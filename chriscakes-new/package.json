@@ -9,7 +9,8 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "import": "tsx scripts/import-content.ts"
+    "import": "tsx scripts/import-content.ts",
+    "import:all": "tsx scripts/import-all-content.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.12.0",
