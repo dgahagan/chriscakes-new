@@ -44,11 +44,11 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 - [x] Identify all editable content areas
 - [ ] Take screenshots of current design for reference (optional)
 
-## Phase 2: CMS Schema Design (Week 1-2)
+## Phase 2: CMS Schema Design (Week 1-2) ✅
 
-### 2.1 Define Sanity Schemas
+### 2.1 Define Sanity Schemas ✅
 
-#### Menu Category Schema
+#### Menu Category Schema ✅
 ```javascript
 {
   name: 'menuCategory',
@@ -64,7 +64,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 }
 ```
 
-#### Menu Item Schema
+#### Menu Item Schema ✅
 ```javascript
 {
   name: 'menuItem',
@@ -85,7 +85,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 }
 ```
 
-#### Site Settings Schema
+#### Site Settings Schema ✅
 ```javascript
 {
   name: 'siteSettings',
@@ -104,7 +104,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 }
 ```
 
-#### Page Content Schema (for About, Contact, etc.)
+#### Page Content Schema (for About, Contact, etc.) ✅
 ```javascript
 {
   name: 'page',
@@ -119,27 +119,28 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 }
 ```
 
-### 2.2 Schema Implementation Tasks
-- [ ] Create all schema files in `/sanity/schemas/`
-- [ ] Configure schema validation rules
-- [ ] Set up custom input components if needed
-- [ ] Test schema in Sanity Studio
-- [ ] Create sample content for testing
+### 2.2 Schema Implementation Tasks ✅
+- [x] Create all schema files in `/sanity/schemas/`
+- [x] Configure schema validation rules
+- [x] Set up custom input components if needed
+- [x] Test schema in Sanity Studio
+- [x] Create sample content for testing
 
-## Phase 3: Content Migration (Week 2)
+## Phase 3: Content Migration (Week 2) ✅
 
-### 3.1 Data Extraction
-- [ ] Extract all menu categories from current site
-- [ ] Extract all menu items with prices and descriptions
-- [ ] Extract all images and optimize them
-- [ ] Extract site settings (contact info, hours, etc.)
-- [ ] Extract page content (About, Contact, etc.)
+### 3.1 Data Extraction ✅
+- [x] Extract all menu categories from current site (5 categories)
+- [x] Extract all menu items with prices and descriptions (64 items)
+- [x] Extract all images and optimize them (logo.png copied)
+- [x] Extract site settings (contact info, hours, etc.)
+- [x] Extract page content (About, Contact, etc.)
 
-### 3.2 Data Import
-- [ ] Manually enter initial content into Sanity Studio, OR
-- [ ] Create migration script using Sanity's import tools
-- [ ] Upload and tag all images
-- [ ] Verify all content imported correctly
+### 3.2 Data Import ✅
+- [x] Create migration script using Sanity's import tools (scripts/import-all-content.ts)
+- [x] Import all menu categories and items into Sanity
+- [x] Upload logo image to public folder
+- [x] Verify all content imported correctly
+- [ ] Add menu item images to Sanity (optional enhancement)
 - [ ] Review with owners for accuracy
 
 ## Phase 4: Frontend Development (Week 2-4)
@@ -166,47 +167,47 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 ### 4.2 Core Components Development
-- [ ] **Layout Components**
-  - [ ] Header with navigation
-  - [ ] Footer with contact info and social links
-  - [ ] Mobile-responsive navigation menu
+- [x] **Layout Components**
+  - [x] Header with navigation
+  - [x] Footer with contact info and social links
+  - [ ] Mobile-responsive navigation menu (hamburger menu)
 
-- [ ] **Menu Components**
-  - [ ] MenuCategory component
-  - [ ] MenuItem card component
+- [x] **Menu Components**
+  - [x] MenuCategory component (integrated into menu page)
+  - [x] MenuItem card component
   - [ ] CategoryFilter/Navigation component
-  - [ ] Menu grid/list layout
+  - [x] Menu grid/list layout
 
-- [ ] **Common Components**
-  - [ ] Image component with optimization
+- [x] **Common Components**
+  - [x] Image component with optimization (Next.js Image)
   - [ ] Button components
   - [ ] Card components
   - [ ] Loading states
 
-- [ ] **Page Templates**
-  - [ ] Homepage
-  - [ ] Menu page
-  - [ ] About page
-  - [ ] Contact page
+- [x] **Page Templates**
+  - [x] Homepage
+  - [x] Menu page
+  - [x] About page
+  - [x] Contact page
 
-### 4.3 Sanity Integration
-- [ ] Install Sanity client: `npm install @sanity/client @sanity/image-url`
-- [ ] Configure Sanity client in `/lib/sanity.js`
-- [ ] Create GROQ queries for all content types
-- [ ] Implement data fetching in page components
-- [ ] Set up Incremental Static Regeneration (ISR) or Server-Side Rendering (SSR)
-- [ ] Implement image optimization using next/image with Sanity CDN
+### 4.3 Sanity Integration ✅
+- [x] Install Sanity client: `npm install @sanity/client @sanity/image-url`
+- [x] Configure Sanity client in `/lib/sanity.ts`
+- [x] Create GROQ queries for all content types
+- [x] Implement data fetching in page components
+- [x] Set up Incremental Static Regeneration (ISR) with 60s revalidation
+- [x] Implement image optimization using next/image with Sanity CDN
 
-### 4.4 Styling
-- [ ] Set up Tailwind CSS (recommended) or CSS Modules
-- [ ] Recreate current design system
-- [ ] Ensure mobile responsiveness
+### 4.4 Styling ✅
+- [x] Set up Tailwind CSS v4
+- [x] Apply ChrisCakes branding (crimson red #dc143c, dark nav #2d2d2d)
+- [x] Ensure mobile responsiveness (basic)
 - [ ] Test cross-browser compatibility
 - [ ] Optimize for accessibility (WCAG 2.1 AA)
 
 ### 4.5 Advanced Features
 - [ ] Search functionality for menu items
-- [ ] Filter by category
+- [ ] Filter by category (on menu page)
 - [ ] Sort by price/name
 - [ ] Print-friendly menu view
 - [ ] SEO optimization (meta tags, structured data)
