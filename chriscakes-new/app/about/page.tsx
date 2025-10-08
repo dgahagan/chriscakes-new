@@ -2,10 +2,10 @@ export default function AboutPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold">About ChrisCakes</h1>
-          <p className="mt-4 text-xl text-blue-100">
+          <h1 className="text-4xl font-bold text-gray-900">About ChrisCakes</h1>
+          <p className="mt-4 text-xl text-gray-600">
             Serving Michigan since 1969
           </p>
         </div>
@@ -76,29 +76,29 @@ export default function AboutPage() {
             </p>
           </section>
 
-          <section className="bg-blue-50 rounded-lg p-8">
+          <section className="bg-gray-100 rounded-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Notable Achievements
             </h2>
             <ul className="space-y-2">
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">✓</span>
+                <span className="text-[#dc143c] mr-2">✓</span>
                 <span>Served four Presidents and 16 Governors</span>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">✓</span>
+                <span className="text-[#dc143c] mr-2">✓</span>
                 <span>Featured on Food Network</span>
               </li>
               <li className="flex items-start">
-                <span className="text-blue-600 mr-2">✓</span>
+                <span className="text-[#dc143c] mr-2">✓</span>
                 <span>Two Guinness World Records</span>
               </li>
               <li className="flex items-start ml-8">
-                <span className="text-blue-600 mr-2">•</span>
+                <span className="text-[#dc143c] mr-2">•</span>
                 <span>Most pancakes made in an hour</span>
               </li>
               <li className="flex items-start ml-8">
-                <span className="text-blue-600 mr-2">•</span>
+                <span className="text-[#dc143c] mr-2">•</span>
                 <span>Highest pancake tossed and caught</span>
               </li>
             </ul>
@@ -112,7 +112,7 @@ export default function AboutPage() {
           </h3>
           <a
             href="/contact"
-            className="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500"
+            className="inline-flex items-center rounded-md bg-[#dc143c] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#b01030]"
           >
             Contact Us Today
           </a>

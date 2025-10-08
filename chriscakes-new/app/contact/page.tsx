@@ -19,10 +19,10 @@ export default async function ContactPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold">Contact Us</h1>
-          <p className="mt-4 text-xl text-blue-100">
+          <h1 className="text-4xl font-bold text-gray-900">Contact Us</h1>
+          <p className="mt-4 text-xl text-gray-600">
             Get in touch to book your event
           </p>
         </div>
@@ -191,7 +191,7 @@ export default async function ContactPage() {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-12 bg-blue-50 rounded-lg p-8 text-center">
+        <div className="mt-12 bg-gray-100 rounded-lg p-8 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             99.9% Success Rate
           </h3>

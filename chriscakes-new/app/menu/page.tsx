@@ -33,10 +33,10 @@ export default async function MenuPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold">Our Menu</h1>
-          <p className="mt-4 text-xl text-blue-100">
+          <h1 className="text-4xl font-bold text-gray-900">Our Menu</h1>
+          <p className="mt-4 text-xl text-gray-600">
             Premier breakfast catering and more
           </p>
         </div>
@@ -106,7 +106,7 @@ export default async function MenuPage() {
         )}
 
         {/* Call to Action */}
-        <div className="mt-16 rounded-lg bg-blue-50 p-8 text-center">
+        <div className="mt-16 rounded-lg bg-gray-100 p-8 text-center">
           <h3 className="text-2xl font-bold text-gray-900">
             Ready to place an order?
           </h3>
@@ -116,7 +116,7 @@ export default async function MenuPage() {
           </p>
           <a
             href="/contact"
-            className="mt-6 inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500"
+            className="mt-6 inline-flex items-center rounded-md bg-[#dc143c] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#b01030]"
           >
             Contact Us
           </a>
