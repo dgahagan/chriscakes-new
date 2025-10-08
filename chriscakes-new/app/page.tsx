@@ -20,32 +20,14 @@ export default async function HomePage() {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <section className="relative bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-gray-900">
               Chris Cakes is the catering company that makes pancakes...
               <br />
-              <span className="text-yellow-300">BY THE MILLIONS!</span>
+              <span className="block mt-2">BY THE MILLIONS!</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-xl">
-              Premier Breakfast Caterer And Large Event Specialist serving
-              Michigan since 1969
-            </p>
-            <div className="mt-10 flex justify-center gap-4">
-              <a
-                href="/menu"
-                className="rounded-md bg-white px-6 py-3 text-base font-semibold text-blue-600 shadow-sm hover:bg-gray-100"
-              >
-                View Menu
-              </a>
-              <a
-                href="/contact"
-                className="rounded-md bg-blue-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-400"
-              >
-                Contact Us
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -110,7 +92,7 @@ export default async function HomePage() {
             <div className="mt-12 text-center">
               <a
                 href="/menu"
-                className="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500"
+                className="inline-flex items-center rounded-md bg-[#dc143c] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#b01030]"
               >
                 View Full Menu
               </a>
@@ -120,18 +102,18 @@ export default async function HomePage() {
       )}
 
       {/* Call to Action */}
-      <section className="bg-blue-600 py-16">
+      <section className="bg-gray-100 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Ready to book your event?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-xl text-gray-700 mb-8">
               No event is too large or too small, from groups of 50 to 50,000!
             </p>
             <a
               href="/contact"
-              className="inline-flex items-center rounded-md bg-white px-8 py-3 text-lg font-semibold text-blue-600 shadow-sm hover:bg-gray-100"
+              className="inline-flex items-center rounded-md bg-[#dc143c] px-8 py-3 text-lg font-semibold text-white shadow-sm hover:bg-[#b01030]"
             >
               Contact Us Today
             </a>
