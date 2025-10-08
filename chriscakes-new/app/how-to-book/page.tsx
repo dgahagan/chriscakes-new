@@ -33,7 +33,7 @@ export default function HowToBookPage() {
     {
       number: 7,
       description:
-        'Chris Cakes is user friendly -- we do all the hard work. Organize 2-3 volunteers, sell your tickets, and together this ensures you'll have a fun and profitable experience.',
+        "Chris Cakes is user friendly -- we do all the hard work. Organize 2-3 volunteers, sell your tickets, and together this ensures you'll have a fun and profitable experience.",
     },
   ];
 
