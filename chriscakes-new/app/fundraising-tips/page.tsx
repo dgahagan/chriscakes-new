@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function FundraisingTipsPage() {
   const tips = [
     'Pre-selling tickets is the backbone to any successful fundraiser. Chris Cakes is always prepared for walk-ins. Many events charge an extra $1 or $2 at the door to encourage advance ticket sales. If you sell 300 tickets and only 220 actually eat, remainder 80 tickets sold is an "out right" donation to your group. The more you feed, the less we charge, the more your group makes!',
@@ -37,8 +39,13 @@ export default function FundraisingTipsPage() {
         {/* Testimonial Section */}
         <div className="grid gap-8 md:grid-cols-3 items-center">
           <div className="flex flex-col items-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-4">
-              <span className="text-gray-500">Image: howto1.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-4">
+              <Image
+                src="/howto1.jpg"
+                alt="Skrumpy Skedaddle at Almar Orchard"
+                fill
+                className="object-cover"
+              />
             </div>
             <h3 className="font-bold text-gray-900 text-center">
               Skrumpy Skedaddle at Almar Orchard<br />

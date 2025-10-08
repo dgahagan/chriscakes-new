@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function VolunteersPage() {
   return (
     <div className="min-h-screen bg-white">
@@ -76,24 +78,39 @@ export default function VolunteersPage() {
 
           <div className="space-y-6">
             <div>
-              <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-                <span className="text-gray-500">help1.jpg</span>
+              <div className="relative h-48 w-full rounded overflow-hidden mb-2">
+                <Image
+                  src="/help1.jpg"
+                  alt="National Cherry Festival Flying Flapjacks"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <h3 className="font-bold text-gray-900 text-center text-sm">
                 National Cherry Festival Flying Flapjacks prior to the Blue Angels Air Show
               </h3>
             </div>
             <div>
-              <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-                <span className="text-gray-500">help2.jpg</span>
+              <div className="relative h-48 w-full rounded overflow-hidden mb-2">
+                <Image
+                  src="/help2.jpg"
+                  alt="We Flip Burgers too"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <h3 className="font-bold text-gray-900 text-center text-sm">
                 We Flip Burgers too
               </h3>
             </div>
             <div>
-              <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-                <span className="text-gray-500">help3.jpg</span>
+              <div className="relative h-48 w-full rounded overflow-hidden mb-2">
+                <Image
+                  src="/help3.jpg"
+                  alt="Breakfast with Santa"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <h3 className="font-bold text-gray-900 text-center text-sm">
                 Breakfast with Santa An ongoing Chris Cakes tradition

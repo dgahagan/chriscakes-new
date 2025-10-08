@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function DayOfEventPage() {
   return (
@@ -13,11 +14,11 @@ export default function DayOfEventPage() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-4 mb-12">
           <div className="space-y-4">
-            <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">day1.jpg</span>
+            <div className="relative h-48 w-full rounded overflow-hidden">
+              <Image src="/day1.jpg" alt="Day of Event 1" fill className="object-cover" />
             </div>
-            <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">day2.jpg</span>
+            <div className="relative h-48 w-full rounded overflow-hidden">
+              <Image src="/day2.jpg" alt="Day of Event 2" fill className="object-cover" />
             </div>
             <h3 className="font-bold text-gray-900 text-center">Ausable River Canoe Marathon</h3>
           </div>
@@ -58,22 +59,22 @@ export default function DayOfEventPage() {
         {/* Event Images */}
         <div className="grid gap-8 md:grid-cols-3 mb-12">
           <div>
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-              <span className="text-gray-500">day3.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-2">
+              <Image src="/day3.jpg" alt="MSU Extension Breakfast on the Farm" fill className="object-cover" />
             </div>
             <h3 className="font-bold text-gray-900 text-center">
               MSU Extension Breakfast on the Farm
             </h3>
           </div>
           <div>
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-              <span className="text-gray-500">day4.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-2">
+              <Image src="/day4.jpg" alt="Rogers Athletic Christmas Party" fill className="object-cover" />
             </div>
             <h3 className="font-bold text-gray-900 text-center">Rogers Athletic Christmas Party</h3>
           </div>
           <div>
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-2">
-              <span className="text-gray-500">day5.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-2">
+              <Image src="/day5.jpg" alt="Rogers Athletic Christmas Party" fill className="object-cover" />
             </div>
             <h3 className="font-bold text-gray-900 text-center">Rogers Athletic Christmas Party</h3>
           </div>

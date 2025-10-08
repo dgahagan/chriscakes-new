@@ -1,6 +1,7 @@
 import { client } from '@/lib/sanity';
 import { faqsQuery } from '@/lib/queries';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface FAQ {
   _id: string;
@@ -33,10 +34,13 @@ export default async function ServicesPage() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* FUNdraising Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="flex items-center justify-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">Image: services1.jpg</span>
-            </div>
+          <div className="relative h-64 w-full rounded overflow-hidden">
+            <Image
+              src="/services1.jpg"
+              alt="Fundraising Services"
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-[#dc143c] mb-4">FUNdraising</h2>
@@ -59,10 +63,13 @@ export default async function ServicesPage() {
 
         {/* Premiere Breakfast Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="flex items-center justify-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">Image: services2.jpg</span>
-            </div>
+          <div className="relative h-64 w-full rounded overflow-hidden">
+            <Image
+              src="/services2.jpg"
+              alt="Premiere Breakfast"
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Premiere Breakfast</h2>
@@ -85,10 +92,13 @@ export default async function ServicesPage() {
 
         {/* Menus N More Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="flex items-center justify-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">Image: services3.jpg</span>
-            </div>
+          <div className="relative h-64 w-full rounded overflow-hidden">
+            <Image
+              src="/services3.jpg"
+              alt="Menus N More"
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Menus N More</h2>

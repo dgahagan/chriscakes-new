@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function InvoicePaymentPage() {
   return (
     <div className="min-h-screen bg-white">
@@ -14,8 +16,13 @@ export default function InvoicePaymentPage() {
         {/* Invoice Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
           <div className="flex flex-col items-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-4">
-              <span className="text-gray-500">invoice1.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-4">
+              <Image
+                src="/invoice1.jpg"
+                alt="University of Michigan Football"
+                fill
+                className="object-cover"
+              />
             </div>
             <h3 className="font-bold text-gray-900 text-center">
               University of Michigan
@@ -51,8 +58,13 @@ export default function InvoicePaymentPage() {
 
         {/* Mileage Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded">
-            <span className="text-gray-500">invoice2.jpg</span>
+          <div className="relative h-64 w-full rounded overflow-hidden">
+            <Image
+              src="/invoice2.jpg"
+              alt="Chris Cakes Catering"
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Mileage:</h2>
@@ -71,8 +83,13 @@ export default function InvoicePaymentPage() {
         {/* Payment Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-2">
           <div className="flex flex-col items-center">
-            <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded mb-4">
-              <span className="text-gray-500">invoice3.jpg</span>
+            <div className="relative h-64 w-full rounded overflow-hidden mb-4">
+              <Image
+                src="/invoice3.jpg"
+                alt="Nutcake teaches Sparty how to Flip"
+                fill
+                className="object-cover"
+              />
             </div>
             <h3 className="font-bold text-gray-900 text-center">
               Nutcake teaches Sparty how to Flip!
@@ -104,8 +121,13 @@ export default function InvoicePaymentPage() {
 
         {/* License Section */}
         <div className="grid gap-8 md:grid-cols-2">
-          <div className="h-64 w-full bg-gray-200 flex items-center justify-center rounded">
-            <span className="text-gray-500">invoice4.jpg</span>
+          <div className="relative h-64 w-full rounded overflow-hidden">
+            <Image
+              src="/invoice4.jpg"
+              alt="Licensed and Insured"
+              fill
+              className="object-cover"
+            />
           </div>
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">License & Insurance:</h2>

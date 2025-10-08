@@ -2,6 +2,7 @@ import { client } from '@/lib/sanity';
 import { menuItemsQuery, featuredTestimonialsQuery } from '@/lib/queries';
 import MenuItemCard from '@/components/menu/MenuItemCard';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -160,17 +161,37 @@ export default async function HomePage() {
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="h-48 bg-gray-200 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-sm">home1.png</span>
+              <div className="relative h-48 rounded overflow-hidden">
+                <Image
+                  src="/home1.png"
+                  alt="Chris Cakes Event 1"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="h-48 bg-gray-200 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-sm">home2.png</span>
+              <div className="relative h-48 rounded overflow-hidden">
+                <Image
+                  src="/home2.png"
+                  alt="Chris Cakes Event 2"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="h-48 bg-gray-200 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-sm">home3.png</span>
+              <div className="relative h-48 rounded overflow-hidden">
+                <Image
+                  src="/home3.png"
+                  alt="Chris Cakes Event 3"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="h-48 bg-gray-200 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-sm">home4.png</span>
+              <div className="relative h-48 rounded overflow-hidden">
+                <Image
+                  src="/home4.png"
+                  alt="Chris Cakes Event 4"
+                  fill
+                  className="object-cover"
+                />
               </div>
             </div>
           </div>

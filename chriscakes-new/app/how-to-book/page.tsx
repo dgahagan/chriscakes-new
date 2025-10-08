@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function HowToBookPage() {
   const steps = [
     {
@@ -49,10 +51,13 @@ export default function HowToBookPage() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Video Section */}
         <div className="mb-12 grid gap-8 md:grid-cols-3 items-center">
-          <div className="flex items-center justify-center">
-            <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">Image: book1.jpg</span>
-            </div>
+          <div className="relative h-48 w-full rounded overflow-hidden">
+            <Image
+              src="/book1.jpg"
+              alt="Chris Cakes Event"
+              fill
+              className="object-cover"
+            />
           </div>
           <div className="flex flex-col items-center">
             <iframe
@@ -72,10 +77,13 @@ export default function HowToBookPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="h-48 w-full bg-gray-200 flex items-center justify-center rounded">
-              <span className="text-gray-500">Image: book2.jpg</span>
-            </div>
+          <div className="relative h-48 w-full rounded overflow-hidden">
+            <Image
+              src="/book2.jpg"
+              alt="Chris Cakes Event"
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
 
