@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Header() {
   return (
@@ -7,12 +8,14 @@ export default function Header() {
       <div className="bg-white border-b-4 border-[#dc143c]">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-5xl font-bold" style={{ color: '#dc143c' }}>
-                Chris Cakes
-              </h1>
-              <p className="text-lg font-semibold text-black">of Michigan</p>
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Chris Cakes of Michigan"
+              width={600}
+              height={120}
+              priority
+              className="h-auto w-auto max-h-28"
+            />
           </Link>
         </div>
       </div>
