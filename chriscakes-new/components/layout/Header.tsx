@@ -23,41 +23,73 @@ export default function Header() {
       {/* Navigation Bar */}
       <nav className="bg-[#2d2d2d]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-12 items-center justify-between">
-            <div className="hidden sm:flex sm:space-x-8">
-              <Link
-                href="/"
-                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-              >
-                Chris Cakes of Michigan
-              </Link>
-            </div>
-            <div className="flex space-x-6">
-              <Link
-                href="/services"
-                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-              >
-                Services
-              </Link>
-              <Link
-                href="/menu"
-                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-              >
-                Menus
-              </Link>
-              <Link
-                href="/about"
-                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-              >
-                On the Flip Side
-              </Link>
-              <Link
-                href="/contact"
-                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-              >
-                Contact Us
-              </Link>
-            </div>
+          <div className="flex h-auto min-h-12 items-center flex-wrap gap-2 py-2">
+            <Link
+              href="/"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Home
+            </Link>
+            <Link
+              href="/services"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Services
+            </Link>
+            <Link
+              href="/fundraising"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Fundraising
+            </Link>
+            <Link
+              href="/menu"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Menus
+            </Link>
+            <Link
+              href="/how-to-book"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              How to Book
+            </Link>
+            <Link
+              href="/fundraising-tips"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Fundraising Tips
+            </Link>
+            <Link
+              href="/volunteers"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Your Group
+            </Link>
+            <Link
+              href="/day-of-event"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Day of Event
+            </Link>
+            <Link
+              href="/invoice-payment"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Invoice & Payment
+            </Link>
+            <Link
+              href="/about"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              On the Flip Side
+            </Link>
+            <Link
+              href="/contact"
+              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+            >
+              Contact Us
+            </Link>
           </div>
         </div>
       </nav>

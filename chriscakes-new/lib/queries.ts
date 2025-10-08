@@ -81,3 +81,41 @@ export const allPagesQuery = groq`*[_type == "page"] {
   title,
   slug
 }`;
+
+// Get all FAQs
+export const faqsQuery = groq`*[_type == "faq"] | order(order asc) {
+  _id,
+  question,
+  answer,
+  category,
+  order
+}`;
+
+// Get FAQs by category
+export const faqsByCategoryQuery = groq`*[_type == "faq" && category == $category] | order(order asc) {
+  _id,
+  question,
+  answer,
+  order
+}`;
+
+// Get all testimonials
+export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
+  _id,
+  quote,
+  author,
+  authorTitle,
+  image,
+  featured,
+  order
+}`;
+
+// Get featured testimonials
+export const featuredTestimonialsQuery = groq`*[_type == "testimonial" && featured == true] | order(order asc) {
+  _id,
+  quote,
+  author,
+  authorTitle,
+  image,
+  order
+}`;
