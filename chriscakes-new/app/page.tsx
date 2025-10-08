@@ -3,12 +3,29 @@ import { menuItemsQuery, featuredTestimonialsQuery } from '@/lib/queries';
 import MenuItemCard from '@/components/menu/MenuItemCard';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
+interface MenuItem {
+  _id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  image?: SanityImageSource;
+  featured?: boolean;
+}
+
+interface Testimonial {
+  _id: string;
+  quote: string;
+  author: string;
+  authorTitle?: string;
+}
+
 async function getMenuItems() {
   try {
-    const items = await client.fetch(menuItemsQuery);
+    const items = await client.fetch<MenuItem[]>(menuItemsQuery);
     return items || [];
   } catch (error) {
     console.error('Error fetching menu items:', error);
@@ -18,7 +35,8 @@ async function getMenuItems() {
 
 async function getTestimonials() {
   try {
-    const testimonials = await client.fetch(featuredTestimonialsQuery);
+    const testimonials =
+      await client.fetch<Testimonial[]>(featuredTestimonialsQuery);
     return testimonials || [];
   } catch (error) {
     console.error('Error fetching testimonials:', error);
@@ -66,8 +84,8 @@ export default async function HomePage() {
                 <p>
                   Not only do we flip flapjacks, we flip burgers, too! Our Menus N More options are
                   full of tasty lunch and dinner options. Pulled pork and smoked potato salad are
-                  our specialties because our sister business is a BBQ joint! Don't see what you're
-                  looking for? ASK US! We try to accommodate all requests.
+                  our specialties because our sister business is a BBQ joint! Don&apos;t see what
+                  you&apos;re looking for? ASK US! We try to accommodate all requests.
                 </p>
                 <p>
                   Chris Cakes can be found at fundraisers, church gatherings, school events,
@@ -84,7 +102,8 @@ export default async function HomePage() {
                 </p>
                 <p>
                   <strong>
-                    Chris Cakes is more than great food at an affordable price… it's an experience!
+                    Chris Cakes is more than great food at an affordable price… it&apos;s an
+                    experience!
                   </strong>
                 </p>
               </div>
@@ -211,7 +230,7 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {menuItems.slice(0, 6).map((item: any) => (
+              {menuItems.slice(0, 6).map((item: MenuItem) => (
                 <MenuItemCard key={item._id} item={item} />
               ))}
             </div>

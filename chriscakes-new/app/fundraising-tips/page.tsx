@@ -56,8 +56,8 @@ export default function FundraisingTipsPage() {
           <div className="md:col-span-2">
             <div className="bg-gray-100 p-8 rounded-lg text-center">
               <p className="text-lg text-gray-700 mb-2">
-                "You guys did an awesome job at the Skrumpy Skedaddle! Organized clean Fast good
-                food with a FLAIR!"
+                &ldquo;You guys did an awesome job at the Skrumpy Skedaddle! Organized clean Fast
+                good food with a FLAIR!&rdquo;
               </p>
               <p className="font-bold text-gray-900">Thank you! -Dave Gillie</p>
             </div>

@@ -1,7 +1,26 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: '/', label: 'Home' },
+    { href: '/services', label: 'Services' },
+    { href: '/fundraising', label: 'Fundraising' },
+    { href: '/menu', label: 'Menus' },
+    { href: '/how-to-book', label: 'How to Book' },
+    { href: '/fundraising-tips', label: 'Fundraising Tips' },
+    { href: '/volunteers', label: 'Your Group' },
+    { href: '/day-of-event', label: 'Day of Event' },
+    { href: '/invoice-payment', label: 'Invoice & Payment' },
+    { href: '/about', label: 'On the Flip Side' },
+    { href: '/contact', label: 'Contact Us' },
+  ];
+
   return (
     <header>
       {/* Logo Area */}
@@ -23,74 +42,63 @@ export default function Header() {
       {/* Navigation Bar */}
       <nav className="bg-[#2d2d2d]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-auto min-h-12 items-center flex-wrap gap-2 py-2">
-            <Link
-              href="/"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/services"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Services
-            </Link>
-            <Link
-              href="/fundraising"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Fundraising
-            </Link>
-            <Link
-              href="/menu"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Menus
-            </Link>
-            <Link
-              href="/how-to-book"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              How to Book
-            </Link>
-            <Link
-              href="/fundraising-tips"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Fundraising Tips
-            </Link>
-            <Link
-              href="/volunteers"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Your Group
-            </Link>
-            <Link
-              href="/day-of-event"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Day of Event
-            </Link>
-            <Link
-              href="/invoice-payment"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Invoice & Payment
-            </Link>
-            <Link
-              href="/about"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              On the Flip Side
-            </Link>
-            <Link
-              href="/contact"
-              className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
-            >
-              Contact Us
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex h-auto min-h-12 items-center flex-wrap gap-2 py-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
+
+          {/* Mobile Navigation - Hamburger Button */}
+          <div className="lg:hidden flex items-center justify-between py-3">
+            <button
+              type="button"
+              className="text-white hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-white"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {mobileMenuOpen ? (
+                  <path d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+            <span className="text-white text-sm font-medium">Menu</span>
+          </div>
+
+          {/* Mobile Navigation - Menu */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden pb-4">
+              <div className="flex flex-col space-y-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-white hover:bg-gray-700 px-3 py-2 text-sm font-medium rounded"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 

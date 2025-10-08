@@ -38,13 +38,13 @@ export default function DayOfEventPage() {
             <p className="text-gray-700">
               After unloading, your volunteers will be asked to help set-up the serving tables, work
               the serving tables during the event, help with clean-up and reloading. Your group will
-              not be asked to cook! Remember what Grandma used to say… "Many hands make for light
-              work!"
+              not be asked to cook! Remember what Grandma used to say… &ldquo;Many hands make for
+              light work!&rdquo;
             </p>
             <p className="text-gray-700">
               Someone from your group will be responsible for ticket, money, and plate distribution.
               We invoice based on the number of plates used. You may want to have signage for your
-              guests to "keep their plate until they have had all they can eat."
+              guests to &ldquo;keep their plate until they have had all they can eat.&rdquo;
             </p>
             <p className="text-gray-700">
               Payment is due at the conclusion of the event. Take a look at our{' '}
@@ -86,12 +86,12 @@ export default function DayOfEventPage() {
             Scott Kefgen and the staff at UPA
           </h2>
           <p className="text-gray-700">
-            "Melanie, Trevor and the gang at Chris Cakes - Thank you so much for the amazing event!
-            Our team was thrilled with everything you did for us! Our families were really excited
-            for our pancake fundraiser, and they really showed their support by showing up in such
-            large numbers. We are so happy with the results that we hope to work with you again in
-            the future! Please let us know if there is anything we can ever do to help you." -
-            Sincerely, your very happy customers!
+            &ldquo;Melanie, Trevor and the gang at Chris Cakes - Thank you so much for the amazing
+            event! Our team was thrilled with everything you did for us! Our families were really
+            excited for our pancake fundraiser, and they really showed their support by showing up in
+            such large numbers. We are so happy with the results that we hope to work with you again
+            in the future! Please let us know if there is anything we can ever do to help
+            you.&rdquo; - Sincerely, your very happy customers!
           </p>
         </div>
       </div>

@@ -1,4 +1,6 @@
 import { urlFor } from '@/lib/sanity';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import Image from 'next/image';
 
 interface MenuItemCardProps {
   item: {
@@ -6,7 +8,7 @@ interface MenuItemCardProps {
     name: string;
     description?: string;
     price?: number;
-    image?: any;
+    image?: SanityImageSource;
     featured?: boolean;
   };
 }
@@ -16,10 +18,11 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {item.image && (
         <div className="relative h-48 bg-gray-200">
-          <img
+          <Image
             src={urlFor(item.image).width(400).height(300).url()}
             alt={item.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         </div>
       )}

@@ -103,9 +103,10 @@ export default async function ServicesPage() {
           <div>
             <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Menus N More</h2>
             <p className="text-gray-700 mb-4">
-              From pulled pork, pasta, burgers, and brats, Chris Cakes serves corporate picnics, graduations, sporting
-              events, and even weddings. Create your own specialized menu. There is very little we can't do! Check
-              out our MENUS N MORE page to see our menu options. Special requests are welcome.
+              From pulled pork, pasta, burgers, and brats, Chris Cakes serves corporate picnics,
+              graduations, sporting events, and even weddings. Create your own specialized menu. There
+              is very little we can&apos;t do! Check out our MENUS N MORE page to see our menu
+              options. Special requests are welcome.
             </p>
             <Link
               href="/menu"

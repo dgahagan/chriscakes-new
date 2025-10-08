@@ -7,7 +7,7 @@ export default function VolunteersPage() {
       <div className="bg-white border-b-4 border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900">
-            As Grandma said, "Many hands makes for light work."
+            As Grandma said, &ldquo;Many hands makes for light work.&rdquo;
           </h1>
         </div>
       </div>

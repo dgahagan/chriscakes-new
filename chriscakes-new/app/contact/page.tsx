@@ -82,15 +82,20 @@ export default async function ContactPage() {
                     Business Hours
                   </h3>
                   <div className="space-y-2">
-                    {settings.hours.map((day: any, index: number) => (
-                      <div
-                        key={index}
-                        className="flex justify-between text-gray-700"
-                      >
-                        <span className="font-medium">{day.day}</span>
-                        <span>{day.hours}</span>
-                      </div>
-                    ))}
+                    {settings.hours.map(
+                      (
+                        day: { day: string; hours: string },
+                        index: number,
+                      ) => (
+                        <div
+                          key={index}
+                          className="flex justify-between text-gray-700"
+                        >
+                          <span className="font-medium">{day.day}</span>
+                          <span>{day.hours}</span>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
               )}
