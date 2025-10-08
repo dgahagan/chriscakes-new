@@ -1,103 +1,143 @@
-import Image from "next/image";
+import { client } from '@/lib/sanity';
+import { menuItemsQuery, featuredMenuItemsQuery } from '@/lib/queries';
+import MenuItemCard from '@/components/menu/MenuItemCard';
 
-export default function Home() {
+export const revalidate = 60; // Revalidate every 60 seconds
+
+async function getMenuItems() {
+  try {
+    const items = await client.fetch(menuItemsQuery);
+    return items || [];
+  } catch (error) {
+    console.error('Error fetching menu items:', error);
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const menuItems = await getMenuItems();
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+              Chris Cakes is the catering company that makes pancakes...
+              <br />
+              <span className="text-yellow-300">BY THE MILLIONS!</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-xl">
+              Premier Breakfast Caterer And Large Event Specialist serving
+              Michigan since 1969
+            </p>
+            <div className="mt-10 flex justify-center gap-4">
+              <a
+                href="/menu"
+                className="rounded-md bg-white px-6 py-3 text-base font-semibold text-blue-600 shadow-sm hover:bg-gray-100"
+              >
+                View Menu
+              </a>
+              <a
+                href="/contact"
+                className="rounded-md bg-blue-500 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-400"
+              >
+                Contact Us
+              </a>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* About Section */}
+      <section className="py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                More than just pancakes!
+              </h2>
+              <div className="space-y-4 text-gray-600">
+                <p>
+                  <strong>
+                    Chris Cakes has been around since 1969 – you won&apos;t
+                    find us in any history books! But you can find us in the
+                    Guinness Book of World Records... twice!
+                  </strong>
+                </p>
+                <p>
+                  We use a custom designed grill and dispensing unit that allows
+                  us to feed large and small groups extremely fast and
+                  efficiently. Add a dose of humor and some fancy pancake
+                  flipping, and you have a one of a kind event that people love
+                  to watch while enjoying our delicious pancakes!
+                </p>
+                <p>
+                  Not only do we flip flapjacks, we flip burgers, too! Our Menus
+                  N More options are full of tasty lunch and dinner options.
+                  Pulled pork and smoked potato salad are our specialties because
+                  our sister business is a BBQ joint!
+                </p>
+              </div>
+            </div>
+            <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
+              <p className="text-gray-500">
+                [Video or Image Placeholder - Add via CMS]
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Menu Items */}
+      {menuItems.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900">
+                Featured Menu Items
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Check out some of our most popular breakfast options
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {menuItems.slice(0, 6).map((item: any) => (
+                <MenuItemCard key={item._id} item={item} />
+              ))}
+            </div>
+            <div className="mt-12 text-center">
+              <a
+                href="/menu"
+                className="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-500"
+              >
+                View Full Menu
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Call to Action */}
+      <section className="bg-blue-600 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Ready to book your event?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8">
+              No event is too large or too small, from groups of 50 to 50,000!
+            </p>
+            <a
+              href="/contact"
+              className="inline-flex items-center rounded-md bg-white px-8 py-3 text-lg font-semibold text-blue-600 shadow-sm hover:bg-gray-100"
+            >
+              Contact Us Today
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
