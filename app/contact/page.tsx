@@ -1,5 +1,6 @@
 import { client } from '@/lib/sanity';
 import { siteSettingsQuery } from '@/lib/queries';
+import ContactForm from '@/components/contact/ContactForm';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -142,56 +143,12 @@ export default async function ContactPage() {
             </div>
           </div>
 
-          {/* Contact Form or Info */}
+          {/* Contact Form */}
           <div className="bg-white rounded-lg shadow-md p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Book Your Event
             </h2>
-            <div className="space-y-4 text-gray-700">
-              <p>
-                Chris Cakes of Michigan is a dependable catering service that is
-                readily available for your 24/7 catering needs.
-              </p>
-              <p>
-                We service the entire state of Michigan and beyond! No event is
-                too large or too small, from groups of 50 to 50,000!
-              </p>
-              <p className="font-semibold text-blue-600">
-                Call us today to discuss your event and get a quote!
-              </p>
-
-              <div className="pt-6 border-t border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-3">
-                  Event Types We Serve:
-                </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Fundraisers</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Church gatherings</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>School events</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Corporate functions</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Graduations & reunions</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-blue-600 mr-2">•</span>
-                    <span>Festivals & benefits</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <ContactForm />
           </div>
         </div>
 

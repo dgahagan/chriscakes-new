@@ -30,6 +30,29 @@ export default defineType({
       validation: (Rule) => Rule.email(),
     }),
     defineField({
+      name: 'contactFormRecipients',
+      title: 'Contact Form Recipients',
+      type: 'array',
+      description:
+        'Email addresses that will receive contact form submissions. Add multiple addresses for redundancy.',
+      of: [{ type: 'string' }],
+      validation: (Rule) =>
+        Rule.custom((emails: string[] | undefined) => {
+          if (!emails || emails.length === 0) {
+            return 'At least one email address is required';
+          }
+          // Validate each email
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const invalidEmails = emails.filter(
+            (email) => !emailRegex.test(email),
+          );
+          if (invalidEmails.length > 0) {
+            return `Invalid email address(es): ${invalidEmails.join(', ')}`;
+          }
+          return true;
+        }),
+    }),
+    defineField({
       name: 'address',
       title: 'Physical Address',
       type: 'text',
