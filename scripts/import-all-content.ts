@@ -56,8 +56,18 @@ const categoriesData = [
   },
 ];
 
+// Menu item data structure for import
+interface MenuItemData {
+  name: string;
+  slug: string;
+  description?: string;
+  price?: number;
+  featured?: boolean;
+  order: number;
+}
+
 // All menu items organized by category
-const menuItemsByCategory: Record<string, any[]> = {
+const menuItemsByCategory: Record<string, MenuItemData[]> = {
   'Breakfast Menus': [
     {
       name: 'Easy Breezy',

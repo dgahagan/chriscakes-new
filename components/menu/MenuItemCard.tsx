@@ -29,11 +29,11 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
       <div className="p-6">
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-xl font-semibold text-gray-900">{item.name}</h3>
-          {item.price && (
-            <span className="text-lg font-bold text-[#dc143c]">
-              ${item.price.toFixed(2)}
-            </span>
-          )}
+          <span className="text-lg font-bold text-[#dc143c]">
+            {item.price && item.price > 0
+              ? `$${item.price.toFixed(2)}`
+              : 'Call for pricing!'}
+          </span>
         </div>
         {item.description && (
           <p className="text-gray-600 text-sm">{item.description}</p>
