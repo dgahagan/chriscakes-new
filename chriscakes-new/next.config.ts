@@ -3,7 +3,11 @@ import path from 'path';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  outputFileTracingRoot: path.join(__dirname, '../../'),
+  // Only use outputFileTracingRoot in local development
+  // When deploying to Vercel with root directory set to "chriscakes-new", this should be omitted
+  ...(process.env.VERCEL !== '1' && {
+    outputFileTracingRoot: path.join(__dirname, '../../'),
+  }),
   images: {
     remotePatterns: [
       {
