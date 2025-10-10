@@ -22,11 +22,11 @@ Welcome to the ChrisCakes website management guides! These step-by-step tutorial
 
 ---
 
-### 🍰 [Managing Menu Items](./managing-menu-items.md)
+### 🥞 [Managing Menu Items](./managing-menu-items.md)
 Learn how to add, edit, and remove items from your menu.
 
 **Topics covered:**
-- Adding new cakes, cupcakes, and other products
+- Adding new breakfast packages, lunch items, and catering options
 - Updating prices and descriptions
 - Uploading and changing photos
 - Marking items as out of stock
@@ -35,13 +35,13 @@ Learn how to add, edit, and remove items from your menu.
 
 **Common tasks:**
 - Change a price → Page 3
-- Add a new cake → Page 1
+- Add a new menu package → Page 1
 - Upload a photo → Page 4
 
 ---
 
 ### 📑 [Managing Categories](./managing-categories.md)
-Organize your menu into sections like "Cakes," "Cupcakes," "Breakfast," etc.
+Organize your menu into sections like "Breakfast Menus," "Lunch & Dinner," "A-La-Carte," etc.
 
 **Topics covered:**
 - Creating new categories
@@ -137,14 +137,14 @@ Contact form emails include a "reply-to" header. Just click "Reply" in your emai
 ### 📸 Use Quality Photos
 - Upload clear, well-lit images
 - At least 1000 pixels wide recommended
-- Photos of your actual products work best
+- Photos of your actual events and food service work best
 
 ## Quick Reference Card
 
 | I want to... | Which guide? |
 |--------------|--------------|
 | Change a menu price | [Managing Menu Items](./managing-menu-items.md) |
-| Add a new cake to the menu | [Managing Menu Items](./managing-menu-items.md) |
+| Add a new menu package | [Managing Menu Items](./managing-menu-items.md) |
 | Update business hours | [Updating Site Settings](./updating-site-settings.md) |
 | Change phone number | [Updating Site Settings](./updating-site-settings.md) |
 | Add a customer review | [Managing Testimonials](./managing-testimonials.md) |
@@ -170,7 +170,7 @@ Please let your website administrator know so they can update the documentation.
 3. **Wait 60 seconds** - After publishing, wait a full minute before checking the live site
 4. **Refresh your browser** - Press F5 (or Cmd+R on Mac) to see changes
 5. **Save drafts often** - Don't lose your work! Save as you go
-6. **Use good photos** - Clear, professional photos make your products look their best
+6. **Use good photos** - Clear, professional photos make your events and food look their best
 7. **Check your email regularly** - Respond to customer inquiries quickly
 
 ## System Access
