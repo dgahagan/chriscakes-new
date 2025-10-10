@@ -6,9 +6,9 @@ Categories help organize your menu into sections like "Cakes," "Cupcakes," "Brea
 
 Think of categories as the main sections of your menu. Each menu item belongs to one category. For example:
 
-- **Cakes** category contains: Wedding Cakes, Birthday Cakes, Custom Cakes
-- **Cupcakes** category contains: Red Velvet Cupcakes, Chocolate Cupcakes
-- **Breakfast** category contains: Muffins, Scones, Coffee Cake
+- **Breakfast Menus** category contains: Chris Cakes Deluxe, Big Chris, Cakes & Eggs
+- **Lunch & Dinner** category contains: Box Lunches, Burgers N' More, BBQ N' More
+- **A-La-Carte** category contains: Hash Browns, Scrambled Eggs, Fresh Fruit Cup
 
 ## Viewing Your Categories
 
@@ -31,18 +31,18 @@ Think of categories as the main sections of your menu. Each menu item belongs to
 
 **Title** (Required)
 - The name of your category as it will appear on the website
-- Examples: "Wedding Cakes", "Cupcakes", "Breakfast Items"
+- Examples: "Breakfast Menus", "Lunch & Dinner", "Fundraising Menus"
 - Keep it short and clear
 
 **Slug** (Required)
 - The web address for this category
 - Click **"Generate"** to create it automatically from your title
-- Example: "wedding-cakes"
+- Example: "breakfast-menus"
 
 **Description**
 - A brief explanation of what's in this category
 - This might appear at the top of the category section
-- Example: "Beautiful custom wedding cakes designed for your special day"
+- Example: "All-you-can-eat breakfast packages perfect for events of any size"
 - Optional, but helpful for customers
 
 **Order**
@@ -92,29 +92,29 @@ Think of categories as the main sections of your menu. Each menu item belongs to
 
 Here are some examples of how you might organize your categories:
 
-### Option 1: By Product Type
-- Cakes
-- Cupcakes
-- Cookies
-- Specialty Items
-
-### Option 2: By Occasion
-- Weddings
-- Birthdays
-- Corporate Events
-- Holidays
-
-### Option 3: By Meal Time (if you serve food)
-- Breakfast
-- Lunch
-- Desserts
+### Option 1: By Meal Type
+- Breakfast Menus
+- Lunch & Dinner Menus
+- A-La-Carte Items
 - Beverages
 
-### Option 4: Mixed Approach
-- Custom Cakes
-- Ready-to-Order Cupcakes
-- Breakfast Items
-- Seasonal Specials
+### Option 2: By Service Style
+- Full Breakfast Packages
+- Lunch Packages
+- Individual Items
+- Add-On Options
+
+### Option 3: By Event Type
+- Fundraising Menus
+- Corporate Events
+- School Events
+- Community Gatherings
+
+### Option 4: Mixed Approach (Current Setup)
+- Breakfast Menus
+- Breakfast A-La-Carte
+- Menus N More - Lunch & Dinner
+- Fundraising Menus
 
 **Choose what makes sense for YOUR business!**
 
@@ -143,10 +143,10 @@ Here are some examples of how you might organize your categories:
 ## Common Questions
 
 **Q: How many categories should I have?**
-A: Most bakeries work well with 4-8 categories. Too few and customers can't find things easily. Too many and it gets overwhelming.
+A: Most catering companies work well with 4-8 categories. Too few and customers can't find things easily. Too many and it gets overwhelming.
 
 **Q: Can one menu item be in multiple categories?**
-A: No, each item can only be in one category. If an item fits multiple categories, pick the best fit or create a "Popular Items" category.
+A: No, each item can only be in one category. If an item fits multiple categories, pick the best fit or create a "Featured Packages" category.
 
 **Q: What happens if I delete a category that has items in it?**
 A: The system usually won't let you delete it. You need to move all items to other categories first.
@@ -160,22 +160,22 @@ A: This can work well! Use the Featured checkbox on menu items to mark them, and
 ## Category Order Example
 
 Let's say you want your menu to appear in this order:
-1. Featured Items
-2. Cakes
-3. Cupcakes
-4. Other Desserts
+1. Breakfast Menus
+2. Breakfast A-La-Carte
+3. Lunch & Dinner
+4. Fundraising
 
 Set the Order field like this:
-- Featured Items: Order = 1
-- Cakes: Order = 2
-- Cupcakes: Order = 3
-- Other Desserts: Order = 4
+- Breakfast Menus: Order = 1
+- Breakfast A-La-Carte: Order = 2
+- Lunch & Dinner: Order = 3
+- Fundraising: Order = 4
 
 Or use bigger gaps for flexibility:
-- Featured Items: Order = 10
-- Cakes: Order = 20
-- Cupcakes: Order = 30
-- Other Desserts: Order = 40
+- Breakfast Menus: Order = 10
+- Breakfast A-La-Carte: Order = 20
+- Lunch & Dinner: Order = 30
+- Fundraising: Order = 40
 
 This way you can easily add new categories in between later!
 

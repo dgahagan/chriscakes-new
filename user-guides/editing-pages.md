@@ -58,16 +58,16 @@ Headings help organize your content into sections:
 **Example structure:**
 ```
 Welcome to ChrisCakes (Heading 2)
-We've been creating beautiful custom cakes since 2005... (Normal text)
+We've been serving pancakes by the millions since 1969... (Normal text)
 
 Our Specialties (Heading 2)
-We specialize in custom cakes for all occasions... (Normal text)
+We specialize in breakfast and event catering for groups of all sizes... (Normal text)
 
-Wedding Cakes (Heading 3)
-Beautiful multi-tier cakes designed for your special day... (Normal text)
+Breakfast Catering (Heading 3)
+All-you-can-eat pancake breakfasts perfect for any event... (Normal text)
 
-Birthday Cakes (Heading 3)
-Fun and creative designs for all ages... (Normal text)
+Lunch & Dinner Catering (Heading 3)
+From hot dogs to BBQ, we've got your event covered... (Normal text)
 ```
 
 ### Creating Lists
@@ -79,10 +79,10 @@ Fun and creative designs for all ages... (Normal text)
 4. Press Enter twice to exit the list
 
 **Example:**
-- Custom wedding cakes
-- Birthday cakes for all ages
-- Corporate event desserts
-- Cupcakes and specialty items
+- All-you-can-eat pancake breakfasts
+- Corporate event catering
+- School and fundraising events
+- Lunch and dinner catering packages
 
 **Numbered List:**
 1. Click the numbered list button instead
@@ -98,9 +98,9 @@ Fun and creative designs for all ages... (Normal text)
 
 **Image Tips:**
 - Use high-quality photos (at least 1000 pixels wide)
-- Images of your actual work are best
+- Images of your actual events and food service are best
 - Keep file sizes reasonable (under 2-3 MB if possible)
-- Add descriptive alt text like "Three-tier white wedding cake with sugar flowers"
+- Add descriptive alt text like "ChrisCakes pancake breakfast setup at corporate event"
 
 ### Adding Links
 
@@ -121,12 +121,12 @@ SEO (Search Engine Optimization) helps people find your page on Google.
 **Meta Title**
 - The title that appears in search results
 - Usually 50-60 characters
-- Example: "About ChrisCakes | Custom Cakes in Michigan"
+- Example: "About ChrisCakes | Premier Breakfast Caterer in Michigan"
 
 **Meta Description**
 - The description in search results
 - Usually 150-160 characters
-- Example: "ChrisCakes has been creating beautiful custom cakes and desserts for Michigan families since 2005. Wedding cakes, birthday cakes, and more!"
+- Example: "ChrisCakes has been serving pancakes by the millions since 1969! Premier breakfast and event catering for groups from 50 to 50,000 in Michigan."
 
 **Tips:**
 - Include important keywords naturally
@@ -145,61 +145,62 @@ SEO (Search Engine Optimization) helps people find your page on Google.
 ### Updating Your About Page
 
 Your About page tells your story. Consider including:
-- When you started your business
+- When you started your business (since 1969!)
 - Your background and experience
-- What makes you special/different
+- What makes you special/different (pancakes by the millions!)
 - Your values or mission
-- Personal touches (family business, passion for baking, etc.)
+- Personal touches (family business, passion for serving people, etc.)
 
 **Example structure:**
 ```
 Welcome to ChrisCakes (Heading 2)
-[Introduction paragraph about your business]
+[Introduction paragraph about your catering business]
 
 Our Story (Heading 2)
-[How and when you started, your background]
+[How and when you started - serving since 1969!]
 
 What Makes Us Special (Heading 2)
-[What sets you apart - custom designs, quality ingredients, etc.]
+[What sets you apart - all-you-can-eat pancakes, large event expertise, etc.]
 
-- All cakes made from scratch
-- Custom designs for every occasion
-- Free consultation and tasting
+- All-you-can-eat pancake breakfasts
+- Events from 50 to 50,000 people
+- Professional catering equipment
+- Experienced staff
 [Bulleted list of key points]
 ```
 
 ### Updating Your Services Page
 
 List what you offer:
-- Types of cakes and desserts
-- Customization options
-- Delivery and setup services
-- Consultation process
+- Types of catering packages (breakfast, lunch, dinner)
+- Menu options and customization
+- Event setup and service
+- Group size capabilities (50 to 50,000!)
 - Pricing information (if you share it)
 
 **Tips:**
 - Be specific about what you offer
-- Mention any minimum orders or requirements
-- Include a call-to-action: "Contact us for a free consultation!"
+- Mention any minimum group sizes or requirements
+- Include a call-to-action: "Contact us for a free quote!"
 
 ### Updating FAQ Page
 
 Common questions might include:
-- How far in advance should I order?
-- Do you deliver?
-- Can I schedule a tasting?
+- How far in advance should I book?
+- What size groups can you serve?
+- Do you provide serving staff?
 - What are your prices?
-- Do you accommodate dietary restrictions?
+- Can you accommodate dietary restrictions?
 
 **Format:**
 Use headings for questions, regular text for answers:
 
 ```
-How far in advance should I order? (Heading 3)
-We recommend ordering at least 2-3 weeks in advance for custom cakes, and 4-6 weeks for wedding cakes. However, we'll do our best to accommodate rush orders when possible!
+How far in advance should I book? (Heading 3)
+We recommend booking at least 2-4 weeks in advance for most events. For large events (500+ people) or peak seasons, please book 6-8 weeks ahead. However, we'll do our best to accommodate last-minute requests when possible!
 
-Do you offer cake tastings? (Heading 3)
-Yes! We offer complimentary tastings for wedding cakes. Schedule your tasting appointment by calling us at (555) 123-4567.
+What size groups can you serve? (Heading 3)
+We can cater events from 50 to 50,000 people! Whether you're planning a small school breakfast or a massive community event, we have the equipment and experience to handle it.
 ```
 
 ## Creating a New Page

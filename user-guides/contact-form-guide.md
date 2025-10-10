@@ -48,32 +48,33 @@ That's it! The reply will go directly to the customer's email address.
 ### Quote Requests
 
 **Customer writes:**
-"Hi, I'd like to get a quote for a birthday cake for my daughter's 5th birthday party. We need it for June 15th. It will serve about 30 people. Can you help?"
+"Hi, I'd like to get a quote for a pancake breakfast for our school fundraiser. We're expecting about 200 people on June 15th. Can you help?"
 
 **Your response might include:**
 - Thank them for contacting you
-- Ask any additional questions (flavor preferences, design ideas, dietary restrictions)
+- Ask any additional questions (menu preferences, setup details, dietary restrictions)
 - Provide pricing information or next steps
-- Suggest a phone call or in-person consultation if needed
+- Suggest a phone call if needed to discuss details
 - Confirm availability for their date
 
 **Example response:**
 ```
 Hi [Name],
 
-Thanks for reaching out! I'd love to help with your daughter's birthday cake.
+Thanks for reaching out! I'd love to help with your school fundraiser breakfast.
 
-For a cake serving 30 people, I have several size options available. To provide you with an accurate quote, I'd like to know:
+For an event with 200 people, we have several menu package options. To provide you with an accurate quote, I'd like to know:
 
-1. Do you have any flavor preferences? (Chocolate, vanilla, red velvet, etc.)
-2. Do you have a theme or design in mind for the cake?
-3. Any dietary restrictions I should know about?
+1. What time would you like the breakfast to start?
+2. Are you interested in our all-you-can-eat pancake packages or would you prefer a lunch option?
+3. Will this be indoors or outdoors?
+4. Any dietary restrictions we should know about?
 
-June 15th is available! My prices for cakes serving 30 typically range from $XX to $XX depending on design complexity.
+June 15th is available! Our breakfast packages for 200 people typically range from $X to $X per person depending on the menu selected.
 
-Would you like to schedule a time to discuss the details? You can call me at [phone number] or reply to this email with your answers and I'll send you a formal quote.
+Would you like to schedule a phone call to discuss the details? You can call me at [phone number] or reply to this email with your answers and I'll send you a formal quote.
 
-Looking forward to creating something special for your daughter!
+Looking forward to making your fundraiser a success!
 
 Best regards,
 [Your name]
@@ -83,26 +84,26 @@ ChrisCakes
 ### General Questions
 
 **Customer writes:**
-"Do you make gluten-free cupcakes?"
+"Can you accommodate gluten-free diets for our event?"
 
 **Simple, direct response:**
 ```
 Hi [Name],
 
-Yes, we do offer gluten-free cupcakes! We can make them in several flavors including chocolate, vanilla, and red velvet.
+Yes, we can accommodate gluten-free requests! We offer gluten-free pancake options for our breakfast catering.
 
-Our gluten-free cupcakes are $X each with a minimum order of 12.
+Please let us know how many guests will need gluten-free options when you book, and we'll make sure they're taken care of.
 
-Would you like to place an order or discuss your specific needs? Feel free to call me at [phone number] or reply to this email.
+Would you like to discuss your event details? Feel free to call me at [phone number] or reply to this email.
 
 Thanks!
 [Your name]
 ```
 
-### Last-Minute or Rush Orders
+### Last-Minute or Rush Requests
 
 **Customer writes:**
-"I need a cake for this Saturday! Is that possible?"
+"I need catering for this Saturday! Is that possible?"
 
 **Be honest about availability:**
 ```
@@ -111,11 +112,12 @@ Hi [Name],
 Thanks for contacting me! This Saturday is short notice, but let me see what I can do.
 
 Can you tell me:
-- How many people does it need to serve?
-- Any specific flavor or design preferences?
-- What time would you need it?
+- How many people are you expecting?
+- What type of meal are you looking for (breakfast, lunch, etc.)?
+- What time is the event?
+- Is this indoors or outdoors?
 
-I'll check my schedule and get back to you within the next few hours to let you know if I can accommodate this.
+I'll check my schedule and equipment availability and get back to you within the next few hours to let you know if we can accommodate this.
 
 Talk soon!
 [Your name]
@@ -164,17 +166,17 @@ Follow us on Instagram: @chriscakesofmi
 
 ## Handling Different Types of Inquiries
 
-### Wedding Cake Inquiries
+### Large Event Inquiries (500+ people)
 - These are high-value and deserve extra attention
-- Suggest a phone call or in-person consultation
-- Ask for their wedding date first (check availability)
-- Request guest count, colors, venue
+- Suggest a phone call to discuss logistics
+- Ask for their event date first (check availability)
+- Request guest count, venue details, menu preferences
 - Send a formal follow-up email summarizing what you discussed
 
-### Corporate Orders
+### Corporate Event Inquiries
 - Ask about budget and timeline upfront
-- Confirm quantities needed
-- Discuss delivery/setup options
+- Confirm expected attendance
+- Discuss setup, service staff, and equipment needs
 - Get billing information (do they need an invoice?)
 - Be professional and detail-oriented
 

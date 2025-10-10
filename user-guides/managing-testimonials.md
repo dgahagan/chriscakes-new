@@ -19,7 +19,7 @@ Testimonials are customer reviews and feedback that appear on your website. They
 - The actual testimonial text from your customer
 - Use their exact words when possible
 - Keep it concise but meaningful
-- Example: "ChrisCakes made the most beautiful and delicious wedding cake! All our guests raved about it. Thank you for making our day so special!"
+- Example: "ChrisCakes catered our company breakfast and it was amazing! The pancakes were delicious and they kept them coming. Our team of 200 was very impressed!"
 
 **Author** (Required)
 - The customer's name
@@ -29,15 +29,15 @@ Testimonials are customer reviews and feedback that appear on your website. They
 **Author Title**
 - Optional: Additional context about the customer
 - Examples:
-  - "Wedding Client, June 2024"
-  - "Birthday Cake Customer"
   - "Corporate Event Planner"
-  - "Mother of the Bride"
+  - "School Fundraising Coordinator"
+  - "Community Event Organizer"
+  - "Company HR Director"
 
 **Image**
-- Optional: A photo of the customer or the cake you made for them
+- Optional: A photo of the customer or the event you catered
 - Upload a clear, professional-looking photo
-- Tip: Photos of happy customers or your finished cakes work great!
+- Tip: Photos of happy event attendees or your catering setup work great!
 
 **Featured**
 - Check this box if you want this testimonial to appear prominently
@@ -82,27 +82,27 @@ Testimonials are customer reviews and feedback that appear on your website. They
 
 ### Choosing Good Testimonials
 - Look for specific praise (not just "Great!")
-- Include details about the product or service
-- Show different types of events (weddings, birthdays, corporate)
-- Mix different kinds of feedback (taste, appearance, service)
+- Include details about the food or service
+- Show different types of events (corporate, school, fundraising, community)
+- Mix different kinds of feedback (food quality, service, event size)
 
 ### What Makes a Strong Testimonial?
 
 **Weak Example:**
-"Good cake!"
+"Good pancakes!"
 - Too short
 - Not specific
 - Doesn't tell a story
 
 **Strong Example:**
-"We ordered a three-tier wedding cake with custom sugar flowers, and it exceeded all our expectations. Not only was it stunning—matching our colors perfectly—but every single guest commented on how delicious it was. ChrisCakes made the ordering process easy and stress-free!"
+"We hired ChrisCakes for our company's annual breakfast event with 300 employees. The pancakes were fluffy and delicious, the service was efficient, and they handled the large crowd seamlessly. Everyone loved the unlimited pancakes and the variety of toppings. We'll definitely be booking them again!"
 - Specific details
-- Mentions both appearance and taste
-- Describes the experience
+- Mentions both food quality and service
+- Describes the experience and event size
 
 ### Photo Tips
-- Use photos of your actual work (the cake you made)
-- Or photos of happy customers with their cakes
+- Use photos of your actual events (the setup, food service, etc.)
+- Or photos of happy event attendees enjoying the meal
 - Make sure you have permission to use any photos
 - Clear, well-lit photos work best
 
@@ -127,8 +127,8 @@ Or organize by date:
 
 ### Balancing Your Testimonials
 Try to include:
-- Different types of events (weddings, birthdays, etc.)
-- Different products (cakes, cupcakes, etc.)
+- Different types of events (corporate, school, fundraising, community)
+- Different menu packages (breakfast, lunch, BBQ, etc.)
 - A mix of long and short testimonials
 - Both new and long-time customers
 
@@ -144,7 +144,7 @@ A: Only with their permission. You can fix obvious typos or shorten it slightly,
 A: Generally no. This is your website to showcase your business. However, you should address negative feedback privately with the customer.
 
 **Q: What if I don't have customer photos?**
-A: That's fine! Photos are optional. The quote itself is most important. You can use photos of your cakes instead of customer photos.
+A: That's fine! Photos are optional. The quote itself is most important. You can use photos of your event setups or food service instead of customer photos.
 
 **Q: How do I ask customers for testimonials?**
 A: After a successful order:
@@ -162,7 +162,7 @@ A: Yes, but always ask permission first. Copy the review exactly as written and 
 ## Example Workflow: Adding a New Review
 
 1. **Customer sends you positive feedback via email**
-   - "Hi! Just wanted to say the birthday cake was perfect. My daughter loved the unicorn design and everyone said it was delicious. Thank you!"
+   - "Hi! Just wanted to say the breakfast you catered for our school fundraiser was perfect. The kids and parents loved the pancakes and everyone said they were delicious. Thank you!"
 
 2. **Ask for permission**
    - Reply: "Thank you so much! Would it be okay if we shared your kind words on our website? We can use your first name or full name—whatever you're comfortable with."
@@ -172,10 +172,10 @@ A: Yes, but always ask permission first. Copy the review exactly as written and 
 
 4. **Add to Studio**
    - Go to Testimonials → Create new
-   - Quote: "The birthday cake was perfect. My daughter loved the unicorn design and everyone said it was delicious. Thank you!"
+   - Quote: "The breakfast you catered for our school fundraiser was perfect. The kids and parents loved the pancakes and everyone said they were delicious. Thank you!"
    - Author: Sarah Johnson
-   - Author Title: Birthday Cake Customer
-   - (Optional) Upload photo of the unicorn cake
+   - Author Title: School Fundraising Coordinator
+   - (Optional) Upload photo of the event
    - Publish!
 
 5. **Thank the customer**

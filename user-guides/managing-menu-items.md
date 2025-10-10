@@ -19,18 +19,18 @@ This guide shows you how to add, edit, and remove items from your menu. Menu ite
 
 **Name** (Required)
 - Enter the name of your item exactly as you want it to appear
-- Example: "Red Velvet Cupcakes" or "Wedding Cake - 3 Tier"
+- Example: "Chris Cakes Deluxe" or "Box Lunches"
 
 **Slug** (Required)
 - This creates the web address for the item
 - Click **"Generate"** next to the slug field
 - It will automatically create one from your item name
-- Example: "red-velvet-cupcakes"
+- Example: "chris-cakes-deluxe"
 
 **Description**
 - Describe your item in a sentence or two
-- Mention key details like flavors, ingredients, or serving size
-- Example: "Moist red velvet cupcakes topped with cream cheese frosting. Perfect for any occasion!"
+- Mention key details like ingredients, what's included, or serving size
+- Example: "Unlimited pancakes served with two eggs, sausage links, and hash browns. A hearty breakfast for any event!"
 
 **Price**
 - Enter the price as a number (don't include the $ sign)
@@ -39,7 +39,7 @@ This guide shows you how to add, edit, and remove items from your menu. Menu ite
 
 **Category** (Required)
 - Click the **"Select"** button
-- Choose the category this item belongs to (Breakfast, Lunch, Cakes, etc.)
+- Choose the category this item belongs to (Breakfast Menus, Lunch & Dinner, A-La-Carte, etc.)
 - Don't see the right category? See [Managing Categories](./managing-categories.md)
 
 **Image**
@@ -124,9 +124,9 @@ The item will be hidden from your menu but you can easily bring it back by check
 
 ### Photos
 - Use natural lighting when photographing food
-- Show the actual product (not stock photos)
+- Show the actual meal or setup (not stock photos)
 - Make sure the photo is in focus
-- Include something for scale if it helps (like a fork or plate)
+- Show what guests will actually receive at their event
 
 ### Descriptions
 - Be specific about flavors and ingredients
@@ -135,8 +135,8 @@ The item will be hidden from your menu but you can easily bring it back by check
 - Use appetizing words!
 
 ### Pricing
-- Be consistent (all cupcakes use similar pricing)
-- Use "0" for custom items that need quotes
+- Be consistent (all breakfast menus use similar pricing structure)
+- Use "0" for items that require custom quotes based on group size
 - Update prices regularly to stay current
 
 ### Organization

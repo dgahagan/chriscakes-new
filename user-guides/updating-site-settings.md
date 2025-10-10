@@ -23,7 +23,7 @@ Site Settings is where you update your business information that appears through
 - A brief description of your business
 - Used by search engines
 - Keep it under 160 characters
-- Example: "Custom cakes, cupcakes, and desserts for every occasion. Serving Michigan with delicious, beautiful baked goods since 2005."
+- Example: "Premier breakfast and event catering serving pancakes by the millions! Catering for groups from 50 to 50,000. Serving Michigan since 1969."
 
 ### Contact Information
 
