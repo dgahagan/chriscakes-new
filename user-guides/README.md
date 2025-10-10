@@ -90,19 +90,17 @@ Add and manage customer reviews and testimonials on your website.
 ---
 
 ### 📄 [Editing Pages](./editing-pages.md)
-Update content on pages like "About Us," "Services," "Catering," etc.
+Understanding what content you can edit vs. what requires developer help.
 
 **Topics covered:**
-- Using the rich text editor
-- Adding headings and formatting text
-- Creating bulleted and numbered lists
-- Adding images to pages
-- Creating links
-- SEO settings for better Google visibility
+- What content is editable through Sanity (menus, testimonials, settings, FAQs)
+- What content requires developer assistance (About, Services, and other main pages)
+- How to request page updates from your developer
+- Why pages are currently hard-coded
+- Tips for working with developers
 
-**Common tasks:**
-- Update About page → Page 3
-- Add a new section → Page 2
+**Important note:**
+Main website pages like About, Services, and Fundraising are currently hard-coded and require developer assistance to update.
 
 ---
 
@@ -148,7 +146,7 @@ Contact form emails include a "reply-to" header. Just click "Reply" in your emai
 | Update business hours | [Updating Site Settings](./updating-site-settings.md) |
 | Change phone number | [Updating Site Settings](./updating-site-settings.md) |
 | Add a customer review | [Managing Testimonials](./managing-testimonials.md) |
-| Update About page | [Editing Pages](./editing-pages.md) |
+| Update About page | [Editing Pages](./editing-pages.md) - Requires developer help |
 | Understand contact form emails | [Contact Form Guide](./contact-form-guide.md) |
 | Create a new menu section | [Managing Categories](./managing-categories.md) |
 | Add my Instagram link | [Updating Site Settings](./updating-site-settings.md) |

@@ -29,12 +29,13 @@ When you make changes in the Studio, here's what happens:
 
 When you first open the Studio, you'll see a menu on the left side with different sections:
 
-- **Menu Items** - Add, edit, or remove items from your menu
-- **Menu Categories** - Organize your menu into sections (Breakfast, Lunch, etc.)
-- **Pages** - Edit content on pages like About Us or Services
-- **Site Settings** - Update your phone number, hours, address, etc.
-- **Testimonials** - Manage customer reviews
-- **FAQs** - Update frequently asked questions
+- **Menu Items** ✅ - Add, edit, or remove items from your menu (fully editable)
+- **Menu Categories** ✅ - Organize your menu into sections (fully editable)
+- **Site Settings** ✅ - Update your phone number, hours, address, etc. (fully editable)
+- **Testimonials** ✅ - Manage customer reviews (fully editable)
+- **FAQs** ✅ - Update frequently asked questions (fully editable)
+
+**Note**: While you'll see a "Pages" section in the Studio, the main website pages (About, Services, Fundraising, etc.) are currently hard-coded and require developer assistance to update. See the [Editing Pages](./editing-pages.md) guide for details.
 
 ## Your First Change
 
@@ -76,7 +77,7 @@ Now that you understand the basics, check out these specific guides:
 - **[Managing Categories](./managing-categories.md)** - Organize your menu sections
 - **[Updating Site Settings](./updating-site-settings.md)** - Change hours, contact info, social media
 - **[Managing Testimonials](./managing-testimonials.md)** - Add customer reviews
-- **[Editing Pages](./editing-pages.md)** - Update your About, Services, and other pages
+- **[Editing Pages](./editing-pages.md)** - Understanding what you can edit vs. what needs developer help
 - **[Contact Form Guide](./contact-form-guide.md)** - Understanding form submissions
 
 ## Need Help?

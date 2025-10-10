@@ -184,5 +184,5 @@ A: Yes, but always ask permission first. Copy the review exactly as written and 
 ---
 
 **Next Steps**:
-- [Editing Pages](./editing-pages.md) - Update your About and Services pages
+- [Editing Pages](./editing-pages.md) - Understanding what you can edit vs. what needs developer help
 - [Contact Form Guide](./contact-form-guide.md) - Understanding customer inquiries

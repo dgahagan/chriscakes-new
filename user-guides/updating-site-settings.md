@@ -220,4 +220,4 @@ Update your site description to include: "Please note: We will be closed Decembe
 
 **Next Steps**:
 - [Managing Testimonials](./managing-testimonials.md) - Add customer reviews
-- [Editing Pages](./editing-pages.md) - Update your About and Services pages
+- [Editing Pages](./editing-pages.md) - Understanding what you can edit vs. what needs developer help
