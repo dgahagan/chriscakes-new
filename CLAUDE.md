@@ -19,9 +19,12 @@ chriscakes/
 ├── scripts/                 # Content import scripts
 ├── public/                  # Static assets
 ├── reference/               # Design resources and legacy site archives
-├── CONTENT_AUDIT.md         # Content inventory from original site
+│   └── CONTENT_AUDIT.md    # Content inventory from original site
+├── user-guides/             # Non-technical user documentation
 ├── IMPLEMENTATION_PLAN.md   # Detailed roadmap with progress tracking
 ├── PROJECT_DESCRIPTION.md   # Original project requirements
+├── README.md               # Project overview and quick start
+├── SETUP.md                # Comprehensive setup and deployment guide
 └── CLAUDE.md               # This file
 ```
 
@@ -230,6 +233,7 @@ Access at `/studio` route in browser. Configured via `app/studio/page.tsx`. Stud
 
 Read these files for context:
 - **IMPLEMENTATION_PLAN.md** - Complete project phases and progress
-- **CONTENT_AUDIT.md** - Original site content inventory (in reference/)
+- **reference/CONTENT_AUDIT.md** - Original site content inventory
 - **SETUP.md** - Setup instructions and deployment guide
-- **README.md** - Quick start and feature overview
+- **README.md** - Project overview and quick start
+- **user-guides/** - Non-technical documentation for site managers

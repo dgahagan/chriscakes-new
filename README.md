@@ -35,9 +35,21 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
 
 ## 📖 Documentation
 
+### For Developers
 - **[SETUP.md](./SETUP.md)** - Complete setup instructions, Sanity authentication, and **Vercel deployment guide**
-- **[../IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md)** - Project roadmap and implementation details
-- **[../CONTENT_AUDIT.md](../CONTENT_AUDIT.md)** - Content inventory from original site
+- **[IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)** - Project roadmap and implementation details
+- **[CONTENT_AUDIT.md](./reference/CONTENT_AUDIT.md)** - Content inventory from original site
+- **[CLAUDE.md](./CLAUDE.md)** - AI assistant guidance and project conventions
+
+### For Site Managers
+- **[User Guides](./user-guides/)** - Complete guides for managing the website through Sanity Studio
+  - [Getting Started](./user-guides/GETTING_STARTED.md) - Learn the basics and make your first update
+  - [Managing Menu Items](./user-guides/managing-menu-items.md) - Add, edit, and update menu items
+  - [Managing Categories](./user-guides/managing-categories.md) - Organize your menu sections
+  - [Updating Site Settings](./user-guides/updating-site-settings.md) - Change hours, contact info, social media
+  - [Managing Testimonials](./user-guides/managing-testimonials.md) - Add customer reviews
+  - [Editing Pages](./user-guides/editing-pages.md) - Update About, Services, and other pages
+  - [Contact Form Guide](./user-guides/contact-form-guide.md) - Understanding form submissions and email replies
 
 ## 🏗️ Complete Tech Stack
 

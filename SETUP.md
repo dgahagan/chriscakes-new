@@ -1923,5 +1923,6 @@ After completing this setup and deployment, proceed to **Phase 5** in the IMPLEM
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Vercel Documentation](https://vercel.com/docs)
 - [Vercel CLI Documentation](https://vercel.com/docs/cli)
-- [Project Implementation Plan](../IMPLEMENTATION_PLAN.md)
-- [Content Audit](../CONTENT_AUDIT.md)
+- [Project Implementation Plan](./IMPLEMENTATION_PLAN.md)
+- [Content Audit](./reference/CONTENT_AUDIT.md)
+- [User Guides](./user-guides/) - For non-technical site managers
