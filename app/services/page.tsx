@@ -1,7 +1,8 @@
 import { client } from '@/lib/sanity';
-import { faqsQuery } from '@/lib/queries';
-import Link from 'next/link';
-import Image from 'next/image';
+import { faqsQuery, pageBySlugQuery } from '@/lib/queries';
+import SectionRenderer from '@/components/sections/SectionRenderer';
+import type { Metadata } from 'next';
+import { PortableTextBlock } from '@portabletext/react';
 
 interface FAQ {
   _id: string;
@@ -11,14 +12,65 @@ interface FAQ {
   order: number;
 }
 
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
+
+interface PageSection {
+  _type: string;
+  _key: string;
+  title?: string;
+  heading?: string;
+  content?: PortableTextBlock[];
+  description?: string;
+  items?: string[];
+  backgroundColor?: 'gray' | 'crimson' | 'white';
+  style?: 'default' | 'checklist' | 'numbered' | 'primary' | 'secondary';
+  image?: SanityImage;
+  imagePosition?: 'left' | 'right';
+  ctaButton?: {
+    text: string;
+    link: string;
+  };
+  buttonText?: string;
+  buttonLink?: string;
+  videoUrl?: string;
+}
+
+interface PageData {
+  _id: string;
+  title: string;
+  sections: PageSection[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+}
+
 export const revalidate = 60;
 
+async function getPageData(): Promise<PageData> {
+  return client.fetch(pageBySlugQuery, { slug: 'services' }, { next: { revalidate: 60 } });
+}
+
 async function getFAQs(): Promise<FAQ[]> {
-  return client.fetch(faqsQuery);
+  return client.fetch(faqsQuery, {}, { next: { revalidate: 60 } });
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageData();
+
+  return {
+    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
+    description: page.seo?.metaDescription || page.title,
+  };
 }
 
 export default async function ServicesPage() {
-  const faqs = await getFAQs();
+  const [page, faqs] = await Promise.all([getPageData(), getFAQs()]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -32,116 +84,12 @@ export default async function ServicesPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* FUNdraising Section */}
-        <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="relative h-64 w-full rounded overflow-hidden">
-            <Image
-              src="/services1.jpg"
-              alt="Fundraising Services"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-[#dc143c] mb-4">FUNdraising</h2>
-            <p className="text-gray-700 mb-4">
-              Where else can you make $1,000 in just a short amount of time? Chris Cakes original pancake menu is structured
-              so you can make a lot of money in just a few hours; or host a benefit spaghetti dinner or Coney night.
-              Chris Cakes helps to make a profitable and unique experience. The FUN is no extra charge. Click on our
-              FUNDRAISING MENU page for more information.
-            </p>
-            <Link
-              href="/fundraising"
-              className="inline-block bg-[#dc143c] text-white px-6 py-2 rounded hover:bg-[#b01030] transition"
-            >
-              View Fundraising
-            </Link>
-          </div>
-        </div>
+        {/* Dynamic Content from Sanity */}
+        <SectionRenderer sections={page.sections} />
 
         <hr className="my-12 border-gray-300" />
 
-        {/* Premiere Breakfast Section */}
-        <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="relative h-64 w-full rounded overflow-hidden">
-            <Image
-              src="/services2.jpg"
-              alt="Premiere Breakfast"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Premiere Breakfast</h2>
-            <p className="text-gray-700 mb-4">
-              Our breakfast options include more than just flying flapjacks. We also serve French toast, scrambled eggs,
-              hash browns, fresh fruit, and much more. Chris Cakes Premiere Breakfast options can be served at your
-              office meetings, civic clubs, and more. Take a look at our BREAKFAST MENUS page, check out our options,
-              build your budget, and call our office.
-            </p>
-            <Link
-              href="/menu"
-              className="inline-block bg-[#dc143c] text-white px-6 py-2 rounded hover:bg-[#b01030] transition"
-            >
-              Breakfast Menus
-            </Link>
-          </div>
-        </div>
-
-        <hr className="my-12 border-gray-300" />
-
-        {/* Menus N More Section */}
-        <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div className="relative h-64 w-full rounded overflow-hidden">
-            <Image
-              src="/services3.jpg"
-              alt="Menus N More"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Menus N More</h2>
-            <p className="text-gray-700 mb-4">
-              From pulled pork, pasta, burgers, and brats, Chris Cakes serves corporate picnics,
-              graduations, sporting events, and even weddings. Create your own specialized menu. There
-              is very little we can&apos;t do! Check out our MENUS N MORE page to see our menu
-              options. Special requests are welcome.
-            </p>
-            <Link
-              href="/menu"
-              className="inline-block bg-[#dc143c] text-white px-6 py-2 rounded hover:bg-[#b01030] transition"
-            >
-              Menus N More
-            </Link>
-          </div>
-        </div>
-
-        <hr className="my-12 border-gray-300" />
-
-        {/* Emergency Catering Section */}
-        <div className="mb-12 grid gap-8 md:grid-cols-2">
-          <div></div>
-          <div>
-            <h2 className="text-3xl font-bold text-[#dc143c] mb-4">Emergency Catering</h2>
-            <p className="text-gray-700 mb-4">
-              If you have a catering crisis, Chris Cakes is available. We are a 24/7-365 caterer and we can get you out
-              of a tight spot. We have the ability to feed a large amount of food to massive amounts of people, from
-              serving utility workers to military personnel. Chris Cakes has been even known to provide relief in disaster
-              situations.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-block bg-[#dc143c] text-white px-6 py-2 rounded hover:bg-[#b01030] transition"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-
-        <hr className="my-12 border-gray-300" />
-
-        {/* FAQs Section */}
+        {/* FAQs Section - Dynamic from Sanity */}
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
           <div className="space-y-4">

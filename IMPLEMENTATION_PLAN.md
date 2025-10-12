@@ -216,11 +216,438 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 
 ### 4.5 Advanced Features
 - [ ] Search functionality for menu items
-- [ ] Filter by category (on menu page)
+- [x] Filter by category (on menu page)
 - [ ] Sort by price/name
 - [ ] Print-friendly menu view
 - [ ] SEO optimization (meta tags, structured data)
 - [ ] Analytics integration (Google Analytics 4)
+
+### 4.6 Dynamic Page Content Implementation ✅ COMPLETE
+
+**Goal**: Enable owners to manage page content through Sanity CMS instead of hard-coded content in React components.
+
+**Current State**:
+- Page schema exists in Sanity with title, slug, content (block content), and SEO fields
+- `pageBySlugQuery` exists in `lib/queries.ts`
+- User guide (`user-guides/editing-pages.md`) written assuming dynamic pages
+- Most pages currently have hard-coded content in their `page.tsx` files
+
+**Pages Converted**:
+- [x] About page (`app/[slug]/page.tsx` - dynamic)
+- [x] Services page (`app/services/page.tsx`) - hybrid with sections + FAQs
+- [x] Fundraising page (`app/fundraising/page.tsx`) - hybrid with CTA section + menu items
+- [x] How to Book page (`app/[slug]/page.tsx` - dynamic with video)
+- [x] Fundraising Tips page (`app/[slug]/page.tsx` - dynamic)
+- [x] Volunteers page (`app/[slug]/page.tsx` - dynamic)
+- [x] Day of Event page (`app/[slug]/page.tsx` - dynamic)
+- [x] Invoice & Payment page (`app/[slug]/page.tsx` - dynamic)
+
+**Technical Implementation Tasks**:
+
+**⚠️ IMPORTANT: Task Ordering**
+Follow this order to avoid data loss:
+1. Create section schemas (4.6.3)
+2. Import all content to Sanity (4.6.4) - **DO THIS BEFORE REMOVING ANY HARD-CODED CONTENT**
+3. Create components (4.6.1)
+4. Create page template (4.6.2)
+5. Convert pages one-by-one (4.6.5)
+
+#### 4.6.1 Create Section Renderer Components
+
+**A. PortableText Renderer (for text within sections)**
+- [ ] Install `@portabletext/react`: `npm install @portabletext/react`
+- [ ] Create `components/common/PortableText.tsx` component
+- [ ] Configure custom serializers for:
+  - [ ] Headings (h2, h3, h4) with appropriate Tailwind styling
+  - [ ] Paragraphs with spacing and typography
+  - [ ] Lists (bulleted and numbered)
+  - [ ] Links (styled and accessible)
+  - [ ] Images (using Next.js Image component with Sanity urlFor)
+  - [ ] Bold and italic text
+  - [ ] Block quotes (if needed)
+- [ ] Style all elements to match existing brand design (crimson red, proper spacing)
+
+**B. Section Components (for rendering different section types)**
+- [ ] Create `components/sections/` directory
+
+- [ ] **TextSection Component**
+  - [ ] Create `components/sections/TextSection.tsx`
+  - [ ] Props: title (optional), content (block content)
+  - [ ] Render optional heading + PortableText content
+  - [ ] Single column layout with max-width constraint
+  - [ ] Proper spacing between sections
+
+- [ ] **TwoColumnSection Component**
+  - [ ] Create `components/sections/TwoColumnSection.tsx`
+  - [ ] Props: heading, content, image, imagePosition, ctaButton
+  - [ ] Render as two-column grid on desktop (md:grid-cols-2)
+  - [ ] Stack vertically on mobile
+  - [ ] Image on left or right based on imagePosition prop
+  - [ ] Responsive image using Next.js Image with Sanity urlFor
+  - [ ] Optional CTA button styled with brand colors
+  - [ ] Add proper spacing and alignment
+
+- [ ] **HighlightBox Component**
+  - [ ] Create `components/sections/HighlightBox.tsx`
+  - [ ] Props: title, content, backgroundColor, style
+  - [ ] Render container with background color (gray-100, crimson-50, white)
+  - [ ] Support different styles: default, checklist (with checkmarks), numbered
+  - [ ] Rounded corners and padding
+  - [ ] Handle both PortableText content and simple array of items
+
+- [ ] **CTASection Component**
+  - [ ] Create `components/sections/CTASection.tsx`
+  - [ ] Props: heading, description, buttonText, buttonLink, style
+  - [ ] Center-aligned layout
+  - [ ] Large heading and description text
+  - [ ] Prominent button (primary = crimson, secondary = outlined)
+  - [ ] Proper spacing and visual hierarchy
+
+- [ ] **SectionRenderer Component**
+  - [ ] Create `components/sections/SectionRenderer.tsx`
+  - [ ] Switch/case to render appropriate component based on section._type
+  - [ ] Handle unknown section types gracefully
+  - [ ] Add spacing between sections
+
+#### 4.6.2 Create Generic Dynamic Page Template
+- [ ] Create `components/pages/DynamicPage.tsx` component
+- [ ] Fetch page data using `pageBySlugQuery`
+- [ ] Render page title in header section (styled consistently with other pages)
+- [ ] Map through `sections` array and render using SectionRenderer
+- [ ] Pass section data with proper TypeScript types
+- [ ] Implement SEO metadata from Sanity (title, description)
+- [ ] Add ISR with 60-second revalidation
+- [ ] Include error handling for missing pages (404)
+- [ ] Add loading state considerations
+- [ ] Test with pages containing different section combinations
+
+#### 4.6.3 Page Schema Enhancements with Flexible Sections
+
+**Strategy**: Replace simple `content` field with flexible `sections` array to support both single-column and multi-column layouts.
+
+**Schema Structure**:
+```javascript
+{
+  name: 'page',
+  fields: [
+    { name: 'title', type: 'string' },
+    { name: 'slug', type: 'slug' },
+    {
+      name: 'sections',  // Replaces 'content' field
+      type: 'array',
+      of: [
+        { type: 'textSection' },
+        { type: 'twoColumnSection' },
+        { type: 'highlightBox' },
+        { type: 'ctaSection' },
+      ]
+    },
+    { name: 'seo', type: 'object' }
+  ]
+}
+```
+
+**Section Types to Create**:
+
+- [ ] **textSection** (Single Column Content)
+  - [ ] Create `sanity/schemas/sections/textSection.ts`
+  - [ ] Fields: title (optional), content (block content)
+  - [ ] Use for: Simple text content with headings, lists, links
+  - [ ] Example: Most About page sections, Fundraising Tips content
+
+- [ ] **twoColumnSection** (Image + Text Layout)
+  - [ ] Create `sanity/schemas/sections/twoColumnSection.ts`
+  - [ ] Fields:
+    - [ ] heading (string)
+    - [ ] content (block content)
+    - [ ] image (image with alt text)
+    - [ ] imagePosition ('left' | 'right')
+    - [ ] ctaButton (optional object: text + link)
+  - [ ] Use for: Services page sections, Fundraising page
+  - [ ] Renders as grid on desktop, stacks on mobile
+
+- [ ] **highlightBox** (Styled Container)
+  - [ ] Create `sanity/schemas/sections/highlightBox.ts`
+  - [ ] Fields:
+    - [ ] title (string)
+    - [ ] content (block content or array of items)
+    - [ ] backgroundColor ('gray' | 'crimson' | 'white')
+    - [ ] style ('default' | 'checklist' | 'numbered')
+  - [ ] Use for: About page "Notable Achievements" section
+  - [ ] Renders with background color and special formatting
+
+- [ ] **ctaSection** (Call-to-Action)
+  - [ ] Create `sanity/schemas/sections/ctaSection.ts`
+  - [ ] Fields:
+    - [ ] heading (string)
+    - [ ] description (text)
+    - [ ] buttonText (string)
+    - [ ] buttonLink (string)
+    - [ ] style ('primary' | 'secondary')
+  - [ ] Use for: End-of-page CTAs on About, Services, etc.
+
+**Schema Implementation Tasks**:
+- [ ] Review existing page schema in `sanity/schemas/page.ts`
+- [ ] Create new `sanity/schemas/sections/` directory
+- [ ] Create all section type schemas
+- [ ] Update page schema to use sections array instead of content field
+- [ ] Add helpful descriptions and previews in Sanity Studio
+- [ ] Test section reordering in Sanity Studio (drag and drop)
+- [ ] Consider adding section preview components for better UX
+
+#### 4.6.4 Content Import to Sanity (⚠️ CRITICAL - Do This FIRST!)
+
+**Goal**: Import all hard-coded page content into Sanity CMS BEFORE converting any pages. This creates a safety backup and allows verification before removing hard-coded content.
+
+**Prerequisites**:
+- [ ] Section schemas (4.6.3) must be completed and deployed to Sanity Studio
+- [ ] Verify schemas appear in Sanity Studio and can create documents
+
+**Script Development**:
+- [ ] Create `scripts/import-page-content.ts` (similar to existing `import-all-content.ts`)
+- [ ] Set up Sanity client with write permissions (use SANITY_API_TOKEN)
+- [ ] Create helper functions:
+  - [ ] `convertHtmlToBlockContent()` - Converts JSX/HTML to Sanity block content
+  - [ ] `createTextSection()` - Creates textSection with content
+  - [ ] `createTwoColumnSection()` - Creates twoColumnSection with image reference
+  - [ ] `createHighlightBox()` - Creates highlightBox section
+  - [ ] `createCTASection()` - Creates ctaSection
+
+**Content Extraction & Import** (process each page):
+
+- [ ] **About Page** (`app/about/page.tsx`):
+  - [ ] Extract "Our Story" section → textSection
+  - [ ] Extract "What We Do" section → textSection
+  - [ ] Extract "Service Area" section → textSection
+  - [ ] Extract "Our Promise" section → textSection
+  - [ ] Extract "Notable Achievements" → highlightBox (gray background, checklist style)
+  - [ ] Extract "Ready to experience ChrisCakes?" CTA → ctaSection
+  - [ ] Create page document: slug="about", title="About ChrisCakes"
+  - [ ] Set SEO metadata
+  - [ ] Import to Sanity
+
+- [ ] **Services Page** (`app/services/page.tsx`):
+  - [ ] Extract page header content → textSection or keep custom
+  - [ ] Extract "FUNdraising" section → twoColumnSection (image left, content right)
+  - [ ] Extract "Premiere Breakfast" section → twoColumnSection (image left, content right)
+  - [ ] Extract "Menus N More" section → twoColumnSection (image left, content right)
+  - [ ] Extract "Emergency Catering" → textSection (no image)
+  - [ ] Note: Keep FAQs component dynamic (already implemented)
+  - [ ] Handle service images (services1.jpg, services2.jpg, services3.jpg)
+  - [ ] Create page document: slug="services"
+  - [ ] Import to Sanity
+
+- [ ] **Fundraising Page** (`app/fundraising/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Analyze layout and determine sections
+  - [ ] Extract content into appropriate section types
+  - [ ] Create page document: slug="fundraising"
+  - [ ] Import to Sanity
+
+- [ ] **How to Book Page** (`app/how-to-book/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Extract step-by-step content → textSection(s) with numbered lists
+  - [ ] Extract any CTAs → ctaSection
+  - [ ] Create page document: slug="how-to-book"
+  - [ ] Import to Sanity
+
+- [ ] **Fundraising Tips Page** (`app/fundraising-tips/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Extract tips content → textSection(s) with bulleted lists
+  - [ ] Create page document: slug="fundraising-tips"
+  - [ ] Import to Sanity
+
+- [ ] **Volunteers Page** (`app/volunteers/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Analyze and determine section breakdown
+  - [ ] Extract content into appropriate sections
+  - [ ] Create page document: slug="volunteers"
+  - [ ] Import to Sanity
+
+- [ ] **Day of Event Page** (`app/day-of-event/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Extract instructional content → textSection(s)
+  - [ ] Create page document: slug="day-of-event"
+  - [ ] Import to Sanity
+
+- [ ] **Invoice & Payment Page** (`app/invoice-payment/page.tsx`):
+  - [ ] Read current page structure
+  - [ ] Extract informational content → textSection(s)
+  - [ ] Create page document: slug="invoice-payment"
+  - [ ] Import to Sanity
+
+**Image Handling**:
+- [ ] Upload images to Sanity (services1.jpg, services2.jpg, services3.jpg)
+- [ ] Get Sanity asset IDs for each image
+- [ ] Reference images in twoColumnSection image fields
+- [ ] Verify images appear in Sanity Studio
+
+**Verification (CRITICAL - Must complete before moving forward)**:
+- [ ] Open Sanity Studio at `/studio`
+- [ ] Verify all 8 pages appear in "Pages" section
+- [ ] Open each page and verify:
+  - [ ] Title is correct
+  - [ ] Slug is correct
+  - [ ] All sections appear
+  - [ ] Section content looks correct
+  - [ ] Images are properly linked (if applicable)
+  - [ ] SEO metadata is present
+- [ ] Test drag-and-drop reordering of sections
+- [ ] Test editing content in a section (don't save changes)
+- [ ] **DO NOT PROCEED TO 4.6.5 UNTIL ALL PAGES ARE VERIFIED IN SANITY**
+
+**Safety Check**:
+- [ ] Take screenshots of all pages in Sanity Studio (backup documentation)
+- [ ] Export Sanity dataset as backup: `sanity dataset export production backup.tar.gz`
+- [ ] Commit import script to git
+- [ ] Tag commit as "content-imported" for easy reference
+
+**Script Execution**:
+```bash
+# After schemas are deployed
+npm run sanity deploy  # Ensures schemas are in Sanity
+
+# Run import script
+npx ts-node scripts/import-page-content.ts
+
+# Verify in Studio
+npm run dev
+# Visit http://localhost:3000/studio
+# Check Pages section
+```
+
+#### 4.6.5 Convert Pages to Dynamic
+
+**⚠️ PREREQUISITE**: Section 4.6.4 (Content Import) must be 100% complete and verified before starting any conversions. All content must be safely in Sanity before removing hard-coded content.
+
+**Conversion Process** (for each page):
+1. Verify page content exists in Sanity Studio
+2. Update `page.tsx` to fetch from Sanity
+3. Test locally to ensure rendering is identical
+4. Only after verification, commit the changes
+5. Keep hard-coded content in git history (don't force push)
+
+- [ ] **About Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Replace hard-coded content with Sanity fetch
+  - [ ] Use DynamicPage component or integrate SectionRenderer directly
+  - [ ] Test rendering and styling matches original
+  - [ ] Verify SEO metadata
+  - [ ] Test on mobile
+  - [ ] Commit changes
+
+- [ ] **Services Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Replace hard-coded sections with Sanity fetch
+  - [ ] Keep dynamic FAQs section (already implemented)
+  - [ ] Test two-column sections with images
+  - [ ] Verify image positioning (left/right alternating)
+  - [ ] Test on mobile (sections should stack)
+  - [ ] Commit changes
+
+- [ ] **Fundraising Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test rendering matches original
+  - [ ] Commit changes
+
+- [ ] **How to Book Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test step-by-step instructions render correctly
+  - [ ] Preserve any embedded forms/components if present
+  - [ ] Commit changes
+
+- [ ] **Fundraising Tips Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test list formatting renders correctly
+  - [ ] Commit changes
+
+- [ ] **Volunteers Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test rendering matches original
+  - [ ] Commit changes
+
+- [ ] **Day of Event Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test rendering matches original
+  - [ ] Commit changes
+
+- [ ] **Invoice & Payment Page**:
+  - [ ] ✅ Verify content is in Sanity (from 4.6.4)
+  - [ ] Convert to dynamic content
+  - [ ] Test rendering matches original
+  - [ ] Commit changes
+
+#### 4.6.6 Special Considerations
+- [ ] **Homepage**: Decide if homepage should also be dynamic or remain custom (recommend custom for now)
+- [ ] **Menu Page**: Keep dynamic with menu items (already implemented correctly)
+- [ ] **Contact Page**: Keep as-is with form functionality (not converting to sections)
+- [ ] **Navigation Updates**: Ensure all converted pages remain accessible
+- [ ] **Image Handling**:
+  - [ ] Images within twoColumnSection use image field (optimal)
+  - [ ] Images within text content use PortableText image handling
+  - [ ] All images processed through Sanity CDN
+- [ ] **Mixed Content Pages**: Services page combines sections with dynamic FAQs component
+- [ ] **Section-Based Benefits**:
+  - [ ] Handles single-column layouts (About, Fundraising Tips)
+  - [ ] Handles multi-column layouts (Services with alternating image/text)
+  - [ ] Handles special styled sections (Notable Achievements box)
+  - [ ] Owners can reorder sections via drag-and-drop
+  - [ ] Owners can add/remove sections without developer
+  - [ ] Future-proof: easy to add new section types as needed
+
+#### 4.6.7 Quality Assurance
+- [ ] Test all converted pages in development
+- [ ] Verify content editing in Sanity Studio works smoothly
+- [ ] Test ISR - confirm changes appear within 60 seconds
+- [ ] Check mobile responsiveness of all dynamic content
+- [ ] Verify image optimization works for inline images
+- [ ] Test SEO metadata renders correctly
+- [ ] Validate accessible markup (headings hierarchy, alt text)
+- [ ] Cross-browser testing on converted pages
+
+#### 4.6.8 Documentation Updates
+- [ ] Update `CLAUDE.md` with dynamic page patterns
+- [ ] Document PortableText customization
+- [ ] Add examples of adding/editing pages in Sanity
+- [ ] Update `README.md` if needed
+- [ ] Ensure `user-guides/editing-pages.md` matches final implementation
+
+**Success Criteria**:
+- [ ] All listed pages pull content from Sanity CMS using section-based approach
+- [ ] Owners can edit page content through Sanity Studio using rich text editor
+- [ ] Owners can add, remove, and reorder sections without developer assistance
+- [ ] Single-column pages (About, Fundraising Tips) render correctly
+- [ ] Multi-column pages (Services) render correctly with proper image positioning
+- [ ] Special styled sections (highlightBox) render with proper backgrounds and formatting
+- [ ] Formatting (headings, lists, bold, links, images) works correctly in all section types
+- [ ] Pages maintain brand styling and mobile responsiveness across all section types
+- [ ] Two-column sections stack properly on mobile devices
+- [ ] No hard-coded content remains in converted pages
+- [ ] SEO metadata is manageable through Sanity
+- [ ] Changes reflect on live site within 60 seconds (ISR)
+- [ ] Section drag-and-drop reordering works smoothly in Sanity Studio
+
+**Branch**: `feature/dynamic-pages` (current branch)
+
+**Estimated Effort**: 18-24 hours
+- PortableText component: 2-3 hours
+- Section schemas (4 types): 2-3 hours
+- Section renderer components (5 components): 4-6 hours
+- Page template with section support: 1-2 hours
+- Content migration scripts (section-based): 4-6 hours
+- Page conversions: 4-6 hours
+- Testing and refinements: 3-4 hours
+
+**Note**: The section-based approach adds complexity but provides:
+- Full support for single and multi-column layouts
+- Owner ability to reorder and rearrange sections
+- Flexibility to add new section types in the future
+- No developer required for layout changes within existing section types
 
 ## Phase 5: Testing (Week 4-5)
 
@@ -354,23 +781,31 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 
 ---
 
-## Current Status (as of 2025-10-08)
+## Current Status (as of 2025-10-11)
 
 ### ✅ Completed Phases
 - **Phase 1**: Project Setup & Planning (Complete)
 - **Phase 2**: CMS Schema Design (Complete)
-- **Phase 3**: Content Migration (Complete - content imported successfully)
-- **Phase 4**: Frontend Development (Complete - all core features implemented)
+- **Phase 3**: Content Migration (Complete - menu content imported successfully)
+- **Phase 4**: Frontend Development (COMPLETE) ✅
+  - **Phase 4.1-4.4**: Complete ✅
+  - **Phase 4.5**: Advanced Features (Partial - menu filtering complete)
+  - **Phase 4.6**: Dynamic Page Content Implementation (COMPLETE) ✅
 
-### 🚧 Ready for Next Phase
-- **Phase 5**: Testing
-  - Development testing (ready to begin)
-  - User acceptance testing
-  - Performance optimization
-  - Accessibility audit
+### ✅ Recently Completed
+- **Phase 4.6**: Dynamic Page Content Implementation (COMPLETE - 2025-10-11)
+  - Branch: `feature/dynamic-pages`
+  - Goal: Convert hard-coded pages to pull content from Sanity CMS
+  - Status: ✅ Complete and ready to merge
+  - All 8 pages successfully converted to dynamic content
+  - All images uploaded to Sanity and integrated
+  - YouTube video support added
+  - Production build passes with zero errors
+  - TypeScript types properly defined (no `any` types)
 
 ### ⏭️ Next Steps
-- **Phase 5**: Testing (Not started)
+- Merge `feature/dynamic-pages` to `main`
+- **Phase 5**: Testing (Ready to start)
 - **Phase 6**: Deployment (Not started)
 - **Phase 7**: Training & Documentation (Not started)
 - **Phase 8**: Maintenance & Support (Not started)
@@ -391,13 +826,35 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 
 ---
 
-**Document Version**: 1.2
-**Last Updated**: 2025-10-08
+**Document Version**: 1.4
+**Last Updated**: 2025-10-11
 **Status**: Phase 4 Complete - Ready for Testing
 
 ---
 
-## Recent Updates (2025-10-08 - Phase 4 Completion)
+## Recent Updates
+
+### 2025-10-11 - Dynamic Page Content Planning (Enhanced with Sections + Import Strategy)
+- Added comprehensive Phase 4.6: Dynamic Page Content Implementation
+- **Enhanced approach**: Section-based schema instead of simple block content
+- Created 4 section types: textSection, twoColumnSection, highlightBox, ctaSection
+- Section-based approach handles both single-column and multi-column layouts
+- Enables owners to reorder sections via drag-and-drop in Sanity Studio
+- Created detailed task breakdown for converting 8 hard-coded pages to Sanity CMS
+- Outlined technical implementation with 8 major subsections
+- **⚠️ CRITICAL ADDITION**: Added comprehensive content import strategy (4.6.4)
+  - Import script must be run BEFORE any page conversions
+  - Detailed extraction plan for all 8 pages
+  - Safety verification checklist before proceeding
+  - Dataset backup procedure
+  - Prevents data loss during conversion process
+- **Task Ordering**: Established strict order: schemas → import → components → convert
+- Updated estimated effort to 18-24 hours (accounting for section complexity)
+- Documented benefits: handles Services page two-column layout, About page special sections
+- Updated current status to reflect proper task ordering
+- Planning complete, ready to begin implementation starting with section schemas
+
+### 2025-10-08 - Phase 4 Completion
 
 ### Code Quality Improvements
 - Fixed all TypeScript linting errors (replaced `any` types with proper interfaces)

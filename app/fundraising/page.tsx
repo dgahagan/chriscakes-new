@@ -1,6 +1,9 @@
 import { client } from '@/lib/sanity';
 import { groq } from 'next-sanity';
-import Link from 'next/link';
+import { pageBySlugQuery } from '@/lib/queries';
+import SectionRenderer from '@/components/sections/SectionRenderer';
+import type { Metadata } from 'next';
+import { PortableTextBlock } from '@portabletext/react';
 
 interface MenuItem {
   _id: string;
@@ -9,7 +12,49 @@ interface MenuItem {
   price: number | null;
 }
 
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
+
+interface PageSection {
+  _type: string;
+  _key: string;
+  title?: string;
+  heading?: string;
+  content?: PortableTextBlock[];
+  description?: string;
+  items?: string[];
+  backgroundColor?: 'gray' | 'crimson' | 'white';
+  style?: 'default' | 'checklist' | 'numbered' | 'primary' | 'secondary';
+  image?: SanityImage;
+  imagePosition?: 'left' | 'right';
+  ctaButton?: {
+    text: string;
+    link: string;
+  };
+  buttonText?: string;
+  buttonLink?: string;
+  videoUrl?: string;
+}
+
+interface PageData {
+  _id: string;
+  title: string;
+  sections: PageSection[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+}
+
 export const revalidate = 60;
+
+async function getPageData(): Promise<PageData> {
+  return client.fetch(pageBySlugQuery, { slug: 'fundraising' }, { next: { revalidate: 60 } });
+}
 
 async function getFundraisingItems(): Promise<MenuItem[]> {
   const query = groq`*[_type == "menuItem" && category->slug.current == "fundraising-menus" && available == true] | order(order asc) {
@@ -18,11 +63,20 @@ async function getFundraisingItems(): Promise<MenuItem[]> {
     description,
     price
   }`;
-  return client.fetch(query);
+  return client.fetch(query, {}, { next: { revalidate: 60 } });
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPageData();
+
+  return {
+    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
+    description: page.seo?.metaDescription || page.title,
+  };
 }
 
 export default async function FundraisingPage() {
-  const menuItems = await getFundraisingItems();
+  const [page, menuItems] = await Promise.all([getPageData(), getFundraisingItems()]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -39,7 +93,7 @@ export default async function FundraisingPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Menu Items */}
+        {/* Menu Items - Dynamic from Sanity */}
         <div className="space-y-12">
           {menuItems.map((item) => (
             <div key={item._id}>
@@ -62,33 +116,9 @@ export default async function FundraisingPage() {
           ))}
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-12 bg-gray-50 rounded-lg p-8 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            WE put the FUN… in FUNdraising!
-          </h2>
-          <p className="text-xl text-gray-700 mb-6">Contact us today for more information!</p>
-
-          {/* YouTube Video */}
-          <div className="mb-6 flex justify-center">
-            <iframe
-              width="560"
-              height="315"
-              src="https://www.youtube.com/embed/o1iOkNDGkFA"
-              title="Chris Cakes Fundraising Video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="rounded-lg shadow-lg"
-            ></iframe>
-          </div>
-
-          <Link
-            href="/contact"
-            className="inline-block bg-[#dc143c] text-white px-8 py-3 rounded text-lg font-semibold hover:bg-[#b01030] transition"
-          >
-            Contact Us!
-          </Link>
+        {/* CTA Section - Dynamic from Sanity */}
+        <div className="mt-12">
+          <SectionRenderer sections={page.sections} />
         </div>
       </div>
     </div>
