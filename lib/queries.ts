@@ -71,7 +71,27 @@ export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][
   _id,
   title,
   slug,
-  content,
+  sections[] {
+    _type,
+    _key,
+    title,
+    heading,
+    content,
+    description,
+    items,
+    backgroundColor,
+    style,
+    image {
+      _type,
+      asset->,
+      alt
+    },
+    imagePosition,
+    ctaButton,
+    buttonText,
+    buttonLink,
+    videoUrl
+  },
   seo
 }`;
 

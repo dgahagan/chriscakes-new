@@ -1,0 +1,119 @@
+import { client } from '@/lib/sanity';
+import { pageBySlugQuery, allPagesQuery } from '@/lib/queries';
+import SectionRenderer from '@/components/sections/SectionRenderer';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { PortableTextBlock } from '@portabletext/react';
+
+interface SanityImage {
+  asset: {
+    _ref: string;
+  };
+  alt?: string;
+}
+
+interface PageSection {
+  _type: string;
+  _key: string;
+  title?: string;
+  heading?: string;
+  content?: PortableTextBlock[];
+  description?: string;
+  items?: string[];
+  backgroundColor?: 'gray' | 'crimson' | 'white';
+  style?: 'default' | 'checklist' | 'numbered' | 'primary' | 'secondary';
+  image?: SanityImage;
+  imagePosition?: 'left' | 'right';
+  ctaButton?: {
+    text: string;
+    link: string;
+  };
+  buttonText?: string;
+  buttonLink?: string;
+  videoUrl?: string;
+}
+
+interface PageData {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
+  };
+  sections: PageSection[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+}
+
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export const revalidate = 60;
+
+// Generate static params for all pages
+export async function generateStaticParams() {
+  const pages = await client.fetch<Array<{ slug: { current: string } }>>(
+    allPagesQuery,
+    {},
+    { next: { revalidate: 3600 } }
+  );
+
+  return pages.map((page) => ({
+    slug: page.slug.current,
+  }));
+}
+
+// Generate metadata for each page
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const page = await client.fetch<PageData>(
+    pageBySlugQuery,
+    { slug },
+    { next: { revalidate: 60 } }
+  );
+
+  if (!page) {
+    return {
+      title: 'Page Not Found - ChrisCakes',
+    };
+  }
+
+  return {
+    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
+    description: page.seo?.metaDescription || page.title,
+  };
+}
+
+// Page component
+export default async function DynamicPage({ params }: PageProps) {
+  const { slug } = await params;
+  const page = await client.fetch<PageData>(
+    pageBySlugQuery,
+    { slug },
+    { next: { revalidate: 60 } }
+  );
+
+  if (!page) {
+    notFound();
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="bg-white border-b-4 border-gray-200">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <h1 className="text-4xl font-bold text-gray-900">{page.title}</h1>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <SectionRenderer sections={page.sections} />
+      </div>
+    </div>
+  );
+}
