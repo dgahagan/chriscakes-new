@@ -107,13 +107,245 @@ export default defineType({
     }),
     defineField({
       name: 'socialMedia',
-      title: 'Social Media',
+      title: 'Social Media Settings',
       type: 'object',
+      description:
+        'Configure your social media presence and how it displays on the website',
       fields: [
-        { name: 'facebook', title: 'Facebook URL', type: 'url' },
-        { name: 'instagram', title: 'Instagram URL', type: 'url' },
-        { name: 'twitter', title: 'Twitter/X URL', type: 'url' },
-        { name: 'yelp', title: 'Yelp URL', type: 'url' },
+        // PLATFORM CONFIGURATIONS
+        {
+          name: 'platforms',
+          title: 'Social Media Platforms',
+          type: 'array',
+          description: 'Add and configure social media platforms. Drag to reorder.',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                {
+                  name: 'platform',
+                  title: 'Platform',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Facebook', value: 'facebook' },
+                      { title: 'Instagram', value: 'instagram' },
+                      { title: 'Twitter/X', value: 'twitter' },
+                      { title: 'Yelp', value: 'yelp' },
+                      { title: 'Pinterest', value: 'pinterest' },
+                      { title: 'TikTok', value: 'tiktok' },
+                    ],
+                  },
+                  validation: (Rule) => Rule.required(),
+                },
+                {
+                  name: 'url',
+                  title: 'Profile URL',
+                  type: 'url',
+                  validation: (Rule) => Rule.required(),
+                },
+                {
+                  name: 'enabled',
+                  title: 'Show on Website',
+                  type: 'boolean',
+                  description: 'Toggle to show/hide this platform on your website',
+                  initialValue: true,
+                },
+                {
+                  name: 'handle',
+                  title: 'Handle (optional)',
+                  type: 'string',
+                  description: 'Your username/handle (e.g., @chriscakesmi)',
+                },
+              ],
+              preview: {
+                select: {
+                  platform: 'platform',
+                  url: 'url',
+                  enabled: 'enabled',
+                },
+                prepare({ platform, url, enabled }) {
+                  return {
+                    title: platform.charAt(0).toUpperCase() + platform.slice(1),
+                    subtitle: enabled ? url : '❌ Hidden',
+                  };
+                },
+              },
+            },
+          ],
+        },
+
+        // DISPLAY SETTINGS
+        {
+          name: 'displaySettings',
+          title: 'Display Settings',
+          type: 'object',
+          description: 'Control where social icons appear on your website',
+          fields: [
+            {
+              name: 'showInHeader',
+              title: 'Show in Header',
+              type: 'boolean',
+              description: 'Display social icons in the header navigation',
+              initialValue: false,
+            },
+            {
+              name: 'showInFooter',
+              title: 'Show in Footer',
+              type: 'boolean',
+              description: 'Display social icons in the footer',
+              initialValue: true,
+            },
+          ],
+        },
+
+        // CALL-TO-ACTION
+        {
+          name: 'socialCTA',
+          title: 'Social Call-to-Action',
+          type: 'object',
+          description: 'Customize messaging to encourage social engagement',
+          fields: [
+            {
+              name: 'enabled',
+              title: 'Show CTA',
+              type: 'boolean',
+              initialValue: true,
+            },
+            {
+              name: 'heading',
+              title: 'CTA Heading',
+              type: 'string',
+              description: 'e.g., "Follow Us for Daily Specials"',
+              initialValue: 'Follow Us',
+            },
+            {
+              name: 'message',
+              title: 'CTA Message',
+              type: 'text',
+              rows: 2,
+              description: 'Brief message encouraging follows/engagement',
+            },
+            {
+              name: 'hashtag',
+              title: 'Hashtag to Promote',
+              type: 'string',
+              description: 'e.g., chriscakes (without the #)',
+            },
+          ],
+        },
+
+        // INSTAGRAM WIDGET
+        {
+          name: 'instagramWidget',
+          title: 'Instagram Feed Widget',
+          type: 'object',
+          description: 'Configure Instagram feed display on your website',
+          fields: [
+            {
+              name: 'enabled',
+              title: 'Show Instagram Feed',
+              type: 'boolean',
+              description: 'Display Instagram feed widget on selected pages',
+              initialValue: false,
+            },
+            {
+              name: 'embedCode',
+              title: 'Widget Embed Code',
+              type: 'text',
+              rows: 5,
+              description: 'Paste the embed code from EmbedSocial or Elfsight',
+            },
+            {
+              name: 'displayPages',
+              title: 'Display On Pages',
+              type: 'array',
+              description: 'Choose which pages show the Instagram feed',
+              of: [{ type: 'string' }],
+              options: {
+                list: [
+                  { title: 'Homepage', value: 'homepage' },
+                  { title: 'About Page', value: 'about' },
+                  { title: 'Menu Page', value: 'menu' },
+                  { title: 'Services Page', value: 'services' },
+                  { title: 'Contact Page', value: 'contact' },
+                ],
+              },
+            },
+            {
+              name: 'heading',
+              title: 'Widget Heading',
+              type: 'string',
+              description: 'Heading above Instagram feed',
+              initialValue: 'Follow Us on Instagram',
+            },
+            {
+              name: 'ctaButtonText',
+              title: 'CTA Button Text',
+              type: 'string',
+              description: 'Text for "Follow" button below feed',
+              initialValue: 'Follow @chriscakesmi',
+            },
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'shareButtons',
+      title: 'Social Share Buttons',
+      type: 'object',
+      description:
+        'Control where share buttons appear and which platforms to include',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'Enable Share Buttons',
+          type: 'boolean',
+          description: 'Show social share buttons on your website',
+          initialValue: true,
+        },
+        {
+          name: 'platforms',
+          title: 'Platforms to Include',
+          type: 'array',
+          description: 'Select which platforms to show share buttons for',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Facebook', value: 'facebook' },
+              { title: 'Twitter/X', value: 'twitter' },
+              { title: 'Pinterest', value: 'pinterest' },
+              { title: 'WhatsApp', value: 'whatsapp' },
+              { title: 'LinkedIn', value: 'linkedin' },
+              { title: 'Native Share (Mobile)', value: 'native' },
+            ],
+          },
+          initialValue: ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native'],
+        },
+        {
+          name: 'displayPages',
+          title: 'Show Share Buttons On',
+          type: 'array',
+          description: 'Choose which page types display share buttons',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Menu Page', value: 'menu' },
+              { title: 'Services Page', value: 'services' },
+              { title: 'Fundraising Page', value: 'fundraising' },
+              { title: 'Dynamic Pages', value: 'dynamicPages' },
+              { title: 'All Pages', value: 'all' },
+            ],
+          },
+          initialValue: ['menu', 'services', 'dynamicPages'],
+        },
+        {
+          name: 'pinterestEnabled',
+          title: 'Enable Pinterest Pin Buttons',
+          type: 'boolean',
+          description: 'Show "Pin It" button on food/cake images',
+          initialValue: true,
+        },
       ],
     }),
     defineField({

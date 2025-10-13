@@ -69,9 +69,34 @@ async function getFundraisingItems(): Promise<MenuItem[]> {
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageData();
 
+  const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
+  const description = page.seo?.metaDescription || 'Fundraising menus for schools, churches, benefits, clubs, festivals and more. Delicious options to make your fundraiser a success!';
+
   return {
-    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
-    description: page.seo?.metaDescription || page.title,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: 'https://www.chriscakesofmi.com/fundraising',
+      siteName: 'ChrisCakes of Michigan',
+      images: [
+        {
+          url: 'https://www.chriscakesofmi.com/logo.png',
+          width: 1200,
+          height: 630,
+          alt: 'ChrisCakes Fundraising Menus',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://www.chriscakesofmi.com/logo.png'],
+    },
   };
 }
 

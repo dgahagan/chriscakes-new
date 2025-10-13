@@ -63,9 +63,34 @@ async function getFAQs(): Promise<FAQ[]> {
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageData();
 
+  const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
+  const description = page.seo?.metaDescription || '24/7-365 catering services across Michigan. No one can do what we do! Premier breakfast catering and Menus N More options.';
+
   return {
-    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
-    description: page.seo?.metaDescription || page.title,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: 'https://www.chriscakesofmi.com/services',
+      siteName: 'ChrisCakes of Michigan',
+      images: [
+        {
+          url: 'https://www.chriscakesofmi.com/logo.png',
+          width: 1200,
+          height: 630,
+          alt: 'ChrisCakes Services - 24/7 Catering',
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://www.chriscakesofmi.com/logo.png'],
+    },
   };
 }
 

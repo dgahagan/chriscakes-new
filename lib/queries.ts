@@ -63,6 +63,7 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   address,
   hours,
   socialMedia,
+  shareButtons,
   logo
 }`;
 

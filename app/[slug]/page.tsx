@@ -82,9 +82,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
+  const description = page.seo?.metaDescription || page.title;
+  const pageUrl = `https://www.chriscakesofmi.com/${slug}`;
+
   return {
-    title: page.seo?.metaTitle || `${page.title} - ChrisCakes`,
-    description: page.seo?.metaDescription || page.title,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: 'ChrisCakes of Michigan',
+      images: [
+        {
+          url: 'https://www.chriscakesofmi.com/logo.png',
+          width: 1200,
+          height: 630,
+          alt: `${page.title} - ChrisCakes`,
+        },
+      ],
+      locale: 'en_US',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://www.chriscakesofmi.com/logo.png'],
+    },
   };
 }
 

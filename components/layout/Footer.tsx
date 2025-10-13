@@ -1,4 +1,72 @@
-export default function Footer() {
+import { client } from '@/lib/sanity';
+import { siteSettingsQuery } from '@/lib/queries';
+import Link from 'next/link';
+import {
+  FaFacebook,
+  FaInstagram,
+  FaTwitter,
+  FaYelp,
+  FaPinterest,
+  FaTiktok,
+} from 'react-icons/fa';
+
+interface SocialPlatform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SocialMediaSettings {
+  platforms?: SocialPlatform[];
+  displaySettings?: {
+    showInHeader?: boolean;
+    showInFooter?: boolean;
+  };
+  socialCTA?: {
+    enabled?: boolean;
+    heading?: string;
+    message?: string;
+    hashtag?: string;
+  };
+}
+
+interface SiteSettings {
+  socialMedia?: SocialMediaSettings;
+}
+
+const getSocialIcon = (platform: string) => {
+  const iconProps = { className: 'w-6 h-6' };
+  switch (platform) {
+    case 'facebook':
+      return <FaFacebook {...iconProps} />;
+    case 'instagram':
+      return <FaInstagram {...iconProps} />;
+    case 'twitter':
+      return <FaTwitter {...iconProps} />;
+    case 'yelp':
+      return <FaYelp {...iconProps} />;
+    case 'pinterest':
+      return <FaPinterest {...iconProps} />;
+    case 'tiktok':
+      return <FaTiktok {...iconProps} />;
+    default:
+      return null;
+  }
+};
+
+export default async function Footer() {
+  const settings: SiteSettings = await client.fetch(
+    siteSettingsQuery,
+    {},
+    { next: { revalidate: 60 } },
+  );
+
+  const socialPlatforms =
+    settings?.socialMedia?.platforms?.filter((p) => p.enabled) || [];
+  const showSocialInFooter =
+    settings?.socialMedia?.displaySettings?.showInFooter ?? true;
+
   return (
     <footer className="bg-white border-t border-gray-200">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -10,12 +78,12 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="/services"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   View our Services
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -25,20 +93,20 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-gray-900">Menus</h3>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="/menu"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   Breakfast Menus
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/menu"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   Menus N More
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -50,20 +118,20 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   href="/about"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   How to Book an Event
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/about"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   Day of Event Information
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -73,12 +141,12 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4 text-gray-900">
               Contact Us
             </h3>
-            <a
+            <Link
               href="/contact"
               className="inline-block bg-[#5bc0de] hover:bg-[#46b8da] text-white px-4 py-2 rounded text-sm font-medium mb-3"
             >
               Contact Us Online!
-            </a>
+            </Link>
             <p className="text-gray-700 text-sm mb-1">
               P.O. Box 431 Clare MI, 48617
             </p>
@@ -94,6 +162,47 @@ export default function Footer() {
             </p>
           </div>
         </div>
+
+        {/* Social Media Icons */}
+        {showSocialInFooter && socialPlatforms.length > 0 && (
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <div className="flex flex-col items-center gap-4">
+              {settings?.socialMedia?.socialCTA?.enabled && (
+                <div className="text-center">
+                  {settings.socialMedia.socialCTA.heading && (
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {settings.socialMedia.socialCTA.heading}
+                    </h3>
+                  )}
+                  {settings.socialMedia.socialCTA.message && (
+                    <p className="text-sm text-gray-600 mb-3">
+                      {settings.socialMedia.socialCTA.message}
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="flex items-center gap-4">
+                {socialPlatforms.map((platform) => (
+                  <a
+                    key={platform.platform}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-[#dc143c] transition-colors"
+                    aria-label={`Visit us on ${platform.platform}`}
+                  >
+                    {getSocialIcon(platform.platform)}
+                  </a>
+                ))}
+              </div>
+              {settings?.socialMedia?.socialCTA?.hashtag && (
+                <p className="text-sm text-gray-600">
+                  #{settings.socialMedia.socialCTA.hashtag}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">

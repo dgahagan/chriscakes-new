@@ -4,8 +4,39 @@ import MenuItemCard from '@/components/menu/MenuItemCard';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import type { Metadata } from 'next';
 
 export const revalidate = 60; // Revalidate every 60 seconds
+
+export const metadata: Metadata = {
+  title: 'ChrisCakes - Premier Breakfast Caterer | Michigan Pancake Catering',
+  description:
+    'Michigan\'s premier breakfast caterer serving delicious pancakes and catering services since 1969. Featured on Food Network, served Presidents, 2x Guinness World Record holder. Groups of 50 to 50,000!',
+  openGraph: {
+    title: 'ChrisCakes - Premier Breakfast Caterer',
+    description:
+      'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+    url: 'https://www.chriscakesofmi.com',
+    siteName: 'ChrisCakes of Michigan',
+    images: [
+      {
+        url: 'https://www.chriscakesofmi.com/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'ChrisCakes pancake catering - Guinness World Record holders',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ChrisCakes - Premier Breakfast Caterer',
+    description:
+      'Michigan\'s premier breakfast caterer since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+    images: ['https://www.chriscakesofmi.com/logo.png'],
+  },
+};
 
 interface MenuItem {
   _id: string;
@@ -235,12 +266,12 @@ export default async function HomePage() {
               ))}
             </div>
             <div className="mt-12 text-center">
-              <a
+              <Link
                 href="/menu"
                 className="inline-flex items-center rounded-md bg-[#dc143c] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#b01030]"
               >
                 View Full Menu
-              </a>
+              </Link>
             </div>
           </div>
         </section>

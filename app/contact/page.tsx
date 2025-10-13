@@ -1,8 +1,39 @@
 import { client } from '@/lib/sanity';
 import { siteSettingsQuery } from '@/lib/queries';
 import ContactForm from '@/components/contact/ContactForm';
+import type { Metadata } from 'next';
 
 export const revalidate = 3600; // Revalidate every hour
+
+export const metadata: Metadata = {
+  title: 'Contact Us - ChrisCakes | Book Your Event',
+  description:
+    'Contact ChrisCakes to book your breakfast catering event. Serving Michigan and beyond with 99.9% success rate. Groups of 50 to 50,000. Phone: 989-802-0755',
+  openGraph: {
+    title: 'Contact ChrisCakes - Book Your Event',
+    description:
+      'Contact ChrisCakes to book your breakfast catering event. 99.9% success rate. Groups of 50 to 50,000!',
+    url: 'https://www.chriscakesofmi.com/contact',
+    siteName: 'ChrisCakes of Michigan',
+    images: [
+      {
+        url: 'https://www.chriscakesofmi.com/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Contact ChrisCakes for catering',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact ChrisCakes - Book Your Event',
+    description:
+      'Contact ChrisCakes to book your breakfast catering event. 99.9% success rate!',
+    images: ['https://www.chriscakesofmi.com/logo.png'],
+  },
+};
 
 async function getSiteSettings() {
   try {

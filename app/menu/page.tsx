@@ -1,8 +1,40 @@
 import { client } from '@/lib/sanity';
 import { menuItemsQuery, menuCategoriesQuery } from '@/lib/queries';
 import MenuDisplay from '@/components/menu/MenuDisplay';
+import Link from 'next/link';
+import type { Metadata } from 'next';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Menu - ChrisCakes | Breakfast Catering & More',
+  description:
+    'Browse our delicious breakfast catering menu featuring pancakes, Menus N More lunch/dinner options including pulled pork, burgers, tacos and more. Perfect for any group size!',
+  openGraph: {
+    title: 'Menu - ChrisCakes Catering',
+    description:
+      'Browse our breakfast catering menu and Menus N More options. From pancakes to pulled pork, we cater groups of 50 to 50,000!',
+    url: 'https://www.chriscakesofmi.com/menu',
+    siteName: 'ChrisCakes of Michigan',
+    images: [
+      {
+        url: 'https://www.chriscakesofmi.com/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'ChrisCakes menu - pancakes and catering options',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Menu - ChrisCakes Catering',
+    description:
+      'Browse our breakfast catering menu and Menus N More options. From pancakes to pulled pork!',
+    images: ['https://www.chriscakesofmi.com/logo.png'],
+  },
+};
 
 async function getMenuData() {
   try {
@@ -53,12 +85,12 @@ export default async function MenuPage() {
             Contact us today to book your event or learn more about our catering
             services.
           </p>
-          <a
+          <Link
             href="/contact"
             className="mt-6 inline-flex items-center rounded-md bg-[#dc143c] px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#b01030]"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>
