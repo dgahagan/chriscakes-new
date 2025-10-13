@@ -1,6 +1,9 @@
 import { client } from '@/lib/sanity';
-import { menuItemsQuery, menuCategoriesQuery } from '@/lib/queries';
+import { menuItemsQuery, menuCategoriesQuery, siteSettingsQuery } from '@/lib/queries';
 import MenuDisplay from '@/components/menu/MenuDisplay';
+import SchemaMarkup from '@/components/common/SchemaMarkup';
+import ShareButtons from '@/components/common/ShareButtons';
+import { generateMenuSchema } from '@/lib/schema';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -34,26 +37,44 @@ export const metadata: Metadata = {
       'Browse our breakfast catering menu and Menus N More options. From pancakes to pulled pork!',
     images: ['https://www.chriscakesofmi.com/logo.png'],
   },
+  other: {
+    'pinterest:description':
+      'Browse our delicious breakfast catering menu featuring pancakes, pulled pork, burgers, and more. Perfect for groups of 50 to 50,000!',
+    'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
+  },
 };
 
 async function getMenuData() {
   try {
-    const [items, categories] = await Promise.all([
+    const [items, categories, settings] = await Promise.all([
       client.fetch(menuItemsQuery),
       client.fetch(menuCategoriesQuery),
+      client.fetch(siteSettingsQuery),
     ]);
-    return { items: items || [], categories: categories || [] };
+    return { items: items || [], categories: categories || [], settings };
   } catch (error) {
     console.error('Error fetching menu data:', error);
-    return { items: [], categories: [] };
+    return { items: [], categories: [], settings: null };
   }
 }
 
 export default async function MenuPage() {
-  const { items, categories } = await getMenuData();
+  const { items, categories, settings } = await getMenuData();
+
+  // Generate Menu Schema
+  const menuSchema = items.length > 0 ? generateMenuSchema(items) : null;
+
+  // Check if share buttons should be displayed
+  const shareButtonsEnabled =
+    settings?.shareButtons?.enabled &&
+    (settings?.shareButtons?.displayPages?.includes('menu') ||
+      settings?.shareButtons?.displayPages?.includes('all'));
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* Schema Markup for SEO */}
+      {menuSchema && <SchemaMarkup data={menuSchema} id="menu-schema" />}
+
       {/* Page Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -61,6 +82,20 @@ export default async function MenuPage() {
           <p className="mt-4 text-xl text-gray-600">
             Premier breakfast catering and more
           </p>
+
+          {/* Share Buttons */}
+          {shareButtonsEnabled && (
+            <div className="mt-6">
+              <ShareButtons
+                url="https://www.chriscakesofmi.com/menu"
+                title="Check out ChrisCakes breakfast menu!"
+                description="Delicious pancakes and breakfast catering from ChrisCakes"
+                image="https://www.chriscakesofmi.com/logo.png"
+                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
+                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+              />
+            </div>
+          )}
         </div>
       </div>
 

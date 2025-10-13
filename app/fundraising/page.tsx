@@ -1,7 +1,8 @@
 import { client } from '@/lib/sanity';
 import { groq } from 'next-sanity';
-import { pageBySlugQuery } from '@/lib/queries';
+import { pageBySlugQuery, siteSettingsQuery } from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
+import ShareButtons from '@/components/common/ShareButtons';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
 
@@ -97,11 +98,19 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: ['https://www.chriscakesofmi.com/logo.png'],
     },
+    other: {
+      'pinterest:description': description,
+      'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
+    },
   };
 }
 
 export default async function FundraisingPage() {
-  const [page, menuItems] = await Promise.all([getPageData(), getFundraisingItems()]);
+  const [page, menuItems, settings] = await Promise.all([
+    getPageData(),
+    getFundraisingItems(),
+    client.fetch(siteSettingsQuery),
+  ]);
 
   // Get the first text section and extract plain text from PortableText content
   const firstTextSection = page.sections?.find(
@@ -111,14 +120,23 @@ export default async function FundraisingPage() {
   // Extract plain text from PortableText blocks
   let subtitle = '';
   if (firstTextSection?.content) {
-    const firstBlock = firstTextSection.content.find((block: any) => block._type === 'block');
+    const firstBlock = firstTextSection.content.find((block) => block._type === 'block') as {
+      _type: string;
+      children?: Array<{ _type: string; text?: string }>;
+    } | undefined;
     if (firstBlock?.children) {
       subtitle = firstBlock.children
-        .filter((child: any) => child._type === 'span')
-        .map((span: any) => span.text)
+        .filter((child) => child._type === 'span')
+        .map((span) => span.text || '')
         .join('');
     }
   }
+
+  // Check if share buttons should be displayed
+  const shareButtonsEnabled =
+    settings?.shareButtons?.enabled &&
+    (settings?.shareButtons?.displayPages?.includes('fundraising') ||
+      settings?.shareButtons?.displayPages?.includes('all'));
 
   return (
     <div className="min-h-screen bg-white">
@@ -132,6 +150,20 @@ export default async function FundraisingPage() {
             <p className="text-lg text-gray-600">
               {subtitle}
             </p>
+          )}
+
+          {/* Share Buttons */}
+          {shareButtonsEnabled && (
+            <div className="mt-6">
+              <ShareButtons
+                url="https://www.chriscakesofmi.com/fundraising"
+                title="ChrisCakes Fundraising Menus"
+                description="Fundraising menus for schools, churches, benefits, clubs, festivals and more. Delicious options to make your fundraiser a success!"
+                image="https://www.chriscakesofmi.com/logo.png"
+                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
+                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+              />
+            </div>
           )}
         </div>
       </div>

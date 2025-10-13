@@ -1,6 +1,7 @@
 import { client } from '@/lib/sanity';
-import { pageBySlugQuery, allPagesQuery } from '@/lib/queries';
+import { pageBySlugQuery, allPagesQuery, siteSettingsQuery } from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
+import ShareButtons from '@/components/common/ShareButtons';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
@@ -111,21 +112,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: ['https://www.chriscakesofmi.com/logo.png'],
     },
+    other: {
+      'pinterest:description': description,
+      'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
+    },
   };
 }
 
 // Page component
 export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params;
-  const page = await client.fetch<PageData>(
-    pageBySlugQuery,
-    { slug },
-    { next: { revalidate: 60 } }
-  );
+  const [page, settings] = await Promise.all([
+    client.fetch<PageData>(
+      pageBySlugQuery,
+      { slug },
+      { next: { revalidate: 60 } }
+    ),
+    client.fetch(siteSettingsQuery),
+  ]);
 
   if (!page) {
     notFound();
   }
+
+  // Check if share buttons should be displayed
+  const shareButtonsEnabled =
+    settings?.shareButtons?.enabled &&
+    (settings?.shareButtons?.displayPages?.includes('dynamicPages') ||
+      settings?.shareButtons?.displayPages?.includes('all'));
+
+  const pageUrl = `https://www.chriscakesofmi.com/${slug}`;
+  const pageDescription = page.seo?.metaDescription || page.title;
 
   return (
     <div className="min-h-screen bg-white">
@@ -133,6 +150,20 @@ export default async function DynamicPage({ params }: PageProps) {
       <div className="bg-white border-b-4 border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900">{page.title}</h1>
+
+          {/* Share Buttons */}
+          {shareButtonsEnabled && (
+            <div className="mt-6">
+              <ShareButtons
+                url={pageUrl}
+                title={`${page.title} - ChrisCakes`}
+                description={pageDescription}
+                image="https://www.chriscakesofmi.com/logo.png"
+                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
+                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+              />
+            </div>
+          )}
         </div>
       </div>
 

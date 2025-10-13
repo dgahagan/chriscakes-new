@@ -349,6 +349,239 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'ugcGallery',
+      title: 'User-Generated Content Gallery',
+      type: 'object',
+      description:
+        'Display customer photos from Instagram tagged with your hashtag',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'Enable UGC Gallery',
+          type: 'boolean',
+          description: 'Show user-generated content gallery on your website',
+          initialValue: false,
+        },
+        {
+          name: 'embedCode',
+          title: 'UGC Widget Embed Code',
+          type: 'text',
+          rows: 5,
+          description:
+            'Paste the embed code from EmbedSocial, Taggbox, or Walls.io',
+        },
+        {
+          name: 'heading',
+          title: 'Gallery Heading',
+          type: 'string',
+          description: 'Heading above the gallery',
+          initialValue: 'See What Our Customers Are Saying',
+        },
+        {
+          name: 'message',
+          title: 'Encouragement Message',
+          type: 'text',
+          rows: 2,
+          description: 'Message encouraging customers to share and tag',
+        },
+        {
+          name: 'displayPages',
+          title: 'Display On Pages',
+          type: 'array',
+          description: 'Choose which pages show the UGC gallery',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Homepage', value: 'homepage' },
+              { title: 'About Page', value: 'about' },
+              { title: 'Menu Page', value: 'menu' },
+              { title: 'Services Page', value: 'services' },
+            ],
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'reviewWidgets',
+      title: 'Review Widgets',
+      type: 'object',
+      description: 'Display Facebook reviews and Yelp rating on your website',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'Enable Review Widgets',
+          type: 'boolean',
+          description: 'Show review widgets section',
+          initialValue: false,
+        },
+        {
+          name: 'heading',
+          title: 'Section Heading',
+          type: 'string',
+          initialValue: 'What Our Customers Say',
+        },
+        {
+          name: 'showFacebook',
+          title: 'Show Facebook Reviews',
+          type: 'boolean',
+          description: 'Display Facebook page reviews widget',
+          initialValue: true,
+        },
+        {
+          name: 'showYelp',
+          title: 'Show Yelp Badge',
+          type: 'boolean',
+          description: 'Display Yelp rating badge',
+          initialValue: true,
+        },
+        {
+          name: 'displayPages',
+          title: 'Display On Pages',
+          type: 'array',
+          description: 'Choose which pages show review widgets',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Homepage', value: 'homepage' },
+              { title: 'About Page', value: 'about' },
+              { title: 'Services Page', value: 'services' },
+            ],
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'clickToTweet',
+      title: 'Click-to-Tweet Quotes',
+      type: 'object',
+      description: 'Enable shareable testimonial quotes on Twitter',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'Enable Click-to-Tweet',
+          type: 'boolean',
+          description: 'Show click-to-tweet testimonials',
+          initialValue: false,
+        },
+        {
+          name: 'heading',
+          title: 'Section Heading',
+          type: 'string',
+          initialValue: 'Share What Our Customers Are Saying',
+        },
+        {
+          name: 'maxDisplay',
+          title: 'Maximum Testimonials to Display',
+          type: 'number',
+          description: 'How many tweetable testimonials to show',
+          initialValue: 3,
+          validation: (Rule) => Rule.min(1).max(10),
+        },
+        {
+          name: 'hashtags',
+          title: 'Default Hashtags',
+          type: 'array',
+          description: 'Hashtags to include in tweets (without #)',
+          of: [{ type: 'string' }],
+          initialValue: ['ChrisCakes', 'Catering', 'MichiganFood'],
+        },
+        {
+          name: 'displayPages',
+          title: 'Display On Pages',
+          type: 'array',
+          description: 'Choose which pages show click-to-tweet quotes',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Homepage', value: 'homepage' },
+              { title: 'About Page', value: 'about' },
+              { title: 'Services Page', value: 'services' },
+            ],
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: 'pinterestBoards',
+      title: 'Pinterest Boards Showcase',
+      type: 'object',
+      description: 'Display curated Pinterest boards on your website',
+      fields: [
+        {
+          name: 'enabled',
+          title: 'Enable Pinterest Boards',
+          type: 'boolean',
+          description: 'Show Pinterest boards showcase',
+          initialValue: false,
+        },
+        {
+          name: 'heading',
+          title: 'Section Heading',
+          type: 'string',
+          initialValue: 'Find Inspiration on Pinterest',
+        },
+        {
+          name: 'boards',
+          title: 'Pinterest Boards',
+          type: 'array',
+          description: 'Add Pinterest boards to showcase',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                {
+                  name: 'title',
+                  title: 'Board Title',
+                  type: 'string',
+                  validation: (Rule) => Rule.required(),
+                },
+                {
+                  name: 'url',
+                  title: 'Board URL',
+                  type: 'url',
+                  description: 'Full Pinterest board URL',
+                  validation: (Rule) => Rule.required(),
+                },
+                {
+                  name: 'description',
+                  title: 'Description',
+                  type: 'text',
+                  rows: 2,
+                  description: 'Brief description of the board content',
+                },
+              ],
+              preview: {
+                select: {
+                  title: 'title',
+                  url: 'url',
+                },
+                prepare({ title, url }) {
+                  return {
+                    title,
+                    subtitle: url,
+                  };
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'displayPages',
+          title: 'Display On Pages',
+          type: 'array',
+          description: 'Choose which pages show Pinterest boards',
+          of: [{ type: 'string' }],
+          options: {
+            list: [
+              { title: 'Homepage', value: 'homepage' },
+              { title: 'Menu Page', value: 'menu' },
+              { title: 'Services Page', value: 'services' },
+            ],
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'logo',
       title: 'Site Logo',
       type: 'image',

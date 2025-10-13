@@ -1,6 +1,7 @@
 import { client } from '@/lib/sanity';
-import { faqsQuery, pageBySlugQuery } from '@/lib/queries';
+import { faqsQuery, pageBySlugQuery, siteSettingsQuery } from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
+import ShareButtons from '@/components/common/ShareButtons';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
 
@@ -91,11 +92,25 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: ['https://www.chriscakesofmi.com/logo.png'],
     },
+    other: {
+      'pinterest:description': description,
+      'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
+    },
   };
 }
 
 export default async function ServicesPage() {
-  const [page, faqs] = await Promise.all([getPageData(), getFAQs()]);
+  const [page, faqs, settings] = await Promise.all([
+    getPageData(),
+    getFAQs(),
+    client.fetch(siteSettingsQuery),
+  ]);
+
+  // Check if share buttons should be displayed
+  const shareButtonsEnabled =
+    settings?.shareButtons?.enabled &&
+    (settings?.shareButtons?.displayPages?.includes('services') ||
+      settings?.shareButtons?.displayPages?.includes('all'));
 
   return (
     <div className="min-h-screen bg-white">
@@ -105,6 +120,20 @@ export default async function ServicesPage() {
           <h1 className="text-4xl font-bold text-gray-900">
             24/7-365 <span className="text-xl font-normal text-gray-600">NO ONE CAN DO WHAT WE DO!</span>
           </h1>
+
+          {/* Share Buttons */}
+          {shareButtonsEnabled && (
+            <div className="mt-6">
+              <ShareButtons
+                url="https://www.chriscakesofmi.com/services"
+                title="ChrisCakes 24/7 Catering Services"
+                description="24/7-365 catering services across Michigan. Premier breakfast catering and Menus N More options."
+                image="https://www.chriscakesofmi.com/logo.png"
+                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
+                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+              />
+            </div>
+          )}
         </div>
       </div>
 

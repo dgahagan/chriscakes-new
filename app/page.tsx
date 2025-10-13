@@ -1,6 +1,14 @@
 import { client } from '@/lib/sanity';
-import { menuItemsQuery, featuredTestimonialsQuery } from '@/lib/queries';
+import {
+  menuItemsQuery,
+  featuredTestimonialsQuery,
+  siteSettingsQuery,
+} from '@/lib/queries';
 import MenuItemCard from '@/components/menu/MenuItemCard';
+import InstagramFeed from '@/components/common/InstagramFeed';
+import SocialCTA from '@/components/common/SocialCTA';
+import SchemaMarkup from '@/components/common/SchemaMarkup';
+import { generateRestaurantSchema, generateAggregateRatingSchema } from '@/lib/schema';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
@@ -36,6 +44,11 @@ export const metadata: Metadata = {
       'Michigan\'s premier breakfast caterer since 1969. Featured on Food Network, 2x Guinness World Record holder.',
     images: ['https://www.chriscakesofmi.com/logo.png'],
   },
+  other: {
+    'pinterest:description':
+      'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+    'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
+  },
 };
 
 interface MenuItem {
@@ -52,6 +65,37 @@ interface Testimonial {
   quote: string;
   author: string;
   authorTitle?: string;
+}
+
+interface Platform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SiteSettings {
+  title?: string;
+  description?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  socialMedia?: {
+    platforms?: Platform[];
+    socialCTA?: {
+      enabled?: boolean;
+      heading?: string;
+      message?: string;
+      hashtag?: string;
+    };
+    instagramWidget?: {
+      enabled?: boolean;
+      embedCode?: string;
+      displayPages?: string[];
+      heading?: string;
+      ctaButtonText?: string;
+    };
+  };
 }
 
 async function getMenuItems() {
@@ -75,12 +119,40 @@ async function getTestimonials() {
   }
 }
 
+async function getSiteSettings() {
+  try {
+    const settings = await client.fetch<SiteSettings>(siteSettingsQuery);
+    return settings;
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return null;
+  }
+}
+
 export default async function HomePage() {
   const menuItems = await getMenuItems();
   const testimonials = await getTestimonials();
+  const settings = await getSiteSettings();
+
+  // Generate Restaurant Schema
+  const restaurantSchema = settings
+    ? generateRestaurantSchema(settings)
+    : null;
+
+  // Generate Aggregate Rating Schema from testimonials
+  const ratingSchema =
+    testimonials.length > 0
+      ? generateAggregateRatingSchema(testimonials)
+      : null;
 
   return (
     <div className="bg-gray-50">
+      {/* Schema Markup for SEO */}
+      {restaurantSchema && <SchemaMarkup data={restaurantSchema} />}
+      {ratingSchema && (
+        <SchemaMarkup data={ratingSchema} id="aggregate-rating" />
+      )}
+
       {/* Hero Section */}
       <section className="relative bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -276,6 +348,43 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Social CTA Section */}
+      {settings?.socialMedia?.socialCTA?.enabled &&
+        settings?.socialMedia?.platforms && (
+          <SocialCTA
+            heading={
+              settings.socialMedia.socialCTA.heading || 'Follow Us on Social Media'
+            }
+            message={settings.socialMedia.socialCTA.message}
+            hashtag={settings.socialMedia.socialCTA.hashtag}
+            platforms={settings.socialMedia.platforms}
+          />
+        )}
+
+      {/* Instagram Feed Widget */}
+      {settings?.socialMedia?.instagramWidget?.enabled &&
+        settings?.socialMedia?.instagramWidget?.embedCode &&
+        settings?.socialMedia?.instagramWidget?.displayPages?.includes(
+          'homepage',
+        ) && (
+          <InstagramFeed
+            embedCode={settings.socialMedia.instagramWidget.embedCode}
+            heading={
+              settings.socialMedia.instagramWidget.heading ||
+              'Follow Us on Instagram'
+            }
+            ctaButtonText={
+              settings.socialMedia.instagramWidget.ctaButtonText ||
+              'Follow @chriscakesmi'
+            }
+            instagramUrl={
+              settings.socialMedia.platforms?.find(
+                (p) => p.platform === 'instagram' && p.enabled,
+              )?.url
+            }
+          />
+        )}
 
       {/* Call to Action */}
       <section className="bg-gray-100 py-16">
