@@ -78,14 +78,14 @@ export default defineType({
       title: 'title',
       content: 'content',
     },
-    prepare({ title, content }) {
-      const block = (content || []).find((block: any) => block._type === 'block');
+    prepare({ title, content }: { title?: string; content?: Array<{ _type: string; children?: Array<{ _type: string; text?: string }> }> }) {
+      const block = (content || []).find((block) => block._type === 'block');
       return {
         title: title || 'Text Section',
         subtitle: block
           ? block.children
-              ?.filter((child: any) => child._type === 'span')
-              .map((span: any) => span.text)
+              ?.filter((child) => child._type === 'span')
+              .map((span) => span.text || '')
               .join('')
               .substring(0, 100)
           : 'No content',
