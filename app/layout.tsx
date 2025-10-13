@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
+import SkipToContent from '@/components/common/SkipToContent';
 import { client } from '@/lib/sanity';
 import { siteSettingsQuery } from '@/lib/queries';
 
@@ -44,8 +45,11 @@ export default async function RootLayout({
         {analyticsEnabled && settings?.analytics?.googleAnalyticsId && (
           <GoogleAnalytics measurementId={settings.analytics.googleAnalyticsId} />
         )}
+        <SkipToContent />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1" tabIndex={-1}>
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
