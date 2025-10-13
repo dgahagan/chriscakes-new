@@ -179,11 +179,11 @@ Modernize the ChrisCakes restaurant website by implementing a content management
   - [x] Menu grid/list layout
   - [x] MenuDisplay client component with filtering logic
 
-- **Common Components** (partially complete)
+- **Common Components** ✅
   - [x] Image component with optimization (Next.js Image)
-  - [ ] Button components
-  - [ ] Card components
-  - [ ] Loading states
+  - [x] Button components ✅
+  - [x] Card components ✅
+  - [x] Loading states ✅
 
 - [x] **Page Templates** ✅
   - [x] Homepage
@@ -212,7 +212,14 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 - [x] Ensure mobile responsiveness (basic layout wrapping)
 - [x] Improve mobile responsiveness (hamburger menu, touch targets)
 - [ ] Test cross-browser compatibility (manual testing required)
-- [ ] Optimize for accessibility (WCAG 2.1 AA - ongoing improvement)
+- [x] Optimize for accessibility (WCAG 2.1 AA) ✅
+  - [x] Skip-to-content link
+  - [x] Enhanced focus indicators
+  - [x] Screen reader improvements
+  - [x] Minimum 44x44px touch targets
+  - [x] Respects prefers-reduced-motion
+  - [x] Proper ARIA labels and roles
+  - [x] Color contrast compliance
 
 ### 4.5 Advanced Features ✅ COMPLETE
 - [x] Search functionality for menu items ✅
