@@ -21,3 +21,50 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Print styles for menu */
+@media print {
+  @page {
+    margin: 1cm;
+  }
+
+  /* Hide navigation, footer, and interactive elements */
+  header,
+  footer {
+    display: none !important;
+  }
+
+  /* Hide elements marked with print:hidden */
+  [class*="print:hidden"] {
+    display: none !important;
+  }
+
+  /* Optimize colors for printing */
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Prevent page breaks inside items */
+  .menu-item-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Better spacing for print */
+  h1, h2, h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Remove shadows and optimize for print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Optimize images for print */
+  img {
+    max-width: 100% !important;
+  }
+}

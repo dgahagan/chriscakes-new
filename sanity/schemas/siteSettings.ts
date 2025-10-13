@@ -582,6 +582,28 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'analytics',
+      title: 'Analytics & Tracking',
+      type: 'object',
+      description: 'Configure Google Analytics and other tracking tools',
+      fields: [
+        {
+          name: 'googleAnalyticsId',
+          title: 'Google Analytics Measurement ID',
+          type: 'string',
+          description: 'Your GA4 Measurement ID (e.g., G-XXXXXXXXXX)',
+          placeholder: 'G-XXXXXXXXXX',
+        },
+        {
+          name: 'enabled',
+          title: 'Enable Analytics',
+          type: 'boolean',
+          description: 'Turn analytics tracking on/off site-wide',
+          initialValue: false,
+        },
+      ],
+    }),
+    defineField({
       name: 'logo',
       title: 'Site Logo',
       type: 'image',
