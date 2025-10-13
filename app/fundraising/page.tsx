@@ -103,17 +103,36 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function FundraisingPage() {
   const [page, menuItems] = await Promise.all([getPageData(), getFundraisingItems()]);
 
+  // Get the first text section and extract plain text from PortableText content
+  const firstTextSection = page.sections?.find(
+    (section) => section._type === 'textSection',
+  );
+
+  // Extract plain text from PortableText blocks
+  let subtitle = '';
+  if (firstTextSection?.content) {
+    const firstBlock = firstTextSection.content.find((block: any) => block._type === 'block');
+    if (firstBlock?.children) {
+      subtitle = firstBlock.children
+        .filter((child: any) => child._type === 'span')
+        .map((span: any) => span.text)
+        .join('');
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
+      {/* Header - Dynamic from Sanity */}
       <div className="bg-white border-b-4 border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Fundraising Menus
+            {page.title}
           </h1>
-          <p className="text-lg text-gray-600">
-            SCHOOLS - CHURCHES - BENEFITS - CLUBS/ORGANIZATIONS - FESTIVALS - AIRPORT FLY-INS
-          </p>
+          {subtitle && (
+            <p className="text-lg text-gray-600">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
 
