@@ -11,7 +11,15 @@
     "format:check": "prettier --check .",
     "import": "tsx scripts/import-content.ts",
     "import:all": "tsx scripts/import-all-content.ts",
-    "import:more": "tsx scripts/import-additional-content.ts"
+    "import:more": "tsx scripts/import-additional-content.ts",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:e2e": "playwright test tests/e2e",
+    "test:a11y": "playwright test tests/accessibility",
+    "test:visual": "playwright test tests/visual",
+    "test:report": "playwright show-report",
+    "test:debug": "playwright test --debug"
   },
   "dependencies": {
     "@portabletext/react": "^4.0.3",
@@ -31,11 +39,14 @@
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-playwright": "^2.2.2",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
