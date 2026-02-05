@@ -27,7 +27,7 @@
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.10.2",
-    "next": "15.5.4",
+    "next": "^15.5.12",
     "next-sanity": "^11.4.2",
     "next-share": "^0.27.0",
     "react": "19.1.0",
