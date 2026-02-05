@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Implementation planning (internal use only)
 implementation/
+
+# Happy Coder (mobile Claude Code client - installed separately)
+happy/

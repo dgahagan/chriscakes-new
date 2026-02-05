@@ -56,7 +56,7 @@ npm run import:all   # Import all content to Sanity (requires auth)
 ### Tech Stack
 
 - **Framework**: Next.js 15 with App Router (not Pages Router)
-- **CMS**: Sanity.io (project ID: 9t9xlmvm)
+- **CMS**: Sanity.io (project ID: 0fl6fs6u)
 - **Styling**: Tailwind CSS v4
 - **Language**: TypeScript (strict mode)
 - **Deployment**: Vercel
