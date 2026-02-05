@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { client } from '@/lib/sanity';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Simple rate limiting using in-memory store
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT = 3; // Max submissions per time window
@@ -104,6 +102,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Build email content
     const emailContent = `
