@@ -31,7 +31,7 @@ export default defineType({
       name: 'price',
       title: 'Price',
       type: 'number',
-      validation: (Rule) => Rule.required().min(0),
+      validation: (Rule) => Rule.min(0),
     }),
     defineField({
       name: 'image',
