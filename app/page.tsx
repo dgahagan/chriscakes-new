@@ -5,7 +5,6 @@ import {
   siteSettingsQuery,
 } from '@/lib/queries';
 import MenuItemCard from '@/components/menu/MenuItemCard';
-import InstagramFeed from '@/components/common/InstagramFeed';
 import SocialCTA from '@/components/common/SocialCTA';
 import SchemaMarkup from '@/components/common/SchemaMarkup';
 import { generateRestaurantSchema } from '@/lib/schema';
@@ -87,13 +86,6 @@ interface SiteSettings {
       heading?: string;
       message?: string;
       hashtag?: string;
-    };
-    instagramWidget?: {
-      enabled?: boolean;
-      embedCode?: string;
-      displayPages?: string[];
-      heading?: string;
-      ctaButtonText?: string;
     };
   };
 }
@@ -370,30 +362,6 @@ export default async function HomePage() {
             message={settings.socialMedia.socialCTA.message}
             hashtag={settings.socialMedia.socialCTA.hashtag}
             platforms={settings.socialMedia.platforms}
-          />
-        )}
-
-      {/* Instagram Feed Widget */}
-      {settings?.socialMedia?.instagramWidget?.enabled &&
-        settings?.socialMedia?.instagramWidget?.embedCode &&
-        settings?.socialMedia?.instagramWidget?.displayPages?.includes(
-          'homepage'
-        ) && (
-          <InstagramFeed
-            embedCode={settings.socialMedia.instagramWidget.embedCode}
-            heading={
-              settings.socialMedia.instagramWidget.heading ||
-              'Follow Us on Instagram'
-            }
-            ctaButtonText={
-              settings.socialMedia.instagramWidget.ctaButtonText ||
-              'Follow @chriscakesmi'
-            }
-            instagramUrl={
-              settings.socialMedia.platforms?.find(
-                (p) => p.platform === 'instagram' && p.enabled
-              )?.url
-            }
           />
         )}
 
