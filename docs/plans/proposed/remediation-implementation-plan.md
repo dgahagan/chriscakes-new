@@ -967,7 +967,7 @@ whichever keeps the diff honest).
 
 **Phase 2 — Settings & CMS drift (C)**
 
-- [ ] T5 — Delete dead social features (`sonnet`)
+- [x] T5 — Delete dead social features (`sonnet`) — `68d4388` (note: `siteSettings.logo` remains projected-but-unrendered; outside T5's delete-list, retained deliberately)
 - [ ] T6 — Google Analytics end-to-end fix (`opus`)
 - [ ] T7 — CMS-driven header/footer + contact socials (`sonnet`)
 - [ ] T8 — Fundraising page corrections (`sonnet`)
