@@ -8,7 +8,7 @@ import MenuItemCard from '@/components/menu/MenuItemCard';
 import InstagramFeed from '@/components/common/InstagramFeed';
 import SocialCTA from '@/components/common/SocialCTA';
 import SchemaMarkup from '@/components/common/SchemaMarkup';
-import { generateRestaurantSchema, generateAggregateRatingSchema } from '@/lib/schema';
+import { generateRestaurantSchema } from '@/lib/schema';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
@@ -19,11 +19,11 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export const metadata: Metadata = {
   title: 'ChrisCakes - Premier Breakfast Caterer | Michigan Pancake Catering',
   description:
-    'Michigan\'s premier breakfast caterer serving delicious pancakes and catering services since 1969. Featured on Food Network, served Presidents, 2x Guinness World Record holder. Groups of 50 to 50,000!',
+    "Michigan's premier breakfast caterer serving delicious pancakes and catering services since 1969. Featured on Food Network, served Presidents, 2x Guinness World Record holder. Groups of 50 to 50,000!",
   openGraph: {
     title: 'ChrisCakes - Premier Breakfast Caterer',
     description:
-      'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+      "Michigan's premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.",
     url: 'https://www.chriscakesofmi.com',
     siteName: 'ChrisCakes of Michigan',
     images: [
@@ -41,12 +41,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ChrisCakes - Premier Breakfast Caterer',
     description:
-      'Michigan\'s premier breakfast caterer since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+      "Michigan's premier breakfast caterer since 1969. Featured on Food Network, 2x Guinness World Record holder.",
     images: ['https://www.chriscakesofmi.com/logo.png'],
   },
   other: {
     'pinterest:description':
-      'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.',
+      "Michigan's premier breakfast caterer serving delicious pancakes since 1969. Featured on Food Network, 2x Guinness World Record holder.",
     'pinterest:image': 'https://www.chriscakesofmi.com/logo.png',
   },
 };
@@ -110,8 +110,9 @@ async function getMenuItems() {
 
 async function getTestimonials() {
   try {
-    const testimonials =
-      await client.fetch<Testimonial[]>(featuredTestimonialsQuery);
+    const testimonials = await client.fetch<Testimonial[]>(
+      featuredTestimonialsQuery
+    );
     return testimonials || [];
   } catch (error) {
     console.error('Error fetching testimonials:', error);
@@ -135,23 +136,12 @@ export default async function HomePage() {
   const settings = await getSiteSettings();
 
   // Generate Restaurant Schema
-  const restaurantSchema = settings
-    ? generateRestaurantSchema(settings)
-    : null;
-
-  // Generate Aggregate Rating Schema from testimonials
-  const ratingSchema =
-    testimonials.length > 0
-      ? generateAggregateRatingSchema(testimonials)
-      : null;
+  const restaurantSchema = settings ? generateRestaurantSchema(settings) : null;
 
   return (
     <div className="bg-gray-50">
       {/* Schema Markup for SEO */}
       {restaurantSchema && <SchemaMarkup data={restaurantSchema} />}
-      {ratingSchema && (
-        <SchemaMarkup data={ratingSchema} id="aggregate-rating" />
-      )}
 
       {/* Hero Section */}
       <section className="relative bg-white">
@@ -174,39 +164,45 @@ export default async function HomePage() {
               <div className="space-y-4 text-gray-700">
                 <p>
                   <strong>
-                    Chris Cakes has been around since 1969 – you won&apos;t find us in any history
-                    books! But you can find us in the Guinness Book of World Records... twice!
+                    Chris Cakes has been around since 1969 – you won&apos;t find
+                    us in any history books! But you can find us in the Guinness
+                    Book of World Records... twice!
                   </strong>
                 </p>
                 <p>
-                  We use a custom designed grill and dispensing unit that allows us to feed large
-                  and small groups extremely fast and efficiently. Add a dose of humor and some
-                  fancy pancake flipping, and you have a one of a kind event that people love to
-                  watch while enjoying our delicious pancakes!
+                  We use a custom designed grill and dispensing unit that allows
+                  us to feed large and small groups extremely fast and
+                  efficiently. Add a dose of humor and some fancy pancake
+                  flipping, and you have a one of a kind event that people love
+                  to watch while enjoying our delicious pancakes!
                 </p>
                 <p>
-                  Not only do we flip flapjacks, we flip burgers, too! Our Menus N More options are
-                  full of tasty lunch and dinner options. Pulled pork and smoked potato salad are
-                  our specialties because our sister business is a BBQ joint! Don&apos;t see what
-                  you&apos;re looking for? ASK US! We try to accommodate all requests.
+                  Not only do we flip flapjacks, we flip burgers, too! Our Menus
+                  N More options are full of tasty lunch and dinner options.
+                  Pulled pork and smoked potato salad are our specialties
+                  because our sister business is a BBQ joint! Don&apos;t see
+                  what you&apos;re looking for? ASK US! We try to accommodate
+                  all requests.
                 </p>
                 <p>
-                  Chris Cakes can be found at fundraisers, church gatherings, school events,
-                  university functions, corporate lunches, dinners, benefits, graduations, reunions,
-                  fly-ins and national festivals; the list is endless. No event is too large or too
+                  Chris Cakes can be found at fundraisers, church gatherings,
+                  school events, university functions, corporate lunches,
+                  dinners, benefits, graduations, reunions, fly-ins and national
+                  festivals; the list is endless. No event is too large or too
                   small, from groups of 50 to 50,000!
                 </p>
                 <p>
-                  Chris Cakes of Michigan is a dependable catering service that is readily available
-                  for your 24/7 catering needs. We service the entire state of Michigan and beyond!
-                  Centrally located, we can travel anywhere in Michigan in about two hours! In four
-                  feet of snow, in the dead of a Michigan winter, Chris Cakes has a 99.9% success
-                  rate.
+                  Chris Cakes of Michigan is a dependable catering service that
+                  is readily available for your 24/7 catering needs. We service
+                  the entire state of Michigan and beyond! Centrally located, we
+                  can travel anywhere in Michigan in about two hours! In four
+                  feet of snow, in the dead of a Michigan winter, Chris Cakes
+                  has a 99.9% success rate.
                 </p>
                 <p>
                   <strong>
-                    Chris Cakes is more than great food at an affordable price… it&apos;s an
-                    experience!
+                    Chris Cakes is more than great food at an affordable price…
+                    it&apos;s an experience!
                   </strong>
                 </p>
               </div>
@@ -237,18 +233,26 @@ export default async function HomePage() {
       {/* Achievements Section */}
       <section className="py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">More than just pancakes!</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+            More than just pancakes!
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">See us in action on Youtube!</h4>
+              <h4 className="font-bold text-gray-900 mb-4">
+                See us in action on Youtube!
+              </h4>
               <ul className="space-y-2">
                 <li className="flex gap-2">
                   <span className="text-[#dc143c]">•</span>
-                  <span className="text-gray-700">Served four Presidents and 16 Governors</span>
+                  <span className="text-gray-700">
+                    Served four Presidents and 16 Governors
+                  </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-[#dc143c]">•</span>
-                  <span className="text-gray-700">Featured on Food Network</span>
+                  <span className="text-gray-700">
+                    Featured on Food Network
+                  </span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-[#dc143c]">•</span>
@@ -269,13 +273,19 @@ export default async function HomePage() {
               </ul>
               {testimonials.length > 0 && (
                 <div className="mt-8">
-                  <h4 className="font-bold text-gray-900 mb-4">What our customers have to say</h4>
+                  <h4 className="font-bold text-gray-900 mb-4">
+                    What our customers have to say
+                  </h4>
                   <blockquote className="border-l-4 border-[#dc143c] pl-4 italic">
-                    <p className="text-gray-700 mb-2">{testimonials[0].quote}</p>
+                    <p className="text-gray-700 mb-2">
+                      {testimonials[0].quote}
+                    </p>
                     <footer className="text-gray-600 not-italic">
                       {testimonials[0].author}
                       {testimonials[0].authorTitle && (
-                        <cite className="block text-sm">-- {testimonials[0].authorTitle}</cite>
+                        <cite className="block text-sm">
+                          -- {testimonials[0].authorTitle}
+                        </cite>
                       )}
                     </footer>
                   </blockquote>
@@ -354,7 +364,8 @@ export default async function HomePage() {
         settings?.socialMedia?.platforms && (
           <SocialCTA
             heading={
-              settings.socialMedia.socialCTA.heading || 'Follow Us on Social Media'
+              settings.socialMedia.socialCTA.heading ||
+              'Follow Us on Social Media'
             }
             message={settings.socialMedia.socialCTA.message}
             hashtag={settings.socialMedia.socialCTA.hashtag}
@@ -366,7 +377,7 @@ export default async function HomePage() {
       {settings?.socialMedia?.instagramWidget?.enabled &&
         settings?.socialMedia?.instagramWidget?.embedCode &&
         settings?.socialMedia?.instagramWidget?.displayPages?.includes(
-          'homepage',
+          'homepage'
         ) && (
           <InstagramFeed
             embedCode={settings.socialMedia.instagramWidget.embedCode}
@@ -380,7 +391,7 @@ export default async function HomePage() {
             }
             instagramUrl={
               settings.socialMedia.platforms?.find(
-                (p) => p.platform === 'instagram' && p.enabled,
+                (p) => p.platform === 'instagram' && p.enabled
               )?.url
             }
           />
@@ -392,9 +403,10 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
               <p className="text-lg text-gray-700">
-                Chris Cake&apos;s famous flapjacks aren&apos;t the only thing our flippers are
-                cooking up. From Coney dogs, brats and burgers to tacos and pulled pork... our Menus
-                N More options will satisfy any group, any time, anywhere in Michigan.
+                Chris Cake&apos;s famous flapjacks aren&apos;t the only thing
+                our flippers are cooking up. From Coney dogs, brats and burgers
+                to tacos and pulled pork... our Menus N More options will
+                satisfy any group, any time, anywhere in Michigan.
               </p>
             </div>
             <div className="flex items-center">
