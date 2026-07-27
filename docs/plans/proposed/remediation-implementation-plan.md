@@ -196,10 +196,12 @@ is no history to preserve.
   returns nothing; build unaffected.
 - **Commit:** `docs: track remediation plans under docs/plans/proposed`
 - **Deps:** none.
-- **⚠ Decide before committing:** `.claude/` is also untracked and holds
-  `commands/impl-plan.md`, `commands/run-plan.md`, and `settings.local.json`.
-  The two command files are worth committing; `settings.local.json` is
-  machine-local and should be gitignored. Ask the human rather than guessing.
+- **✅ DONE — commit `04cf3ab`.** `.claude/commands/` is tracked;
+  `.claude/settings.local.json` is gitignored as a machine-local override.
+  Branch `feat/remediation` was cut from `master` at `48236c6`.
+  **Baseline recorded at T0:** `npm run lint` 0 errors / 2 known warnings
+  (`test-utils.ts` unused vars — T23 clears them); `npm run build` green,
+  17 static pages. `npm test` is known-red and is Workstream A's subject.
 
 ---
 
@@ -954,7 +956,7 @@ whichever keeps the diff honest).
 
 **Phase 0 — Plan housekeeping**
 
-- [ ] T0 — Relocate plan docs into `docs/plans/proposed/` (`haiku`)
+- [x] T0 — Relocate plan docs into `docs/plans/proposed/` (`haiku`) — `04cf3ab`
 
 **Phase 1 — Data layer foundation (G)**
 
