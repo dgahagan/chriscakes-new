@@ -4,7 +4,35 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function Header() {
+interface SocialPlatform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SocialMediaSettings {
+  platforms?: SocialPlatform[];
+  displaySettings?: {
+    showInHeader?: boolean;
+    showInFooter?: boolean;
+  };
+  socialCTA?: {
+    enabled?: boolean;
+    heading?: string;
+    message?: string;
+    hashtag?: string;
+  };
+}
+
+interface HeaderProps {
+  phone?: string;
+  email?: string;
+  address?: string;
+  socialMedia?: SocialMediaSettings;
+}
+
+export default function Header({ phone, email, address }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -106,15 +134,15 @@ export default function Header() {
       <div className="bg-gray-100 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-between text-sm text-gray-700">
-            <div>P.O. Box 431 Clare MI, 48617</div>
-            <div>Office: 989-802-0755</div>
+            <div>{address || 'P.O. Box 431 Clare MI, 48617'}</div>
+            <div>Office: {phone || '989-802-0755'}</div>
             <div>
               Email:{' '}
               <a
-                href="mailto:chriscakesmi@sbcglobal.net"
+                href={`mailto:${email || 'chriscakesmi@sbcglobal.net'}`}
                 className="text-blue-600 hover:text-blue-800"
               >
-                chriscakesmi@sbcglobal.net
+                {email || 'chriscakesmi@sbcglobal.net'}
               </a>
             </div>
           </div>

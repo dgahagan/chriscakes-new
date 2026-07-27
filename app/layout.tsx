@@ -15,7 +15,32 @@ export const metadata: Metadata = {
     "Michigan's premier breakfast caterer serving delicious pancakes and catering services since 1969.",
 };
 
+interface SocialPlatform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SocialMediaSettings {
+  platforms?: SocialPlatform[];
+  displaySettings?: {
+    showInHeader?: boolean;
+    showInFooter?: boolean;
+  };
+  socialCTA?: {
+    enabled?: boolean;
+    heading?: string;
+    message?: string;
+    hashtag?: string;
+  };
+}
+
 interface SiteSettings {
+  phone?: string;
+  email?: string;
+  address?: string;
+  socialMedia?: SocialMediaSettings;
   analytics?: {
     googleAnalyticsId?: string;
     enabled?: boolean;
@@ -59,11 +84,21 @@ export default async function RootLayout({
           </Suspense>
         )}
         <SkipToContent />
-        <Header />
+        <Header
+          phone={settings?.phone}
+          email={settings?.email}
+          address={settings?.address}
+          socialMedia={settings?.socialMedia}
+        />
         <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
-        <Footer />
+        <Footer
+          phone={settings?.phone}
+          email={settings?.email}
+          address={settings?.address}
+          socialMedia={settings?.socialMedia}
+        />
       </body>
     </html>
   );

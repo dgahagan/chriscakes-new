@@ -1,5 +1,3 @@
-import { client } from '@/lib/sanity';
-import { siteSettingsQuery } from '@/lib/queries';
 import Link from 'next/link';
 import {
   FaFacebook,
@@ -31,7 +29,10 @@ interface SocialMediaSettings {
   };
 }
 
-interface SiteSettings {
+interface FooterProps {
+  phone?: string;
+  email?: string;
+  address?: string;
   socialMedia?: SocialMediaSettings;
 }
 
@@ -55,17 +56,15 @@ const getSocialIcon = (platform: string) => {
   }
 };
 
-export default async function Footer() {
-  const settings: SiteSettings = await client.fetch(
-    siteSettingsQuery,
-    {},
-    { next: { revalidate: 60 } },
-  );
-
+export default function Footer({
+  phone,
+  email,
+  address,
+  socialMedia,
+}: FooterProps) {
   const socialPlatforms =
-    settings?.socialMedia?.platforms?.filter((p) => p.enabled) || [];
-  const showSocialInFooter =
-    settings?.socialMedia?.displaySettings?.showInFooter ?? true;
+    socialMedia?.platforms?.filter((p) => p.enabled) || [];
+  const showSocialInFooter = socialMedia?.displaySettings?.showInFooter ?? true;
 
   return (
     <footer className="bg-white border-t border-gray-200">
@@ -119,7 +118,7 @@ export default async function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/about"
+                  href="/how-to-book"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   How to Book an Event
@@ -127,7 +126,7 @@ export default async function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="/day-of-event"
                   className="text-blue-600 hover:text-blue-800 text-sm"
                 >
                   Day of Event Information
@@ -148,16 +147,18 @@ export default async function Footer() {
               Contact Us Online!
             </Link>
             <p className="text-gray-700 text-sm mb-1">
-              P.O. Box 431 Clare MI, 48617
+              {address || 'P.O. Box 431 Clare MI, 48617'}
             </p>
-            <p className="text-gray-700 text-sm mb-1">Office: 989-802-0755</p>
+            <p className="text-gray-700 text-sm mb-1">
+              Office: {phone || '989-802-0755'}
+            </p>
             <p className="text-sm">
               Email:{' '}
               <a
-                href="mailto:chriscakesmi@sbcglobal.net"
+                href={`mailto:${email || 'chriscakesmi@sbcglobal.net'}`}
                 className="text-blue-600 hover:text-blue-800"
               >
-                chriscakesmi@sbcglobal.net
+                {email || 'chriscakesmi@sbcglobal.net'}
               </a>
             </p>
           </div>
@@ -167,16 +168,16 @@ export default async function Footer() {
         {showSocialInFooter && socialPlatforms.length > 0 && (
           <div className="mt-8 pt-8 border-t border-gray-200">
             <div className="flex flex-col items-center gap-4">
-              {settings?.socialMedia?.socialCTA?.enabled && (
+              {socialMedia?.socialCTA?.enabled && (
                 <div className="text-center">
-                  {settings.socialMedia.socialCTA.heading && (
+                  {socialMedia.socialCTA.heading && (
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {settings.socialMedia.socialCTA.heading}
+                      {socialMedia.socialCTA.heading}
                     </h3>
                   )}
-                  {settings.socialMedia.socialCTA.message && (
+                  {socialMedia.socialCTA.message && (
                     <p className="text-sm text-gray-600 mb-3">
-                      {settings.socialMedia.socialCTA.message}
+                      {socialMedia.socialCTA.message}
                     </p>
                   )}
                 </div>
@@ -195,9 +196,9 @@ export default async function Footer() {
                   </a>
                 ))}
               </div>
-              {settings?.socialMedia?.socialCTA?.hashtag && (
+              {socialMedia?.socialCTA?.hashtag && (
                 <p className="text-sm text-gray-600">
-                  #{settings.socialMedia.socialCTA.hashtag}
+                  #{socialMedia.socialCTA.hashtag}
                 </p>
               )}
             </div>
