@@ -960,8 +960,8 @@ whichever keeps the diff honest).
 
 **Phase 1 — Data layer foundation (G)**
 
-- [ ] T1 — Delete sanity boilerplate and dead components (`haiku`) ∥ T2
-- [ ] T2 — One token-free, env-driven Sanity client (`sonnet`) ∥ T1
+- [x] T1 — Delete sanity boilerplate and dead components (`haiku`) ∥ T2 — `512c10b`
+- [x] T2 — One token-free, env-driven Sanity client (`sonnet`) ∥ T1 — `a2d07f2`
 - [ ] T3 — Query and schema corrections (`sonnet`)
 - [ ] T4 — JSON-LD helper cleanup (`sonnet`)
 
