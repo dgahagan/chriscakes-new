@@ -49,3 +49,6 @@ implementation/
 
 # Happy Coder (mobile Claude Code client - installed separately)
 happy/
+
+# Claude Code local overrides (machine-specific)
+.claude/settings.local.json
