@@ -1005,7 +1005,7 @@ decision on the fix.
 - [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
 - [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
-- [ ] T9 — `siteSettings` singleton enforcement (`sonnet`)
+- [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ⚠ Studio DOM unverified (login cannot be automated — see commit body); needs one manual look in a logged-in browser
 - [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ prod dataset — approved
 
 **Phase 3 — Frontend correctness & a11y (F)**
