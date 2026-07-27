@@ -962,7 +962,7 @@ whichever keeps the diff honest).
 
 - [x] T1 — Delete sanity boilerplate and dead components (`haiku`) ∥ T2 — `512c10b`
 - [x] T2 — One token-free, env-driven Sanity client (`sonnet`) ∥ T1 — `a2d07f2`
-- [ ] T3 — Query and schema corrections (`sonnet`)
+- [x] T3 — Query and schema corrections (`sonnet`) — `90699dc`
 - [ ] T4 — JSON-LD helper cleanup (`sonnet`)
 
 **Phase 2 — Settings & CMS drift (C)**
