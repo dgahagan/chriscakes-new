@@ -6,6 +6,7 @@ import {
 } from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
 import ShareButtons from '@/components/common/ShareButtons';
+import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
 
@@ -56,7 +57,7 @@ interface PageData {
 
 export const revalidate = 60;
 
-async function getPageData(): Promise<PageData> {
+async function getPageData(): Promise<PageData | null> {
   return client.fetch(
     pageBySlugQuery,
     { slug: 'fundraising' },
@@ -74,6 +75,12 @@ async function getFundraisingItems(): Promise<MenuItem[]> {
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageData();
+
+  if (!page) {
+    return {
+      title: 'Page Not Found - ChrisCakes',
+    };
+  }
 
   const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
   const description =
@@ -118,6 +125,10 @@ export default async function FundraisingPage() {
     getFundraisingItems(),
     client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } }),
   ]);
+
+  if (!page) {
+    notFound();
+  }
 
   // Get the first text section and extract plain text from PortableText content
   const firstTextSection = page.sections?.find(

@@ -2,6 +2,7 @@ import { client } from '@/lib/sanity';
 import { faqsQuery, pageBySlugQuery, siteSettingsQuery } from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
 import ShareButtons from '@/components/common/ShareButtons';
+import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
 
@@ -53,8 +54,12 @@ interface PageData {
 
 export const revalidate = 60;
 
-async function getPageData(): Promise<PageData> {
-  return client.fetch(pageBySlugQuery, { slug: 'services' }, { next: { revalidate: 60 } });
+async function getPageData(): Promise<PageData | null> {
+  return client.fetch(
+    pageBySlugQuery,
+    { slug: 'services' },
+    { next: { revalidate: 60 } }
+  );
 }
 
 async function getFAQs(): Promise<FAQ[]> {
@@ -64,8 +69,16 @@ async function getFAQs(): Promise<FAQ[]> {
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageData();
 
+  if (!page) {
+    return {
+      title: 'Page Not Found - ChrisCakes',
+    };
+  }
+
   const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
-  const description = page.seo?.metaDescription || '24/7-365 catering services across Michigan. No one can do what we do! Premier breakfast catering and Menus N More options.';
+  const description =
+    page.seo?.metaDescription ||
+    '24/7-365 catering services across Michigan. No one can do what we do! Premier breakfast catering and Menus N More options.';
 
   return {
     title,
@@ -106,6 +119,10 @@ export default async function ServicesPage() {
     client.fetch(siteSettingsQuery),
   ]);
 
+  if (!page) {
+    notFound();
+  }
+
   // Check if share buttons should be displayed
   const shareButtonsEnabled =
     settings?.shareButtons?.enabled &&
@@ -118,7 +135,10 @@ export default async function ServicesPage() {
       <div className="bg-white border-b-4 border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900">
-            24/7-365 <span className="text-xl font-normal text-gray-600">NO ONE CAN DO WHAT WE DO!</span>
+            24/7-365{' '}
+            <span className="text-xl font-normal text-gray-600">
+              NO ONE CAN DO WHAT WE DO!
+            </span>
           </h1>
 
           {/* Share Buttons */}
@@ -129,8 +149,18 @@ export default async function ServicesPage() {
                 title="ChrisCakes 24/7 Catering Services"
                 description="24/7-365 catering services across Michigan. Premier breakfast catering and Menus N More options."
                 image="https://www.chriscakesofmi.com/logo.png"
-                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
-                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+                platforms={
+                  settings?.shareButtons?.platforms || [
+                    'facebook',
+                    'twitter',
+                    'pinterest',
+                    'whatsapp',
+                    'native',
+                  ]
+                }
+                showNativeShare={settings?.shareButtons?.platforms?.includes(
+                  'native'
+                )}
               />
             </div>
           )}
@@ -145,7 +175,9 @@ export default async function ServicesPage() {
 
         {/* FAQs Section - Dynamic from Sanity */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Frequently Asked Questions
+          </h2>
           <div className="space-y-4">
             {faqs.map((faq) => (
               <details
@@ -153,7 +185,9 @@ export default async function ServicesPage() {
                 className="group border border-gray-200 rounded-lg overflow-hidden"
               >
                 <summary className="flex justify-between items-center cursor-pointer p-4 bg-gray-50 hover:bg-gray-100 transition">
-                  <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {faq.question}
+                  </h3>
                   <span className="text-[#dc143c] group-open:rotate-180 transition-transform">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +197,11 @@ export default async function ServicesPage() {
                       stroke="currentColor"
                       className="w-5 h-5"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </span>
                 </summary>
