@@ -1006,11 +1006,11 @@ decision on the fix.
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
 - [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
 - [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ⚠ Studio DOM unverified (login cannot be automated — see commit body); needs one manual look in a logged-in browser
-- [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ prod dataset — approved
+- [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ **BLOCKED — needs a human to run one command.** Guarded script committed in `f706e60`; executing it was denied by the sandbox. Run `npx tsx scripts/delete-test-document.ts --yes`, then confirm `/test-dynamic-page` 404s and `count(*[_type=="page"])` is 8.
 
 **Phase 3 — Frontend correctness & a11y (F)**
 
-- [ ] T11 — Missing-document resilience + branded 404 (`sonnet`)
+- [x] T11 — Missing-document resilience + branded 404 (`sonnet`) — `b8823ad`
 - [ ] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13
 - [ ] T13 — Interactive-component accessibility (`sonnet`) ∥ T12
 - [ ] T14 — Rendering correctness and image sizing (`sonnet`)
