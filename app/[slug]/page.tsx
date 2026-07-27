@@ -1,5 +1,9 @@
 import { client } from '@/lib/sanity';
-import { pageBySlugQuery, allPagesQuery, siteSettingsQuery } from '@/lib/queries';
+import {
+  pageBySlugQuery,
+  allPagesQuery,
+  siteSettingsQuery,
+} from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
 import ShareButtons from '@/components/common/ShareButtons';
 import { notFound } from 'next/navigation';
@@ -55,6 +59,14 @@ interface PageProps {
 
 export const revalidate = 60;
 
+/**
+ * Slugs that have a dedicated route with bespoke rendering. The CMS also holds
+ * `page` documents for these, and prerendering them here collides with the
+ * dedicated routes' output — the generic renderer wins and the bespoke pages
+ * (the fundraising menu list, the services FAQ block) never render.
+ */
+const RESERVED_SLUGS = new Set(['fundraising', 'services']);
+
 // Generate static params for all pages
 export async function generateStaticParams() {
   const pages = await client.fetch<Array<{ slug: { current: string } }>>(
@@ -63,13 +75,17 @@ export async function generateStaticParams() {
     { next: { revalidate: 3600 } }
   );
 
-  return pages.map((page) => ({
-    slug: page.slug.current,
-  }));
+  return pages
+    .filter((page) => !RESERVED_SLUGS.has(page.slug.current))
+    .map((page) => ({
+      slug: page.slug.current,
+    }));
 }
 
 // Generate metadata for each page
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = await client.fetch<PageData>(
     pageBySlugQuery,
@@ -159,8 +175,18 @@ export default async function DynamicPage({ params }: PageProps) {
                 title={`${page.title} - ChrisCakes`}
                 description={pageDescription}
                 image="https://www.chriscakesofmi.com/logo.png"
-                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
-                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+                platforms={
+                  settings?.shareButtons?.platforms || [
+                    'facebook',
+                    'twitter',
+                    'pinterest',
+                    'whatsapp',
+                    'native',
+                  ]
+                }
+                showNativeShare={settings?.shareButtons?.platforms?.includes(
+                  'native'
+                )}
               />
             </div>
           )}
