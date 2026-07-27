@@ -952,6 +952,33 @@ whichever keeps the diff honest).
 
 ---
 
+## ⚠ Blocking issue found during execution (2026-07-27, at T8)
+
+**`/fundraising` and `/services` are dead routes.** The CMS contains `page`
+documents with slugs `fundraising` and `services`. `app/[slug]/page.tsx`'s
+`generateStaticParams` reads `allPagesQuery` and therefore prerenders both,
+writing to the same output paths as the dedicated `app/fundraising/page.tsx`
+and `app/services/page.tsx` routes. The `[slug]` renderer wins, so the
+dedicated pages never render.
+
+Evidence: a sentinel menu item hardcoded into `app/fundraising/page.tsx`'s
+item list does not appear in `.next/server/app/fundraising.html`, and neither
+does a `console.log` in its data fetcher. The served page is `[slug]`'s
+markup — `<h1>{page.title}</h1>` plus `SectionRenderer`, with no menu items.
+Confirmed present **before** T8 (verified by rebuilding the pre-T8 file), so it
+is pre-existing, not caused by this work.
+
+Published page slugs: `test-dynamic-page`, `about`, `day-of-event`,
+**`fundraising`**, `fundraising-tips`, `how-to-book`, `invoice-payment`,
+**`services`**, `volunteers`.
+
+**Impact on the plan:** T8 is committed and correct but unverifiable in the
+running app. **T11 is blocked** — it adds `notFound()` handling to those two
+pages, which cannot be exercised while they are shadowed. Awaiting an owner
+decision on the fix.
+
+---
+
 ## Progress Tracker
 
 **Phase 0 — Plan housekeeping**
@@ -970,7 +997,7 @@ whichever keeps the diff honest).
 - [x] T5 — Delete dead social features (`sonnet`) — `68d4388` (note: `siteSettings.logo` remains projected-but-unrendered; outside T5's delete-list, retained deliberately)
 - [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
-- [ ] T8 — Fundraising page corrections (`sonnet`)
+- [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b` ⚠ code correct but **unobservable at runtime**: `/fundraising` and `/services` are shadowed by `app/[slug]/page.tsx` (see "Blocking issue" below)
 - [ ] T9 — `siteSettings` singleton enforcement (`sonnet`)
 - [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ prod dataset — approved
 
