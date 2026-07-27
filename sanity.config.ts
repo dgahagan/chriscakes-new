@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'ChrisCakes',
 
-  projectId: '0fl6fs6u',
-  dataset: 'production',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
 
   basePath: '/studio',
 
