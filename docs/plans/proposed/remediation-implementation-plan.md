@@ -969,7 +969,7 @@ whichever keeps the diff honest).
 
 - [x] T5 — Delete dead social features (`sonnet`) — `68d4388` (note: `siteSettings.logo` remains projected-but-unrendered; outside T5's delete-list, retained deliberately)
 - [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
-- [ ] T7 — CMS-driven header/footer + contact socials (`sonnet`)
+- [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
 - [ ] T8 — Fundraising page corrections (`sonnet`)
 - [ ] T9 — `siteSettings` singleton enforcement (`sonnet`)
 - [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ prod dataset — approved
