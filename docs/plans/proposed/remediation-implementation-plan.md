@@ -952,7 +952,14 @@ whichever keeps the diff honest).
 
 ---
 
-## ⚠ Blocking issue found during execution (2026-07-27, at T8)
+## ✅ RESOLVED — route-shadowing bug found during execution (2026-07-27, at T8)
+
+**Fixed in `946979f`** (owner decision: exclude reserved slugs). `[slug]`'s
+`generateStaticParams` now filters out `fundraising` and `services`, so the
+dedicated routes render. T8's acceptance was then verified end-to-end and
+**T11 is unblocked**. Original writeup below for the record.
+
+
 
 **`/fundraising` and `/services` are dead routes.** The CMS contains `page`
 documents with slugs `fundraising` and `services`. `app/[slug]/page.tsx`'s
@@ -997,7 +1004,7 @@ decision on the fix.
 - [x] T5 — Delete dead social features (`sonnet`) — `68d4388` (note: `siteSettings.logo` remains projected-but-unrendered; outside T5's delete-list, retained deliberately)
 - [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
-- [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b` ⚠ code correct but **unobservable at runtime**: `/fundraising` and `/services` are shadowed by `app/[slug]/page.tsx` (see "Blocking issue" below)
+- [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
 - [ ] T9 — `siteSettings` singleton enforcement (`sonnet`)
 - [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ prod dataset — approved
 
