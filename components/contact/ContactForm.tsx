@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface ContactFormData {
@@ -32,6 +32,15 @@ export default function ContactForm() {
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
+  const statusRef = useRef<HTMLDivElement>(null);
+
+  // Move focus to the status message so screen readers announce the
+  // submission result as soon as it's available.
+  useEffect(() => {
+    if (submitStatus.type) {
+      statusRef.current?.focus();
+    }
+  }, [submitStatus]);
 
   const {
     register,
@@ -452,6 +461,10 @@ export default function ContactForm() {
       {/* Status Messages */}
       {submitStatus.type && (
         <div
+          ref={statusRef}
+          role="status"
+          aria-live="polite"
+          tabIndex={-1}
           className={`rounded-md p-4 ${
             submitStatus.type === 'success'
               ? 'bg-green-50 text-green-800'

@@ -21,7 +21,8 @@ export default function CategoryFilter({
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => onCategoryChange(null)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          aria-pressed={activeCategory === null}
+          className={`min-h-[44px] min-w-[44px] px-4 py-3 rounded-full text-sm font-medium transition-colors ${
             activeCategory === null
               ? 'bg-[#dc143c] text-white'
               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -33,7 +34,8 @@ export default function CategoryFilter({
           <button
             key={category._id}
             onClick={() => onCategoryChange(category._id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            aria-pressed={activeCategory === category._id}
+            className={`min-h-[44px] min-w-[44px] px-4 py-3 rounded-full text-sm font-medium transition-colors ${
               activeCategory === category._id
                 ? 'bg-[#dc143c] text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'

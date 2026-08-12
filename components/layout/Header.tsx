@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface SocialPlatform {
   platform: string;
@@ -34,6 +35,31 @@ interface HeaderProps {
 
 export default function Header({ phone, email, address }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const wasMobileMenuOpenRef = useRef(false);
+
+  // Return focus to the hamburger button whenever the mobile menu closes.
+  useEffect(() => {
+    if (wasMobileMenuOpenRef.current && !mobileMenuOpen) {
+      menuButtonRef.current?.focus();
+    }
+    wasMobileMenuOpenRef.current = mobileMenuOpen;
+  }, [mobileMenuOpen]);
+
+  // Close the mobile menu on Escape.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -76,6 +102,7 @@ export default function Header({ phone, email, address }: HeaderProps) {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={pathname === link.href ? 'page' : undefined}
                 className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
               >
                 {link.label}
@@ -86,10 +113,13 @@ export default function Header({ phone, email, address }: HeaderProps) {
           {/* Mobile Navigation - Hamburger Button */}
           <div className="lg:hidden flex items-center justify-between py-3">
             <button
+              ref={menuButtonRef}
               type="button"
               className="text-white hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-white"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               <svg
                 className="h-6 w-6"
@@ -111,22 +141,24 @@ export default function Header({ phone, email, address }: HeaderProps) {
           </div>
 
           {/* Mobile Navigation - Menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden pb-4">
-              <div className="flex flex-col space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-white hover:bg-gray-700 px-3 py-2 text-sm font-medium rounded"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
+          <div
+            id="mobile-menu"
+            className={`lg:hidden ${mobileMenuOpen ? 'pb-4' : 'hidden'}`}
+          >
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={pathname === link.href ? 'page' : undefined}
+                  className="text-white hover:bg-gray-700 px-3 py-2 text-sm font-medium rounded"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       </nav>
 
