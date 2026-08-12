@@ -1037,13 +1037,15 @@ decision on the fix.
 >    future contact-endpoint testing must start the server with an **invalid**
 >    `RESEND_API_KEY` and verify `grep -c "Email sent successfully"` is 0.
 >
-> **🐛 Pre-existing bug found, NOT fixed (out of T16's scope, needs an owner
-> decision):** the endpoint returns 200 "sent successfully" even when Resend
-> fails. The Resend SDK resolves with `{data, error}` instead of throwing, and
-> neither the original code nor this task inspects `error`. A genuine delivery
-> failure is therefore reported to the visitor as success and the inquiry is
-> lost silently. Confirmed live: with an invalid API key the endpoint still
-> returned the success payload.
+> **🐛 Pre-existing bug found and FIXED — commit `492f62c`** (owner approved the
+> follow-up, 2026-08-12). The endpoint returned 200 "sent successfully" even
+> when Resend failed, because the SDK resolves with `{data, error}` instead of
+> throwing and neither the original code nor T16 inspected `error` — a genuine
+> delivery failure was reported to the visitor as success and the inquiry was
+> lost with no trace. Now uses `Promise.allSettled` and reads `error` per
+> recipient: all-failed returns 500, partial success still returns 200 and logs
+> the failures. The bot gates are unaffected — they return before any send.
+> T26's API tests should cover this path.
 - [ ] T17 — JSON-LD server rendering and XSS fix (`sonnet`)
 - [ ] T18 — robots + sitemap (`sonnet`) ∥ T19
 - [ ] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18
