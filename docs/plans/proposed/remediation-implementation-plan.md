@@ -1011,8 +1011,8 @@ decision on the fix.
 **Phase 3 — Frontend correctness & a11y (F)**
 
 - [x] T11 — Missing-document resilience + branded 404 (`sonnet`) — `b8823ad`
-- [ ] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13
-- [ ] T13 — Interactive-component accessibility (`sonnet`) ∥ T12
+- [x] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13 — `734a551` (also carries gate-required Prettier reformatting of `MenuDisplay.tsx`)
+- [x] T13 — Interactive-component accessibility (`sonnet`) ∥ T12 — `651928e` (mobile panel is now always-mounted and toggled with `hidden` so `aria-controls` always resolves; verified Escape/focus-return/`aria-current` interactively)
 - [ ] T14 — Rendering correctness and image sizing (`sonnet`)
 - [ ] T15 — Data-fetch, sort, and directive cleanup (`sonnet`)
 
