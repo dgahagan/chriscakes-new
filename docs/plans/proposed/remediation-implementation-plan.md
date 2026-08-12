@@ -1055,7 +1055,23 @@ decision on the fix.
 > build in T18. They were run **sequentially**. Treat `∥` as a statement about
 > files only — tasks that touch installed dependencies are never actually
 > parallel-safe.
-- [ ] T20 — Security headers and CSP (`opus`)
+- [x] T20 — Security headers and CSP (`opus`) — `3019ed9`
+
+> **Phase 4 complete.** Owner decision (2026-08-12): `/studio` gets a **relaxed
+> CSP scoped by path from the start**, rather than the plan's try-DENY-first,
+> because the interactive Studio check cannot be automated here. Public routes
+> keep the strict policy and `X-Frame-Options: DENY`; `/studio` gets
+> `SAMEORIGIN`.
+>
+> **Trap worth remembering:** Next's `headers()` applies *every* matching entry,
+> so a public source and a `/studio` source that both match would emit **two**
+> CSP headers and the browser would enforce their intersection — silently
+> breaking Studio. The public source uses a negative lookahead
+> (`/:path((?!studio).*)`) to guarantee they are disjoint; verified by asserting
+> exactly one CSP header per route.
+>
+> `core.sanity-cdn.com` (Sanity's visual-editing bridge) had to be added to the
+> Studio policy — found by observing a real violation, not by guessing.
 
 **Phase 5 — Import script safety (B)**
 
