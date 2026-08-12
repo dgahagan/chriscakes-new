@@ -1046,7 +1046,7 @@ decision on the fix.
 > recipient: all-failed returns 500, partial success still returns 200 and logs
 > the failures. The bot gates are unaffected — they return before any send.
 > T26's API tests should cover this path.
-- [ ] T17 — JSON-LD server rendering and XSS fix (`sonnet`)
+- [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
 - [ ] T18 — robots + sitemap (`sonnet`) ∥ T19
 - [ ] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18
 - [ ] T20 — Security headers and CSP (`opus`)
