@@ -1085,7 +1085,7 @@ decision on the fix.
 - [ ] T25 — Rewrite menu spec and add page smoke tests (`sonnet`)
 - [ ] T26 — Contact form and API coverage (`sonnet`)
 - [ ] T27 — Accessibility spec rewrite and full-suite green (`opus`)
-- [ ] T28 — CI workflow (`sonnet`)
+- [ ] T28 — CI workflow (`sonnet`) — **owner decision (2026-08-12): accept one red `format:check`** and clear it at T31. Include `format:check` in the workflow as planned, and state the expected-red explicitly in the commit body so it is not mistaken for a regression.
 
 **Phase 7 — Hygiene (H)**
 
