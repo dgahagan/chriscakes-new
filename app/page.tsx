@@ -290,6 +290,7 @@ export default async function HomePage() {
                   src="/home1.png"
                   alt="Chris Cakes Event 1"
                   fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
                   className="object-cover"
                 />
               </div>
@@ -298,6 +299,7 @@ export default async function HomePage() {
                   src="/home2.png"
                   alt="Chris Cakes Event 2"
                   fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
                   className="object-cover"
                 />
               </div>
@@ -306,6 +308,7 @@ export default async function HomePage() {
                   src="/home3.png"
                   alt="Chris Cakes Event 3"
                   fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
                   className="object-cover"
                 />
               </div>
@@ -314,6 +317,7 @@ export default async function HomePage() {
                   src="/home4.png"
                   alt="Chris Cakes Event 4"
                   fill
+                  sizes="(min-width: 768px) 25vw, 50vw"
                   className="object-cover"
                 />
               </div>
