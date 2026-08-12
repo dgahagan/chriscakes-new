@@ -1072,6 +1072,24 @@ decision on the fix.
 >
 > `core.sanity-cdn.com` (Sanity's visual-editing bridge) had to be added to the
 > Studio policy — found by observing a real violation, not by guessing.
+>
+> ✅ **Authenticated Studio surface manually verified by the owner 2026-08-12**
+> with the DevTools Console open: image upload, document edit and save all
+> succeeded with **no CSP violations**. Image upload is the strongest signal
+> available — it exercises `blob:`, the Sanity asset API, and CDN writes at
+> once. A real uploaded Sanity image was then confirmed to render on `/menu`
+> through the scoped `remotePatterns` with zero violations, which also closes
+> the earlier gap where the pattern could only be tested against a fake asset.
+>
+> **All human-only verification for this run is now complete.** T9, T19 and T20
+> each carried an "unverified in a logged-in browser" caveat; all three are
+> cleared.
+>
+> Note for future sessions: use **`localhost:3333`** for Studio work — it is
+> already in the project's Sanity CORS origins (`npx sanity cors list`), so no
+> new origin has to be registered. An arbitrary port triggers Studio's
+> "Connect this studio to your project" screen, whose "Add development host"
+> button writes a **permanent** CORS origin.
 
 **Phase 5 — Import script safety (B)**
 
