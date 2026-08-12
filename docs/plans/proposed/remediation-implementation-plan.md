@@ -1047,8 +1047,14 @@ decision on the fix.
 > the failures. The bot gates are unaffected — they return before any send.
 > T26's API tests should cover this path.
 - [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
-- [ ] T18 — robots + sitemap (`sonnet`) ∥ T19
+- [x] T18 — robots + sitemap (`sonnet`) ∥ T19 — `b23ed8c`
 - [ ] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18
+
+> **Note on the T18 ∥ T19 marker:** their *file sets* are disjoint, but T19 runs
+> `npm audit fix`, which rewrites `node_modules` and would break a concurrent
+> build in T18. They were run **sequentially**. Treat `∥` as a statement about
+> files only — tasks that touch installed dependencies are never actually
+> parallel-safe.
 - [ ] T20 — Security headers and CSP (`opus`)
 
 **Phase 5 — Import script safety (B)**
