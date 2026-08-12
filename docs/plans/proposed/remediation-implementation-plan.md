@@ -1006,7 +1006,7 @@ decision on the fix.
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
 - [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
 - [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ⚠ Studio DOM unverified (login cannot be automated — see commit body); needs one manual look in a logged-in browser
-- [ ] T10 — Delete `test-dynamic-page` document (`opus`) ⚠ **BLOCKED — needs a human to run one command.** Guarded script committed in `f706e60`; executing it was denied by the sandbox. Run `npx tsx scripts/delete-test-document.ts --yes`, then confirm `/test-dynamic-page` 404s and `count(*[_type=="page"])` is 8.
+- [x] T10 — Delete `test-dynamic-page` document (`opus`) — script `f706e60`, executed 2026-08-12. Deleted `abe5021f-0a3a-4b99-b3b3-797895b6c756` ("Test Dynamic Page") from `production`; `count(*[_type=="page"])` 9 → 8; `/test-dynamic-page` returns 404 while `/about`, `/fundraising`, `/services` still 200. **Note:** a clean rebuild (`rm -rf .next`) is required after content deletions — Next's fetch cache otherwise keeps prerendering the removed slug.
 
 **Phase 3 — Frontend correctness & a11y (F)**
 
