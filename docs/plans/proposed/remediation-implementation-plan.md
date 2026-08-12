@@ -1005,7 +1005,7 @@ decision on the fix.
 - [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
 - [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
 - [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
-- [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ⚠ Studio DOM unverified (login cannot be automated — see commit body); needs one manual look in a logged-in browser
+- [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ✅ **Studio DOM manually verified by the owner 2026-08-12** in a logged-in browser: exactly one Site Settings entry, opens directly, no reachable path to create a second. The earlier ⚠ is cleared.
 - [x] T10 — Delete `test-dynamic-page` document (`opus`) — script `f706e60`, executed 2026-08-12. Deleted `abe5021f-0a3a-4b99-b3b3-797895b6c756` ("Test Dynamic Page") from `production`; `count(*[_type=="page"])` 9 → 8; `/test-dynamic-page` returns 404 while `/about`, `/fundraising`, `/services` still 200. **Note:** a clean rebuild (`rm -rf .next`) is required after content deletions — Next's fetch cache otherwise keeps prerendering the removed slug.
 
 **Phase 3 — Frontend correctness & a11y (F)**
@@ -1048,7 +1048,7 @@ decision on the fix.
 > T26's API tests should cover this path.
 - [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
 - [x] T18 — robots + sitemap (`sonnet`) ∥ T19 — `b23ed8c`
-- [x] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18 — `14eb919`. 41 → 12 vulns (critical + low cleared); 7 high / 5 moderate residuals all need major bumps (`sanity@6`, `next@16`, `next-sanity@13`) and are documented in the commit body. No Sanity bump was applied, so T9's resolver is on an unchanged dependency surface.
+- [x] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18 — `14eb919`. 41 → 12 vulns (critical + low cleared); 7 high / 5 moderate residuals all need major bumps (`sanity@6`, `next@16`, `next-sanity@13`) and are documented in the commit body. No Sanity bump was applied, so T9's resolver is on an unchanged dependency surface. ✅ **Studio edit/save manually verified by the owner 2026-08-12** against `staging`: changed a menu item price and uploaded an image, both persisted and rendered on `/menu` after ISR revalidation. The earlier "interactive check outstanding" note is cleared.
 
 > **Note on the T18 ∥ T19 marker:** their *file sets* are disjoint, but T19 runs
 > `npm audit fix`, which rewrites `node_modules` and would break a concurrent
