@@ -116,7 +116,7 @@ export default async function ServicesPage() {
   const [page, faqs, settings] = await Promise.all([
     getPageData(),
     getFAQs(),
-    client.fetch(siteSettingsQuery),
+    client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } }),
   ]);
 
   if (!page) {

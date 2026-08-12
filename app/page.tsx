@@ -92,7 +92,11 @@ interface SiteSettings {
 
 async function getMenuItems() {
   try {
-    const items = await client.fetch<MenuItem[]>(menuItemsQuery);
+    const items = await client.fetch<MenuItem[]>(
+      menuItemsQuery,
+      {},
+      { next: { revalidate: 60 } }
+    );
     return items || [];
   } catch (error) {
     console.error('Error fetching menu items:', error);
@@ -103,7 +107,9 @@ async function getMenuItems() {
 async function getTestimonials() {
   try {
     const testimonials = await client.fetch<Testimonial[]>(
-      featuredTestimonialsQuery
+      featuredTestimonialsQuery,
+      {},
+      { next: { revalidate: 60 } }
     );
     return testimonials || [];
   } catch (error) {
@@ -114,7 +120,11 @@ async function getTestimonials() {
 
 async function getSiteSettings() {
   try {
-    const settings = await client.fetch<SiteSettings>(siteSettingsQuery);
+    const settings = await client.fetch<SiteSettings>(
+      siteSettingsQuery,
+      {},
+      { next: { revalidate: 60 } }
+    );
     return settings;
   } catch (error) {
     console.error('Error fetching site settings:', error);
@@ -123,9 +133,11 @@ async function getSiteSettings() {
 }
 
 export default async function HomePage() {
-  const menuItems = await getMenuItems();
-  const testimonials = await getTestimonials();
-  const settings = await getSiteSettings();
+  const [menuItems, testimonials, settings] = await Promise.all([
+    getMenuItems(),
+    getTestimonials(),
+    getSiteSettings(),
+  ]);
 
   // Generate Restaurant Schema
   const restaurantSchema = settings ? generateRestaurantSchema(settings) : null;
@@ -213,9 +225,9 @@ export default async function HomePage() {
                 ></iframe>
               </div>
               <div className="bg-gray-100 p-4 rounded text-center">
-                <h4 className="font-bold text-gray-900">
+                <h2 className="font-bold text-gray-900">
                   Premier Breakfast Caterer And Large Event Specialist
-                </h4>
+                </h2>
               </div>
             </div>
           </div>
@@ -230,9 +242,9 @@ export default async function HomePage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div>
-              <h4 className="font-bold text-gray-900 mb-4">
+              <h3 className="font-bold text-gray-900 mb-4">
                 See us in action on Youtube!
-              </h4>
+              </h3>
               <ul className="space-y-2">
                 <li className="flex gap-2">
                   <span className="text-[#dc143c]">•</span>
@@ -265,9 +277,9 @@ export default async function HomePage() {
               </ul>
               {testimonials.length > 0 && (
                 <div className="mt-8">
-                  <h4 className="font-bold text-gray-900 mb-4">
+                  <h3 className="font-bold text-gray-900 mb-4">
                     What our customers have to say
-                  </h4>
+                  </h3>
                   <blockquote className="border-l-4 border-[#dc143c] pl-4 italic">
                     <p className="text-gray-700 mb-2">
                       {testimonials[0].quote}

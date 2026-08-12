@@ -1,5 +1,9 @@
 import { client } from '@/lib/sanity';
-import { menuItemsQuery, menuCategoriesQuery, siteSettingsQuery } from '@/lib/queries';
+import {
+  menuItemsQuery,
+  menuCategoriesQuery,
+  siteSettingsQuery,
+} from '@/lib/queries';
 import MenuDisplay from '@/components/menu/MenuDisplay';
 import SchemaMarkup from '@/components/common/SchemaMarkup';
 import ShareButtons from '@/components/common/ShareButtons';
@@ -47,9 +51,9 @@ export const metadata: Metadata = {
 async function getMenuData() {
   try {
     const [items, categories, settings] = await Promise.all([
-      client.fetch(menuItemsQuery),
-      client.fetch(menuCategoriesQuery),
-      client.fetch(siteSettingsQuery),
+      client.fetch(menuItemsQuery, {}, { next: { revalidate: 60 } }),
+      client.fetch(menuCategoriesQuery, {}, { next: { revalidate: 60 } }),
+      client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } }),
     ]);
     return { items: items || [], categories: categories || [], settings };
   } catch (error) {
@@ -91,8 +95,18 @@ export default async function MenuPage() {
                 title="Check out ChrisCakes breakfast menu!"
                 description="Delicious pancakes and breakfast catering from ChrisCakes"
                 image="https://www.chriscakesofmi.com/logo.png"
-                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
-                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+                platforms={
+                  settings?.shareButtons?.platforms || [
+                    'facebook',
+                    'twitter',
+                    'pinterest',
+                    'whatsapp',
+                    'native',
+                  ]
+                }
+                showNativeShare={settings?.shareButtons?.platforms?.includes(
+                  'native'
+                )}
               />
             </div>
           )}

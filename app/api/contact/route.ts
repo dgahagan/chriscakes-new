@@ -61,6 +61,8 @@ export async function POST(request: NextRequest) {
     try {
       const settings = await client.fetch(
         `*[_type == "siteSettings"][0]{ contactFormRecipients }`,
+        {},
+        { next: { revalidate: 60 } }
       );
       recipientEmails = settings?.contactFormRecipients || [];
     } catch (error) {
@@ -155,14 +157,14 @@ Reply directly to this email to respond to the customer.
         replyTo: body.contactEmail,
         subject: `New Event Inquiry - ${body.contactName} - ${body.eventStartDate || 'TBD'}`,
         text: emailContent,
-      }),
+      })
     );
 
     const results = await Promise.all(emailPromises);
 
     console.log(
       `Email sent successfully to ${recipientEmails.length} recipient(s):`,
-      recipientEmails,
+      recipientEmails
     );
     console.log('Resend results:', results);
 

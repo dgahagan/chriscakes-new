@@ -72,7 +72,7 @@ export async function generateStaticParams() {
   const pages = await client.fetch<Array<{ slug: { current: string } }>>(
     allPagesQuery,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 60 } }
   );
 
   return pages
@@ -144,7 +144,7 @@ export default async function DynamicPage({ params }: PageProps) {
       { slug },
       { next: { revalidate: 60 } }
     ),
-    client.fetch(siteSettingsQuery),
+    client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } }),
   ]);
 
   if (!page) {

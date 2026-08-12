@@ -73,10 +73,24 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
         sorted.sort((a, b) => b.name.localeCompare(a.name));
         break;
       case 'price-asc':
-        sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+        sorted.sort((a, b) => {
+          const aPrice = a.price;
+          const bPrice = b.price;
+          if (aPrice == null && bPrice == null) return 0;
+          if (aPrice == null) return 1;
+          if (bPrice == null) return -1;
+          return aPrice - bPrice;
+        });
         break;
       case 'price-desc':
-        sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        sorted.sort((a, b) => {
+          const aPrice = a.price;
+          const bPrice = b.price;
+          if (aPrice == null && bPrice == null) return 0;
+          if (aPrice == null) return 1;
+          if (bPrice == null) return -1;
+          return bPrice - aPrice;
+        });
         break;
       default:
         // Keep default order
