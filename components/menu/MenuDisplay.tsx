@@ -29,7 +29,12 @@ interface MenuDisplayProps {
   categories: MenuCategory[];
 }
 
-type SortOption = 'default' | 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
+type SortOption =
+  | 'default'
+  | 'name-asc'
+  | 'name-desc'
+  | 'price-asc'
+  | 'price-desc';
 
 export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -42,7 +47,9 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
 
     // Filter by category
     if (activeCategory !== null) {
-      filtered = filtered.filter((item) => item.category?._id === activeCategory);
+      filtered = filtered.filter(
+        (item) => item.category?._id === activeCategory
+      );
     }
 
     // Filter by search query
@@ -89,7 +96,7 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
       acc[categoryTitle].push(item);
       return acc;
     },
-    {},
+    {}
   );
 
   const handlePrint = () => {
@@ -107,7 +114,7 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
             placeholder="Search menu items..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-crimson-500 focus:border-crimson-500"
+            className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc143c] focus:border-[#dc143c]"
             aria-label="Search menu items"
           />
           <svg
@@ -143,14 +150,17 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
         {/* Sort and Print Controls */}
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center gap-2">
-            <label htmlFor="sort-select" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="sort-select"
+              className="text-sm font-medium text-gray-700"
+            >
               Sort by:
             </label>
             <select
               id="sort-select"
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value as SortOption)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-crimson-500 focus:border-crimson-500"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc143c] focus:border-[#dc143c]"
             >
               <option value="default">Default</option>
               <option value="name-asc">Name (A-Z)</option>
@@ -165,7 +175,12 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             aria-label="Print menu"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -190,7 +205,9 @@ export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
       {/* Results Summary */}
       {searchQuery && (
         <div className="mb-4 text-sm text-gray-600 print:hidden">
-          Found {processedItems.length} item{processedItems.length !== 1 ? 's' : ''} matching &quot;{searchQuery}&quot;
+          Found {processedItems.length} item
+          {processedItems.length !== 1 ? 's' : ''} matching &quot;{searchQuery}
+          &quot;
         </div>
       )}
 
