@@ -1013,7 +1013,7 @@ decision on the fix.
 - [x] T11 — Missing-document resilience + branded 404 (`sonnet`) — `b8823ad`
 - [x] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13 — `734a551` (also carries gate-required Prettier reformatting of `MenuDisplay.tsx`)
 - [x] T13 — Interactive-component accessibility (`sonnet`) ∥ T12 — `651928e` (mobile panel is now always-mounted and toggled with `hidden` so `aria-controls` always resolves; verified Escape/focus-return/`aria-current` interactively)
-- [ ] T14 — Rendering correctness and image sizing (`sonnet`)
+- [x] T14 — Rendering correctness and image sizing (`sonnet`) — `a0ec740`. Scope note: also added `sizes` to the four `fill` images in `app/page.tsx` (not in T14's stated file list, but required by its "no `fill` image lacks `sizes`" acceptance); nothing else in that file was touched, so T15 still owns it. The YouTube id keeps a `^[a-zA-Z0-9_-]+$` check so the `URL`-based rewrite does not loosen the old regex's guarantee.
 - [ ] T15 — Data-fetch, sort, and directive cleanup (`sonnet`)
 
 **Phase 4 — Endpoint & security hardening (D + E)**
