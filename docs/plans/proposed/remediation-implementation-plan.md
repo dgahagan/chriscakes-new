@@ -1048,7 +1048,7 @@ decision on the fix.
 > T26's API tests should cover this path.
 - [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
 - [x] T18 — robots + sitemap (`sonnet`) ∥ T19 — `b23ed8c`
-- [ ] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18
+- [x] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18 — `14eb919`. 41 → 12 vulns (critical + low cleared); 7 high / 5 moderate residuals all need major bumps (`sanity@6`, `next@16`, `next-sanity@13`) and are documented in the commit body. No Sanity bump was applied, so T9's resolver is on an unchanged dependency surface.
 
 > **Note on the T18 ∥ T19 marker:** their *file sets* are disjoint, but T19 runs
 > `npm audit fix`, which rewrites `node_modules` and would break a concurrent
