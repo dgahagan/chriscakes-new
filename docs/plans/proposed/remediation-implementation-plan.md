@@ -1014,7 +1014,9 @@ decision on the fix.
 - [x] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13 — `734a551` (also carries gate-required Prettier reformatting of `MenuDisplay.tsx`)
 - [x] T13 — Interactive-component accessibility (`sonnet`) ∥ T12 — `651928e` (mobile panel is now always-mounted and toggled with `hidden` so `aria-controls` always resolves; verified Escape/focus-return/`aria-current` interactively)
 - [x] T14 — Rendering correctness and image sizing (`sonnet`) — `a0ec740`. Scope note: also added `sizes` to the four `fill` images in `app/page.tsx` (not in T14's stated file list, but required by its "no `fill` image lacks `sizes`" acceptance); nothing else in that file was touched, so T15 still owns it. The YouTube id keeps a `^[a-zA-Z0-9_-]+$` check so the `URL`-based rewrite does not loosen the old regex's guarantee.
-- [ ] T15 — Data-fetch, sort, and directive cleanup (`sonnet`)
+- [x] T15 — Data-fetch, sort, and directive cleanup (`sonnet`) — `415621a`. The homepage had **two** heading skips, not one (`h1→h4→h2→h4→h4→h2`); all fixed. ISR sweep covered all 19 `client.fetch` calls and normalized a stray `revalidate: 3600` in `[slug]`'s `generateStaticParams` to 60.
+
+**Phase 3 complete.**
 
 **Phase 4 — Endpoint & security hardening (D + E)**
 
