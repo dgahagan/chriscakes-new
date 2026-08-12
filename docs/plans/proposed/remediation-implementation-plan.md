@@ -1020,7 +1020,30 @@ decision on the fix.
 
 **Phase 4 — Endpoint & security hardening (D + E)**
 
-- [ ] T16 — Contact endpoint hardening (`opus`)
+- [x] T16 — Contact endpoint hardening (`opus`) — `0af1f80`
+
+> **⚠ Two operational warnings learned the hard way at T16 (2026-08-12).**
+>
+> 1. **`pkill -f "next start"` does NOT kill the server.** It matches the npm
+>    wrapper, not the `next-server` child, which survives and keeps serving a
+>    **stale build** on the same port. A later `npm run start` then dies with
+>    `EADDRINUSE` while curl happily talks to the old code. Always
+>    `pkill -f "next-server"`, then assert the port is free, then assert a
+>    response that only the new code can produce before trusting any result.
+> 2. **`.env.local` carries a live `RESEND_API_KEY` and real recipients**
+>    (`contactFormRecipients` in Sanity takes priority over `CONTACT_EMAIL_TO`,
+>    so blanking the env var alone is NOT enough). Ten test posts against the
+>    stale server delivered **20 real emails** to the owner's inboxes. Any
+>    future contact-endpoint testing must start the server with an **invalid**
+>    `RESEND_API_KEY` and verify `grep -c "Email sent successfully"` is 0.
+>
+> **🐛 Pre-existing bug found, NOT fixed (out of T16's scope, needs an owner
+> decision):** the endpoint returns 200 "sent successfully" even when Resend
+> fails. The Resend SDK resolves with `{data, error}` instead of throwing, and
+> neither the original code nor this task inspects `error`. A genuine delivery
+> failure is therefore reported to the visitor as success and the inquiry is
+> lost silently. Confirmed live: with an invalid API key the endpoint still
+> returned the success payload.
 - [ ] T17 — JSON-LD server rendering and XSS fix (`sonnet`)
 - [ ] T18 — robots + sitemap (`sonnet`) ∥ T19
 - [ ] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18
