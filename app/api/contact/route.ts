@@ -372,10 +372,41 @@ Reply directly to this email to respond to the customer.
       })
     );
 
-    await Promise.all(emailPromises);
+    // Resend resolves with { data, error } rather than throwing, so a failed
+    // delivery has to be read off the result. Without this the endpoint
+    // reports success to the visitor and the inquiry is lost silently.
+    const results = await Promise.allSettled(emailPromises);
+
+    const failures = results.flatMap((result, index) => {
+      const recipient = recipientEmails[index];
+      if (result.status === 'rejected') {
+        return [{ recipient, reason: String(result.reason) }];
+      }
+      if (result.value.error) {
+        return [{ recipient, reason: String(result.value.error.message) }];
+      }
+      return [];
+    });
+
+    const delivered = recipientEmails.length - failures.length;
+
+    if (failures.length > 0) {
+      console.error('Contact form: delivery failed for', failures);
+    }
+
+    // Nothing got through — tell the visitor, so they can call instead.
+    if (delivered === 0) {
+      return NextResponse.json(
+        {
+          error:
+            'Failed to send your inquiry. Please try again or call us directly.',
+        },
+        { status: 500 }
+      );
+    }
 
     console.log(
-      `Email sent successfully to ${recipientEmails.length} recipient(s)`
+      `Email sent successfully to ${delivered} of ${recipientEmails.length} recipient(s)`
     );
 
     return NextResponse.json(SUCCESS_BODY, { status: 200 });
