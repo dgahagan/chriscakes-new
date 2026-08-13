@@ -1206,7 +1206,37 @@ decision on the fix.
 > **Tooling note for future sessions:** long `git commit` heredocs get blocked
 > by the permission classifier in this environment. Write the message to a file
 > and use `git commit -F <file>` instead.
-- [ ] T24 — Rewrite navigation and homepage specs (`sonnet`)
+- [x] T24 — Rewrite navigation and homepage specs (`sonnet`) — `e123134`
+
+> **The root cause of much of the red suite: every nav link exists twice in
+> the DOM simultaneously.** T13 made the `#mobile-menu` panel always-mounted
+> (toggled by the `hidden` class) so `aria-controls` always resolves, and the
+> desktop list `div.hidden.lg:flex` is always mounted too. So a bare
+> `getByRole('link', { name: 'Menus' })` matches **two** elements and fails
+> Playwright strict mode. Every nav locator must be scoped to one container
+> first. T25–T27 must do the same.
+>
+> Verified independently by the orchestrator: **29 passed, 5 skipped, 0
+> failed** on chromium + Mobile Chrome. The 5 skips are the intended
+> desktop-only / mobile-only splits.
+>
+> **⚠ Harness trap fixed here (mechanical consequence of T23).** The config
+> had `reuseExistingServer: !CI`, so a local run adopted whatever already
+> owned port 3000 rather than the build it had just made. **On this host an
+> unrelated service permanently owns :3000 and 302s to `/login`** — the suite
+> would have silently tested that app. Now `reuseExistingServer: false` (the
+> suite always serves its own build) and the port is overridable:
+> **run local suites as `PLAYWRIGHT_PORT=3100 npm test`.** A busy port now
+> fails loudly instead of producing confident nonsense.
+>
+> `checkNavigationLinks` and `testMobileMenu` were deleted from `test-utils`
+> — both used unscoped locators (the former substring-matched, so
+> "Fundraising" also hit "Fundraising Tips") and the latter used
+> `waitForTimeout`.
+>
+> **Note for the contact specs:** the phone number is plain text in `Header`
+> and `Footer`, never a `tel:` anchor — only `/contact` has one. The plan's
+> "assert a `tel:` link exists" has nothing to bind to on the homepage/nav.
 - [ ] T25 — Rewrite menu spec and add page smoke tests (`sonnet`)
 - [ ] T26 — Contact form and API coverage (`sonnet`)
 - [ ] T27 — Accessibility spec rewrite and full-suite green (`opus`)
