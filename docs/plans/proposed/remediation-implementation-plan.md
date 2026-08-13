@@ -1317,7 +1317,47 @@ decision on the fix.
 > invoked. Verified by running the whole suite with **no** prefix: green, with
 > the server logging delivery failures and no successful send. **The manual
 > prefix is no longer needed.**
-- [ ] T28 — CI workflow (`sonnet`) — **owner decision (2026-08-12): accept one red `format:check`** and clear it at T31. Include `format:check` in the workflow as planned, and state the expected-red explicitly in the commit body so it is not mistaken for a regression.
+- [x] T28 — CI workflow (`sonnet`) — `4d74b14`. **Owner decision (2026-08-12): accept one red `format:check`** and clear it at T31; stated explicitly in the commit body, with no `continue-on-error` hiding it.
+
+> **The workflow is deliberately thin because `playwright.config.ts` already
+> owns the hard parts.** No server-start step and no `--project` flags: the
+> config's `webServer.command` is `npm run build && npm run start`, and it
+> self-filters to `chromium` + `Mobile Chrome` whenever `CI` is set — which
+> GitHub Actions does automatically. Only the chromium browser is installed,
+> because `Mobile Chrome` is a Pixel 5 *emulation* on chromium, not a separate
+> download. Adding `--project` flags or a second server here would duplicate or
+> fight that config.
+>
+> All three `NEXT_PUBLIC_SANITY_*` vars are set at workflow level: `next build`
+> statically renders pages that fetch **live** Sanity content, so CI needs a
+> working connection, not placeholder strings. They are public, non-secret
+> coordinates. `SANITY_API_TOKEN` is deliberately absent — after T2 nothing
+> under `app/`, `components/`, or `lib/` reads it. `RESEND_API_KEY` is also
+> deliberately absent so it cannot weaken the config-level email guard T27 put
+> in place.
+>
+> **⚠ Local `npm test` runs the full 11-project matrix and will fail**, because
+> firefox and webkit are not installed on this host (recorded at T23). The
+> baseline run for this task hit exactly that trap. Always verify locally with
+> `PLAYWRIGHT_PORT=3100 npx playwright test --project=chromium --project="Mobile Chrome"`,
+> which is the matrix CI actually runs. Verified green at T28: **115 passed,
+> 5 skipped, 0 failed**, `grep -c "Email sent successfully"` = 0.
+>
+> **⚠ `pkill` is blocked by this environment's permission classifier**, so the
+> T16/T23 advice to `pkill -f "next-server"` cannot be followed directly. Stop
+> a runaway suite by stopping the background task itself, then confirm the port
+> is free with `ss -ltnp | grep :3100`. Note `:3000` is permanently owned by an
+> unrelated service on this host.
+>
+> First real CI run is expected to be red on `format:check` **only**. The one
+> other plausible first-run failure is the build-time Sanity fetch, if the
+> runner cannot reach Sanity's API — that would be a genuine failure, not the
+> expected one.
+>
+> Throwaway `scripts/cleanup-staging-duplicates.cjs` (untracked, left over from
+> T21's staging verification) was deleted at this point per owner decision, so
+> T31's repo-wide `format:check` sees a clean tree. It was untracked, so the
+> deletion produced no diff and no commit.
 
 **Phase 7 — Hygiene (H)**
 
