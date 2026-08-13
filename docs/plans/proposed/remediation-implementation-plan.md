@@ -1237,7 +1237,22 @@ decision on the fix.
 > **Note for the contact specs:** the phone number is plain text in `Header`
 > and `Footer`, never a `tel:` anchor — only `/contact` has one. The plan's
 > "assert a `tel:` link exists" has nothing to bind to on the homepage/nav.
-- [ ] T25 — Rewrite menu spec and add page smoke tests (`sonnet`)
+- [x] T25 — Rewrite menu spec and add page smoke tests (`sonnet`) — `42b7c29`
+
+> Verified independently: **22 passed, 0 failed** on chromium + Mobile Chrome.
+> All 8 `waitForTimeout` calls are gone — `grep -rn "waitForTimeout" tests/e2e`
+> is now empty (the accessibility spec still has 5; T27 clears them).
+>
+> Filters are located by `aria-pressed` rather than by button text, so renaming
+> a category in Studio cannot turn the suite red. Search seeds its query from
+> the first rendered item's own name at runtime instead of hardcoding one.
+>
+> `pages.spec.ts` sources its `[slug]` target from **`/sitemap.xml`** at
+> runtime — no hardcoded slug and no Sanity credentials in the test. It
+> excludes the static routes and the two reserved slugs (`fundraising`,
+> `services`), mirroring `RESERVED_SLUGS` in `app/[slug]/page.tsx`. The 404
+> test asserts the real HTTP status from the navigation response, which is the
+> first actual coverage of T11's `notFound()` handling.
 - [ ] T26 — Contact form and API coverage (`sonnet`)
 - [ ] T27 — Accessibility spec rewrite and full-suite green (`opus`)
 - [ ] T28 — CI workflow (`sonnet`) — **owner decision (2026-08-12): accept one red `format:check`** and clear it at T31. Include `format:check` in the workflow as planned, and state the expected-red explicitly in the commit body so it is not mistaken for a regression.
