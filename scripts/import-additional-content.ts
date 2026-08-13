@@ -1,3 +1,34 @@
+/**
+ * One-time content migration: seeds the Fundraising Menus category, its
+ * menu items, 6 general FAQs, and 3 testimonials into Sanity.
+ *
+ * SAFE BY DESIGN AGAINST A POPULATED DATASET: this script's writes
+ * (menuCategory, menuItem, faq, testimonial) only ever run against a
+ * dataset that has ZERO existing documents of ALL FOUR of those types. If
+ * the dataset already has any menu category, menu item, FAQ, or
+ * testimonial — from a prior run of this script, another import script, or
+ * manual edits in Studio — the script writes NOTHING. It only prints a
+ * divergence report (entries in this file's hardcoded data that have no
+ * matching document in the dataset) so an operator can see what differs.
+ * This is intentional: once real content exists, this script must never
+ * resurrect or duplicate items an editor may have deleted or already
+ * created on purpose, so it is permanently inert against live data.
+ *
+ * Existence matching uses slug.current OR title/name for menu categories
+ * and menu items (slugs can drift — e.g. Sanity auto-deduplicating a slug
+ * to `-2` on an earlier import). FAQs and testimonials have no slug field,
+ * so they are matched on `question` and `author` respectively.
+ *
+ * When the dataset IS empty for all four types, the full import runs and
+ * creates every document with a deterministic id (`menuCategory-<slug>`,
+ * `menuItem-<slug>`, `faq-<order>`, `testimonial-<order>`) via
+ * `createIfNotExists`.
+ *
+ * Refuses to run without `--yes` and prints the target project and dataset
+ * before touching anything.
+ *
+ *   npx tsx scripts/import-additional-content.ts --yes
+ */
 import { createClient } from '@sanity/client';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -5,16 +36,13 @@ import * as path from 'path';
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN!,
-  apiVersion: '2024-01-01',
-});
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_API_TOKEN;
 
 // Fundraising Category
 const fundraisingCategoryData = {
+  _id: 'menuCategory-fundraising-menus',
   _type: 'menuCategory',
   title: 'Fundraising Menus',
   slug: { _type: 'slug', current: 'fundraising-menus' },
@@ -139,62 +167,266 @@ const testimonialsData = [
 ];
 
 async function importAdditionalContent() {
+  if (!projectId) {
+    throw new Error('NEXT_PUBLIC_SANITY_PROJECT_ID is not set');
+  }
+  if (!dataset) {
+    throw new Error('NEXT_PUBLIC_SANITY_DATASET is not set');
+  }
+  if (!token) {
+    throw new Error('SANITY_API_TOKEN is not set (required to write)');
+  }
+
+  console.log(`Target project : ${projectId}`);
+  console.log(`Target dataset : ${dataset}`);
+
+  if (!process.argv.includes('--yes')) {
+    console.error(
+      '\nRefusing to run without --yes. This is a one-time migration script ' +
+        'that writes to the dataset above. Re-run with --yes to proceed.'
+    );
+    process.exit(1);
+  }
+
+  const client = createClient({
+    projectId,
+    dataset,
+    useCdn: false,
+    token,
+    apiVersion: '2024-01-01',
+  });
+
+  const failures: Array<{ name: string; error: unknown }> = [];
+
   try {
-    console.log('Starting import of FAQs, Testimonials, and Fundraising menu...\n');
-
-    // Step 1: Create fundraising category
-    console.log('Creating Fundraising category...');
-    const fundraisingCategory = await client.create(fundraisingCategoryData);
     console.log(
-      `✓ Created: ${fundraisingCategory.title} (ID: ${fundraisingCategory._id})\n`
+      '\nStarting import of FAQs, Testimonials, and Fundraising menu...\n'
     );
 
-    // Step 2: Create fundraising menu items
-    console.log('Creating fundraising menu items...');
-    for (const item of fundraisingMenuItems) {
-      const menuItem = await client.create({
-        _type: 'menuItem',
-        name: item.name,
-        slug: { _type: 'slug', current: item.slug },
-        description: item.description,
-        price: null,
-        available: true,
-        featured: false,
-        order: item.order,
-        category: {
-          _type: 'reference',
-          _ref: fundraisingCategory._id,
-        },
-      });
-      console.log(`✓ Created: ${menuItem.name}`);
-    }
-    console.log(`\n✓ Imported ${fundraisingMenuItems.length} fundraising menu items\n`);
+    // Populated-dataset guard: if the dataset already has ANY menuCategory,
+    // menuItem, faq, or testimonial document, this script must not write to
+    // it — see the header comment for why. It only reports what diverges.
+    const [categoryCount, itemCount, faqCount, testimonialCount] =
+      await Promise.all([
+        client.fetch<number>(`count(*[_type == "menuCategory"])`),
+        client.fetch<number>(`count(*[_type == "menuItem"])`),
+        client.fetch<number>(`count(*[_type == "faq"])`),
+        client.fetch<number>(`count(*[_type == "testimonial"])`),
+      ]);
+    const isPopulated =
+      categoryCount > 0 ||
+      itemCount > 0 ||
+      faqCount > 0 ||
+      testimonialCount > 0;
 
-    // Step 3: Create FAQs
-    console.log('Creating FAQs...');
-    for (const faq of faqsData) {
-      await client.create(faq);
-      console.log(`✓ Created FAQ: ${faq.question.substring(0, 50)}...`);
-    }
-    console.log(`\n✓ Imported ${faqsData.length} FAQs\n`);
+    if (isPopulated) {
+      console.log(
+        `Dataset already has content: ${categoryCount} menu categories, ${itemCount} menu items, ${faqCount} FAQs, ${testimonialCount} testimonials.`
+      );
+      console.log(
+        'Refusing to create or modify any menu category / menu item / FAQ / testimonial — ' +
+          'this script only performs the initial import into an empty dataset. See header comment.\n'
+      );
 
-    // Step 4: Create testimonials
-    console.log('Creating testimonials...');
-    for (const testimonial of testimonialsData) {
-      await client.create(testimonial);
-      console.log(`✓ Created testimonial from: ${testimonial.author}`);
-    }
-    console.log(`\n✓ Imported ${testimonialsData.length} testimonials\n`);
+      const [
+        existingCategories,
+        existingItems,
+        existingFaqs,
+        existingTestimonials,
+      ] = await Promise.all([
+        client.fetch<
+          Array<{ _id: string; title: string; slug: string | null }>
+        >(`*[_type == "menuCategory"]{ _id, title, "slug": slug.current }`),
+        client.fetch<Array<{ _id: string; name: string; slug: string | null }>>(
+          `*[_type == "menuItem"]{ _id, name, "slug": slug.current }`
+        ),
+        client.fetch<Array<{ _id: string; question: string }>>(
+          `*[_type == "faq"]{ _id, question }`
+        ),
+        client.fetch<Array<{ _id: string; author: string }>>(
+          `*[_type == "testimonial"]{ _id, author }`
+        ),
+      ]);
 
-    console.log('🎉 Import complete!\n');
-    console.log('Summary:');
-    console.log(`- 1 fundraising category created`);
-    console.log(`- ${fundraisingMenuItems.length} fundraising menu items created`);
-    console.log(`- ${faqsData.length} FAQs created`);
-    console.log(`- ${testimonialsData.length} testimonials created`);
-    console.log(
-      '\nYou can now view these in Sanity Studio at http://localhost:3000/studio'
-    );
+      const categorySlugs = new Set(
+        existingCategories
+          .map((c) => c.slug)
+          .filter((s): s is string => Boolean(s))
+      );
+      const categoryTitles = new Set(existingCategories.map((c) => c.title));
+      const itemSlugs = new Set(
+        existingItems.map((i) => i.slug).filter((s): s is string => Boolean(s))
+      );
+      const itemNames = new Set(existingItems.map((i) => i.name));
+      const faqQuestions = new Set(existingFaqs.map((f) => f.question));
+      const testimonialAuthors = new Set(
+        existingTestimonials.map((t) => t.author)
+      );
+
+      const categoryMissing =
+        !categorySlugs.has(fundraisingCategoryData.slug.current) &&
+        !categoryTitles.has(fundraisingCategoryData.title);
+      const missingItems = fundraisingMenuItems.filter(
+        (item) => !itemSlugs.has(item.slug) && !itemNames.has(item.name)
+      );
+      const missingFaqs = faqsData.filter(
+        (faq) => !faqQuestions.has(faq.question)
+      );
+      const missingTestimonials = testimonialsData.filter(
+        (testimonial) => !testimonialAuthors.has(testimonial.author)
+      );
+
+      console.log('Divergence report (no writes performed):');
+      if (
+        !categoryMissing &&
+        missingItems.length === 0 &&
+        missingFaqs.length === 0 &&
+        missingTestimonials.length === 0
+      ) {
+        console.log(
+          '  None — every category, menu item, FAQ, and testimonial in this file has a match in the dataset.'
+        );
+      } else {
+        if (categoryMissing) {
+          console.log(
+            `  Present in script data but not in dataset (menu categories): ${fundraisingCategoryData.title}`
+          );
+        }
+        if (missingItems.length > 0) {
+          console.log(
+            `  Present in script data but not in dataset (menu items): ${missingItems
+              .map((i) => i.name)
+              .join(', ')}`
+          );
+        }
+        if (missingFaqs.length > 0) {
+          console.log(
+            `  Present in script data but not in dataset (FAQs): ${missingFaqs
+              .map((f) => f.question)
+              .join(', ')}`
+          );
+        }
+        if (missingTestimonials.length > 0) {
+          console.log(
+            `  Present in script data but not in dataset (testimonials): ${missingTestimonials
+              .map((t) => t.author)
+              .join(', ')}`
+          );
+        }
+      }
+      console.log(
+        '\nNo menu categories, menu items, FAQs, or testimonials were created or modified.\n'
+      );
+    } else {
+      console.log(
+        'Dataset has no existing content of these types — importing.\n'
+      );
+
+      // Step 1: Create fundraising category with a deterministic id.
+      console.log('Creating Fundraising category...');
+      try {
+        const fundraisingCategory = await client.createIfNotExists(
+          fundraisingCategoryData
+        );
+        console.log(
+          `✓ Created: ${fundraisingCategory.title} (ID: ${fundraisingCategory._id})\n`
+        );
+      } catch (error) {
+        failures.push({ name: 'Fundraising category', error });
+        console.error('✗ Error creating Fundraising category:', error);
+      }
+
+      // Step 2: Create fundraising menu items with deterministic ids,
+      // referencing the category above.
+      console.log('Creating fundraising menu items...');
+      let itemsCreated = 0;
+      for (const item of fundraisingMenuItems) {
+        try {
+          const menuItem = await client.createIfNotExists({
+            _id: `menuItem-${item.slug}`,
+            _type: 'menuItem',
+            name: item.name,
+            slug: { _type: 'slug', current: item.slug },
+            description: item.description,
+            available: true,
+            featured: false,
+            order: item.order,
+            category: {
+              _type: 'reference',
+              _ref: fundraisingCategoryData._id,
+            },
+          });
+          console.log(`✓ Created: ${menuItem.name}`);
+          itemsCreated++;
+        } catch (error) {
+          failures.push({ name: `Menu item: ${item.name}`, error });
+          console.error(`✗ Error creating menu item ${item.name}:`, error);
+        }
+      }
+      console.log(`\n✓ Imported ${itemsCreated} fundraising menu items\n`);
+
+      // Step 3: Create FAQs with deterministic ids.
+      console.log('Creating FAQs...');
+      let faqsCreated = 0;
+      for (const faq of faqsData) {
+        try {
+          await client.createIfNotExists({
+            _id: `faq-${faq.order}`,
+            ...faq,
+          });
+          console.log(`✓ Created FAQ: ${faq.question.substring(0, 50)}...`);
+          faqsCreated++;
+        } catch (error) {
+          failures.push({ name: `FAQ: ${faq.question}`, error });
+          console.error(`✗ Error creating FAQ "${faq.question}":`, error);
+        }
+      }
+      console.log(`\n✓ Imported ${faqsCreated} FAQs\n`);
+
+      // Step 4: Create testimonials with deterministic ids.
+      console.log('Creating testimonials...');
+      let testimonialsCreated = 0;
+      for (const testimonial of testimonialsData) {
+        try {
+          await client.createIfNotExists({
+            _id: `testimonial-${testimonial.order}`,
+            ...testimonial,
+          });
+          console.log(`✓ Created testimonial from: ${testimonial.author}`);
+          testimonialsCreated++;
+        } catch (error) {
+          failures.push({ name: `Testimonial: ${testimonial.author}`, error });
+          console.error(
+            `✗ Error creating testimonial from ${testimonial.author}:`,
+            error
+          );
+        }
+      }
+      console.log(`\n✓ Imported ${testimonialsCreated} testimonials\n`);
+
+      console.log('Summary:');
+      console.log(`- Fundraising category: attempted 1`);
+      console.log(
+        `- ${itemsCreated}/${fundraisingMenuItems.length} fundraising menu items created`
+      );
+      console.log(`- ${faqsCreated}/${faqsData.length} FAQs created`);
+      console.log(
+        `- ${testimonialsCreated}/${testimonialsData.length} testimonials created`
+      );
+      console.log(
+        '\nYou can now view these in Sanity Studio at http://localhost:3000/studio'
+      );
+    }
+
+    if (failures.length > 0) {
+      console.log(`\n✗ ${failures.length} item(s) FAILED to import:`);
+      for (const failure of failures) {
+        console.log(`  - ${failure.name}: ${String(failure.error)}`);
+      }
+      process.exit(1);
+    } else {
+      console.log('\n🎉 Import complete!\n');
+    }
   } catch (error) {
     console.error('Error importing content:', error);
     process.exit(1);
