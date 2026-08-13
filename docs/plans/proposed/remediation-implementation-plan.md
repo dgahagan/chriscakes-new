@@ -1426,7 +1426,50 @@ decision on the fix.
 > the string. Self-referential, pre-existing, not a defect.
 >
 > Gate: lint clean, build green, 115 passed / 5 skipped / 0 failed, 0 emails.
-- [ ] T30 — Archive superseded documentation (`haiku`)
+- [x] T30 — Archive superseded documentation (`haiku`) — `0f2c4ac`
+
+> All four moved at 100% similarity; `git log --follow --oneline --
+> docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
+> automated testing infrastructure (Phase 5)"), so history survived.
+>
+> **⚠ The acceptance criterion is self-contradictory and cannot be met as
+> literally written.** It asks that
+> `grep -rn "SOCIAL_MEDIA_INTEGRATION\|…" --exclude-dir=docs .` return nothing
+> *and* that referrers be updated to the new paths. An updated reference
+> **contains the filename**, so the grep can only be empty if every reference
+> is deleted outright. Resolved in substance: **zero root-level references
+> survive**, and every remaining match is a `docs/archive/` path explicitly
+> worded as archived. Verify with
+> `grep -rn "SOCIAL_MEDIA_INTEGRATION\|SOCIAL_MEDIA_STATUS\|PHASE5_TESTING_SUMMARY\|TESTING_GUIDE" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=docs . | grep -v "docs/archive/"`
+> which returns nothing.
+>
+> **Referrers were in more places than the plan predicted.** It named
+> `README.md` and `CLAUDE.md` as the likely referrers; neither actually
+> referenced these files. The real referrers were `IMPLEMENTATION_PLAN.md`
+> (3 places) plus **`tests/README.md` and `tests/QUICK_START.md`**, which the
+> plan did not anticipate at all.
+>
+> The archive README was corrected by the orchestrator before commit: it had
+> labelled `remediation-plan.md` as "Full implementation plan" and the
+> implementation plan as "context and rationale" — the two are swapped. Now
+> labelled design-plan vs execution-log.
+>
+> **⚠ T32 must re-point the archive README.** `docs/archive/README.md` cites
+> `docs/plans/proposed/…` four times; T32 moves both plans to
+> `docs/plans/implemented/`, which will dangle those links unless its
+> repo-wide grep catches them.
+>
+> Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
+
+- [x] T30b — Rewrite the stale test suite docs (`sonnet`) — **not in the
+  original plan; added by owner decision 2026-08-12.** T30 revealed that
+  `tests/README.md` and `tests/QUICK_START.md` are stale in exactly the way
+  T30 exists to fix: they document the deleted `visual/` suite and
+  `npm run test:visual`, omit the specs added in T25–T26 (`pages.spec.ts`,
+  `contact.spec.ts`, `tests/api/`), and instruct the reader to run tests
+  against `npm run dev` when T23 switched the suite to a production build.
+  Owner chose **rewrite** over archive. Sequenced before T31 so the format
+  sweep covers final content. — commit recorded below.
 - [ ] T31 — Repo-wide format sweep (`haiku`)
 - [ ] T32 — Graduate the plan documents (`opus`)
 
