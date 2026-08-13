@@ -12,31 +12,31 @@ Documents the UGC gallery, review widgets, click-to-tweet links, Pinterest board
 
 **Note:** Social media _links_ (ShareButtons component) remain on four pages; only embedded _feeds and widgets_ were removed.
 
-**Superseded by:** The current social media strategy documented in `CLAUDE.md` (no embedded feeds); `docs/plans/proposed/remediation-implementation-plan.md` (T5 deletion rationale).
+**Superseded by:** The current social media strategy documented in `CLAUDE.md` (no embedded feeds); `docs/plans/implemented/remediation-implementation-plan.md` (T5 deletion rationale).
 
 ### SOCIAL_MEDIA_STATUS.md
 
 Status tracking document for the social media integration features above, describing implementation progress of the UGC gallery, review widgets, and embedded feeds.
 
-**Superseded by:** `docs/plans/proposed/remediation-implementation-plan.md` (status of all remediation tasks).
+**Superseded by:** `docs/plans/implemented/remediation-implementation-plan.md` (status of all remediation tasks).
 
 ### PHASE5_TESTING_SUMMARY.md
 
 Describes the Phase 5 test suite, including the visual regression test suite, baselines, and test execution procedures. This suite was deleted in T23 because the visual regression baselines never existed.
 
-**Superseded by:** `docs/plans/proposed/remediation-implementation-plan.md` (testing strategy); `.github/workflows/ci.yml` (current CI testing).
+**Superseded by:** `docs/plans/implemented/remediation-implementation-plan.md` (testing strategy); `.github/workflows/ci.yml` (current CI testing).
 
 ### TESTING_GUIDE.md
 
 Documents the pre-rewrite Playwright test suite, test file locations, and the `test:visual` npm script (both deleted). The Playwright suite was completely rewritten from scratch in T23–T27 to match the refactored codebase.
 
-**Superseded by:** `CLAUDE.md` (development commands and testing procedures); `docs/plans/proposed/remediation-implementation-plan.md` (why tests were rewritten); `.github/workflows/ci.yml` (current CI workflow as of T28).
+**Superseded by:** `CLAUDE.md` (development commands and testing procedures); `docs/plans/implemented/remediation-implementation-plan.md` (why tests were rewritten); `.github/workflows/ci.yml` (current CI workflow as of T28).
 
 ## Finding Current Information
 
 - **Development commands and conventions:** See `CLAUDE.md`
-- **Why the remediation was done (design plan):** See `docs/plans/proposed/remediation-plan.md`
-- **What was actually changed, task by task (execution log):** See `docs/plans/proposed/remediation-implementation-plan.md`
+- **Why the remediation was done (design plan):** See `docs/plans/implemented/remediation-plan.md`
+- **What was actually changed, task by task (execution log):** See `docs/plans/implemented/remediation-implementation-plan.md`
 - **Project setup and deployment:** See `SETUP.md`
 
 ## History

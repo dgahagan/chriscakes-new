@@ -2,7 +2,27 @@
 
 **Date:** 2026-07-26
 **Input:** `CODE_REVIEW.md` (full-project review, 2026-07-26)
-**Status:** Draft — pending review
+**Status:** IMPLEMENTED (2026-08-12)
+
+> Delivered on branch `feat/remediation` (PR #1). Every workstream A–H landed;
+> see `docs/plans/implemented/remediation-implementation-plan.md` for the
+> task-by-task execution log, including the verification evidence and the
+> deviations from this design that execution forced.
+>
+> Three things this design assumed that turned out to be wrong, recorded here
+> so the next reader does not repeat them:
+>
+> - **`ShareButtons.tsx` was not unused.** It is imported by four pages, so it
+>   was kept along with its `next-share` dependency. Only the embedded
+>   feed/widget components were deleted.
+> - **Deterministic ids alone did not make the import scripts idempotent.** The
+>   live catalogue predates those ids, so `createIfNotExists` collided with
+>   nothing and created a second full copy. The scripts now refuse to write to
+>   a populated dataset instead.
+> - **CSP could not simply try `X-Frame-Options: DENY` first.** `/studio` got a
+>   path-scoped relaxed policy from the start, because Next applies every
+>   matching `headers()` entry and two overlapping sources would emit two CSP
+>   headers whose intersection silently breaks Studio.
 
 ## Goals
 

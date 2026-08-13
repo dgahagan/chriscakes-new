@@ -1,8 +1,11 @@
 # ChrisCakes Remediation — Implementation Plan
 
-**Status: READY (2026-07-26)**
+**Status: IMPLEMENTED (2026-08-12)** — all 34 tasks complete, delivered on
+branch `feat/remediation` (PR #1). The Kickoff section below is preserved as
+written for the record; it describes how this plan was started, not how to
+start it now.
 
-Execution plan for `docs/plans/proposed/remediation-plan.md` (the WHAT/WHY). The
+Execution plan for `docs/plans/implemented/remediation-plan.md` (the WHAT/WHY). The
 Rules of Engagement normally live in `docs/guides/orchestration-playbook.md` —
 **that file does not exist in this repo**, so a compact version is inlined below
 and is authoritative for this run.
@@ -1523,7 +1526,28 @@ docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
 > than assumed, because the sweep touched `app/globals.css` and six
 > components.
 
-- [ ] T32 — Graduate the plan documents (`opus`)
+- [x] T32 — Graduate the plan documents (`opus`, orchestrator) — this commit
+
+> Both plans moved to `docs/plans/implemented/` with `git mv`; the design plan
+> is marked `Status: IMPLEMENTED (2026-08-12)` and carries a short note of the
+> three assumptions execution disproved (`ShareButtons` was not unused;
+> deterministic ids did not make the imports idempotent; `/studio` needed a
+> scoped CSP from the start rather than try-DENY-first).
+>
+> Referrers repointed: `docs/archive/README.md` (6), `IMPLEMENTATION_PLAN.md`
+> (4). **Historical references inside this file were deliberately left
+> pointing at `docs/plans/proposed/`** — T0's instructions, its commit
+> message, and the T29 acceptance criterion are a record of what was done at
+> the time, and rewriting them would falsify it. Only the live pointers in the
+> header were updated.
+>
+> `.claude/commands/*.md` also match a `docs/plans/proposed/` grep but were
+> left alone: they are generic slash-command templates describing the
+> convention, not references to these two documents.
+>
+> **There is no `docs/README.md` index in this repo**, so the generic
+> `/run-plan` instruction to update the docs index had nothing to bind to.
+> Creating one was not in T32's brief and was not invented.
 
 **Done when:** all 33 boxes are ticked; `npm run lint`, `npm run format:check`,
 `npm run build`, and `npm test` are all green on a fresh checkout of
