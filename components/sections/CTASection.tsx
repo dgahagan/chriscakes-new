@@ -23,7 +23,9 @@ export default function CTASection({
   return (
     <section className="mb-12 text-center py-8">
       <h2 className="text-3xl font-bold text-gray-900 mb-4">{heading}</h2>
-      {description && <p className="text-lg text-gray-700 mb-6">{description}</p>}
+      {description && (
+        <p className="text-lg text-gray-700 mb-6">{description}</p>
+      )}
       <Link
         href={buttonLink}
         className={`inline-block px-8 py-3 rounded text-lg font-semibold transition ${buttonClasses}`}

@@ -1,6 +1,7 @@
 # ChrisCakes Website - Setup Instructions
 
 ## Prerequisites
+
 - Node.js 18.x or higher
 - npm or yarn package manager
 - Git
@@ -8,6 +9,7 @@
 ## Initial Setup Complete ✅
 
 The following has already been configured:
+
 - ✅ Next.js 15 with TypeScript
 - ✅ Tailwind CSS v4
 - ✅ ESLint + Prettier
@@ -27,6 +29,7 @@ npx sanity login
 ```
 
 Choose your preferred login method:
+
 - Google
 - GitHub
 - Email/Password
@@ -40,6 +43,7 @@ npx sanity init
 ```
 
 When prompted:
+
 - **Project name**: ChrisCakes
 - **Use default dataset**: Yes (or choose 'production')
 - **Output path**: Use the existing sanity.config.ts (it's already set up)
@@ -68,6 +72,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 **Note:** `SANITY_API_TOKEN` is only read by the one-time migration scripts in `scripts/` (see "Content Migration Scripts" below) — the app itself (`lib/sanity.ts`) never reads it. You only need it locally if you plan to run a migration script. `NEXT_PUBLIC_SITE_URL` is currently not read anywhere in the app code either (`app/sitemap.ts` and `app/robots.ts` hardcode the production domain directly) — keep it set for forward-compatibility, but changing it has no effect today.
 
 **To get your API token (only needed to run migration scripts):**
+
 1. Go to https://www.sanity.io/manage
 2. Select your ChrisCakes project
 3. Go to API → Tokens
@@ -96,6 +101,7 @@ npm run dev
 ```
 
 Then navigate to:
+
 - **Website**: http://localhost:3000
 - **Sanity Studio**: http://localhost:3000/studio (once configured)
 
@@ -196,14 +202,17 @@ All migration scripts require `SANITY_API_TOKEN` in `.env.local` (see above) —
 ## Troubleshooting
 
 ### "Project ID not found"
+
 - Make sure you've added the correct project ID to `.env.local`
 - Restart the development server after changing environment variables
 
 ### "Unauthorized" errors
+
 - Verify your API token has the correct permissions
 - Make sure the token is in `.env.local` as `SANITY_API_TOKEN`
 
 ### CORS errors
+
 - Add your localhost and production URLs to CORS origins in Sanity dashboard
 
 ## Contact Form Setup with Resend
@@ -232,6 +241,7 @@ The website includes a contact form that sends emails using **Resend**, a develo
 For production use, you should verify your own domain. During development and testing, you can use Resend's testing domain.
 
 #### Option A: Use Testing Domain (Development Only)
+
 - Resend provides `onboarding@resend.dev` for testing
 - Emails will be delivered but marked as "via resend.dev"
 - **Not recommended for production**
@@ -250,6 +260,7 @@ For production use, you should verify your own domain. During development and te
 7. Once verified, you can send emails from any address at your domain (e.g., `noreply@chriscakes.com`)
 
 **DNS Records Example:**
+
 ```
 Type: TXT
 Name: @
@@ -276,6 +287,7 @@ RESEND_FROM_EMAIL=noreply@chriscakes.com  # Must be verified domain
 ```
 
 **Important Notes:**
+
 - `RESEND_API_KEY`: Your API key from Resend dashboard (required)
 - `CONTACT_EMAIL_TO`: Fallback email address (optional - use Sanity instead, see Step 5)
 - `RESEND_FROM_EMAIL`: Must be either:
@@ -301,6 +313,7 @@ RESEND_FROM_EMAIL=noreply@chriscakes.com  # Must be verified domain
 5. Click "Publish" to save changes
 
 **Benefits of managing recipients in Sanity:**
+
 - ✅ Add multiple recipients for redundancy
 - ✅ Update recipients without redeploying
 - ✅ Non-technical owners can manage the list
@@ -308,6 +321,7 @@ RESEND_FROM_EMAIL=noreply@chriscakes.com  # Must be verified domain
 - ✅ Validation ensures valid email formats
 
 **Fallback Behavior:**
+
 - If Sanity recipients are configured, they are used (recommended)
 - If not configured, falls back to `CONTACT_EMAIL_TO` environment variable
 - At least one recipient method must be configured
@@ -315,6 +329,7 @@ RESEND_FROM_EMAIL=noreply@chriscakes.com  # Must be verified domain
 ### Step 6: Test the Contact Form Locally
 
 1. Start your development server:
+
    ```bash
    npm run dev
    ```
@@ -348,6 +363,7 @@ When deploying to production, add these environment variables in Vercel:
 6. Redeploy your application
 
 **Via Vercel CLI:**
+
 ```bash
 vercel env add RESEND_API_KEY
 vercel env add RESEND_FROM_EMAIL
@@ -435,6 +451,7 @@ This is optional and can be added later if spam becomes an issue.
 ## Deployment to Vercel
 
 ### Prerequisites for Deployment
+
 - Git repository with your code (GitHub, GitLab, or Bitbucket)
 - Sanity project ID and API token
 - Vercel account (free tier available)
@@ -528,11 +545,13 @@ vercel login
 #### Via Vercel CLI:
 
 1. **Navigate to your project**:
+
    ```bash
    cd chriscakes-new
    ```
 
 2. **Run Vercel deployment**:
+
    ```bash
    vercel
    ```
@@ -546,6 +565,7 @@ vercel login
    - **Want to override settings**: No (use detected settings)
 
 4. **Add environment variables** (if not done via dashboard):
+
    ```bash
    vercel env add NEXT_PUBLIC_SANITY_PROJECT_ID
    vercel env add NEXT_PUBLIC_SANITY_DATASET
@@ -554,6 +574,7 @@ vercel login
    vercel env add RESEND_API_KEY
    vercel env add RESEND_FROM_EMAIL
    ```
+
    (Skip `SANITY_API_TOKEN` — the deployed app never reads it; it's only used locally by the migration scripts in `scripts/`.)
 
    For each variable, choose the environment:
@@ -595,6 +616,7 @@ vercel
 #### Configure Preview Environment Variables:
 
 In Vercel Dashboard:
+
 1. Go to Project Settings → Environment Variables
 2. For each variable, select which environments to use:
    - ✅ Production
@@ -602,6 +624,7 @@ In Vercel Dashboard:
    - ⬜ Development
 
 **Staging-Specific Variables** (if different from production):
+
 ```
 NEXT_PUBLIC_SITE_URL=https://chriscakes-staging.vercel.app
 NEXT_PUBLIC_SANITY_DATASET=staging
@@ -653,6 +676,7 @@ After deployment, add your Vercel URLs to Sanity CORS origins:
    - Usually ready within a few minutes
 
 4. **Update Environment Variables**:
+
    ```bash
    vercel env add NEXT_PUBLIC_SITE_URL production
    # Enter: https://chriscakes.com
@@ -748,11 +772,13 @@ Before deploying to production:
    - Monitor function execution
 
 2. **Analytics** (Vercel Analytics - Optional):
+
    ```bash
    npm install @vercel/analytics
    ```
 
    Add to `app/layout.tsx`:
+
    ```typescript
    import { Analytics } from '@vercel/analytics/react';
 
@@ -863,6 +889,7 @@ Sanity CMS (Content)
 ### Prerequisites
 
 Before starting:
+
 - [ ] Vercel deployment is working (previous section completed)
 - [ ] Access to current domain registrar account (to update nameservers)
 - [ ] Email address for Cloudflare account
@@ -1081,6 +1108,7 @@ Update the site URL in Vercel environment variables:
    - Click "Save"
 
 2. **Redeploy**:
+
    ```bash
    vercel --prod
    ```
@@ -1180,6 +1208,7 @@ Configure Cloudflare for optimal performance and security:
 Verify everything is working correctly:
 
 1. **Test Domain Resolution**:
+
    ```bash
    # Test domain resolves
    ping chriscakesofmi.com
@@ -1426,6 +1455,7 @@ Now we'll add the tracking code to your Next.js application.
 1. **Add Measurement ID to Environment Variables**:
 
    Edit `.env.local`:
+
    ```env
    NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
    ```
@@ -1435,6 +1465,7 @@ Now we'll add the tracking code to your Next.js application.
 2. **Create Analytics Component**:
 
    Create a new file: `components/analytics/GoogleAnalytics.tsx`
+
    ```typescript
    'use client';
 
@@ -1471,6 +1502,7 @@ Now we'll add the tracking code to your Next.js application.
 3. **Add to Root Layout**:
 
    Edit `app/layout.tsx` and add the GoogleAnalytics component:
+
    ```typescript
    import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 
@@ -1522,6 +1554,7 @@ Track when users submit the contact form as a conversion event.
 1. **Update Contact Form Component**:
 
    Edit `components/contact/ContactForm.tsx` to send events to GA4:
+
    ```typescript
    'use client';
 
@@ -1531,7 +1564,7 @@ Track when users submit the contact form as a conversion event.
        window.gtag('event', 'generate_lead', {
          event_category: 'Contact',
          event_label: 'Contact Form Submission',
-         value: 1
+         value: 1,
        });
      }
    };
@@ -1551,6 +1584,7 @@ Track when users submit the contact form as a conversion event.
 2. **Add TypeScript Types**:
 
    Create `types/gtag.d.ts`:
+
    ```typescript
    export {};
 
@@ -1577,6 +1611,7 @@ Track when users submit the contact form as a conversion event.
 Track additional user interactions beyond pageviews:
 
 1. **Track Outbound Links**:
+
    ```typescript
    // Track when users click external links
    const trackOutboundLink = (url: string) => {
@@ -1590,6 +1625,7 @@ Track additional user interactions beyond pageviews:
    ```
 
 2. **Track Phone Clicks**:
+
    ```typescript
    // Track when users click phone numbers
    const trackPhoneClick = () => {
@@ -1629,12 +1665,13 @@ Track additional user interactions beyond pageviews:
    - Check that pageviews are being recorded
 
 2. **Test in Browser Console**:
+
    ```javascript
    // Open browser console and check:
-   window.dataLayer
+   window.dataLayer;
    // Should show array with tracking data
 
-   window.gtag
+   window.gtag;
    // Should show function definition
    ```
 
@@ -1687,11 +1724,13 @@ Track additional user interactions beyond pageviews:
 1. **Add Cookie Consent Banner** (Optional but Recommended):
 
    Install a consent management library:
+
    ```bash
    npm install react-cookie-consent
    ```
 
    Create `components/analytics/CookieConsent.tsx`:
+
    ```typescript
    'use client';
 
@@ -1744,6 +1783,7 @@ Track additional user interactions beyond pageviews:
    ```
 
    Add to `app/layout.tsx`:
+
    ```typescript
    import CookieBanner from '@/components/analytics/CookieConsent';
 
@@ -1853,6 +1893,7 @@ For a catering business, focus on these metrics:
 **Note**: Universal Analytics (UA) was sunset on July 1, 2023. This guide uses GA4, the current version.
 
 **Key Differences**:
+
 - GA4 is event-based (vs. session-based in UA)
 - Better cross-platform tracking (web + app)
 - Machine learning insights
@@ -1882,6 +1923,7 @@ npm install @vercel/analytics
 ```
 
 Add to `app/layout.tsx`:
+
 ```typescript
 import { Analytics } from '@vercel/analytics/react';
 
@@ -1898,6 +1940,7 @@ export default function RootLayout({ children }) {
 ```
 
 **Benefits**:
+
 - Extremely lightweight
 - Privacy-friendly (no cookies)
 - Core Web Vitals tracking
@@ -1933,6 +1976,7 @@ Before going live with analytics:
 ## Next Phase
 
 After completing this setup and deployment, proceed to **Phase 5** in the IMPLEMENTATION_PLAN.md:
+
 - User acceptance testing on staging environment
 - Performance testing and optimization
 - Cross-browser compatibility testing

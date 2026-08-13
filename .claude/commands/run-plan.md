@@ -10,11 +10,13 @@ model-appropriate subagents, verify each task yourself, and commit after each
 one. You stay in the loop the whole way.
 
 ## Input
+
 Implementation plan: **$ARGUMENTS**
 (If empty, ask the user which `docs/plans/proposed/*-implementation-plan.md` to run, then stop
 and wait.)
 
 ## Before you start — read, in full
+
 1. The implementation plan at `$ARGUMENTS` (the task graph + Progress Tracker).
 2. The design plan it references (`<name>-plan.md`, in the same directory) — the settled WHAT/WHY.
 3. `docs/guides/orchestration-playbook.md` — the Rules of Engagement you must obey.
@@ -22,6 +24,7 @@ and wait.)
    conventions.
 
 ## Then execute the playbook loop
+
 1. **Branch & baseline.** Create or check out `feat/<name>` (per the plan). If
    resuming, `git checkout` it and read the Progress Tracker to find the first
    unchecked task. Establish a **green baseline** — run the full verification gate

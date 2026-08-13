@@ -38,12 +38,14 @@ The following pages are hard-coded and need developer assistance to update:
 When you need to update content on one of these pages:
 
 ### Step 1: Identify What Needs to Change
+
 - Which page? (About, Services, Fundraising, etc.)
 - What section of the page?
 - What is the current text?
 - What should it say instead?
 
 ### Step 2: Prepare Your Content
+
 Write out the exact text you want on the page. For example:
 
 ```
@@ -54,7 +56,9 @@ New text: "We use our custom designed grill and dispensing system that allows us
 ```
 
 ### Step 3: Contact Your Developer
+
 Send your requested changes to your web developer or site administrator with:
+
 - The page name
 - The specific section
 - The new content (and any images if applicable)
@@ -62,9 +66,10 @@ Send your requested changes to your web developer or site administrator with:
 
 ## Why Aren't Pages Editable?
 
-The Sanity CMS includes a "Page" content type that *could* be used for dynamic page content, but the current website implementation uses hard-coded pages for better performance and simpler maintenance of the current content structure.
+The Sanity CMS includes a "Page" content type that _could_ be used for dynamic page content, but the current website implementation uses hard-coded pages for better performance and simpler maintenance of the current content structure.
 
 **Future Enhancement**: The website could be updated to make pages editable through Sanity, but this would require developer work to:
+
 1. Create page content in Sanity
 2. Update the Next.js pages to fetch from Sanity
 3. Migrate existing content
@@ -77,6 +82,7 @@ If you frequently need to update page content and would like this feature, discu
 One exception: The **Services page** displays FAQs at the bottom, and these **ARE editable** through Sanity Studio!
 
 ### To Edit FAQs:
+
 1. Go to **www.chriscakesofmi.com/studio**
 2. Click **"FAQs"** in the left menu
 3. Add, edit, or remove FAQ items
@@ -87,30 +93,38 @@ FAQs appear automatically on the Services page in the order you specify.
 
 ## Content You Should Update Regularly
 
-Focus your energy on the content you *can* manage yourself:
+Focus your energy on the content you _can_ manage yourself:
 
 ### Menu Items
+
 Keep your menu fresh and up-to-date:
+
 - Update prices as needed
 - Add seasonal specials
 - Mark items as unavailable when needed
 - Upload appetizing photos
 
 ### Testimonials
+
 Regularly add new customer reviews:
+
 - After each successful event, ask for feedback
 - Add 1-2 new testimonials per month
 - Feature your best reviews
 
 ### Site Settings
+
 Keep your contact information current:
+
 - Phone number
 - Email address
 - Business hours
 - Social media links
 
 ### FAQs
+
 Update common questions:
+
 - Add new questions customers frequently ask
 - Update answers when policies change
 - Remove outdated questions
@@ -120,24 +134,28 @@ Update common questions:
 You should reach out to your developer when:
 
 ### Content Changes
+
 - Updating text on About, Services, or other main pages
 - Adding or removing entire pages
 - Changing navigation menu items
 - Major content restructuring
 
 ### Design Changes
+
 - Changing colors or fonts
 - Modifying layout or structure
 - Adding new sections or features
 - Mobile responsiveness issues
 
 ### Technical Issues
+
 - Something is broken or not displaying correctly
 - Images aren't loading properly
 - Forms aren't working
 - Website is slow or has errors
 
 ### Feature Requests
+
 - Adding new functionality
 - Integrating with other services
 - Custom forms or calculators
@@ -146,22 +164,27 @@ You should reach out to your developer when:
 ## Tips for Working With Your Developer
 
 ### Be Specific
+
 Instead of: "Can you update the About page?"
 Say: "Can you update the About page, 'Our Story' section, second paragraph, to say: [exact new text]"
 
 ### Provide Complete Content
+
 - Write all the text you want
 - Gather all images beforehand
 - Specify exactly where things should go
 - Include links if needed
 
 ### Be Realistic About Timing
+
 - Simple text changes: Usually quick (hours to 1 day)
 - New sections or features: May take days or weeks
 - Major overhauls: Could take weeks or months
 
 ### Batch Your Requests
+
 If possible, group multiple changes together:
+
 - All About page updates at once
 - All Services page updates at once
 - This is more efficient than many small requests
@@ -169,22 +192,25 @@ If possible, group multiple changes together:
 ## Summary
 
 **What You Control:**
+
 - Menu items and categories (fully editable)
 - Testimonials (fully editable)
 - Site settings (fully editable)
 - FAQs (fully editable)
 
 **What Requires Developer:**
+
 - Main page content (About, Services, etc.)
 - New pages or navigation changes
 - Design and layout changes
 - New features or functionality
 
-By focusing on what you *can* update yourself (menus, testimonials, settings), you can keep your site fresh and current. For larger content changes to main pages, work with your developer to implement those updates.
+By focusing on what you _can_ update yourself (menus, testimonials, settings), you can keep your site fresh and current. For larger content changes to main pages, work with your developer to implement those updates.
 
 ---
 
 **Related Guides**:
+
 - [Managing Menu Items](./managing-menu-items.md) - What you CAN edit yourself
 - [Managing Testimonials](./managing-testimonials.md) - Keep reviews current
 - [Updating Site Settings](./updating-site-settings.md) - Contact info you control

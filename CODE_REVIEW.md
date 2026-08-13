@@ -21,30 +21,33 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 
 **Baseline checks (run 2026-07-26):**
 
-| Check | Result |
-|---|---|
-| `npm run build` | ✅ Succeeds — 17 routes |
-| `npm run lint` | ✅ 0 errors, 2 warnings (unused vars in `tests/helpers/test-utils.ts:75-76`) |
-| `npm run format:check` | ❌ 77 files fail Prettier |
-| `npm audit --omit=dev` | ❌ 1 critical, 25 high (Sanity toolchain: `tar`, `ws`, Babel plugin) |
-| CI | ❌ None — no `.github/workflows/`, tests never run automatically |
+| Check                  | Result                                                                       |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `npm run build`        | ✅ Succeeds — 17 routes                                                      |
+| `npm run lint`         | ✅ 0 errors, 2 warnings (unused vars in `tests/helpers/test-utils.ts:75-76`) |
+| `npm run format:check` | ❌ 77 files fail Prettier                                                    |
+| `npm audit --omit=dev` | ❌ 1 critical, 25 high (Sanity toolchain: `tar`, `ws`, Babel plugin)         |
+| CI                     | ❌ None — no `.github/workflows/`, tests never run automatically             |
 
 ---
 
 ## Critical / High Findings
 
 ### H1. Google Analytics is broken four independent ways
+
 - `lib/queries.ts:57-68` + `app/layout.tsx:17-46` — `siteSettingsQuery` never projects the `analytics` field, but the layout reads `settings.analytics.googleAnalyticsId`. **GA never loads, even when configured in Studio.**
 - `components/common/GoogleAnalytics.tsx:13` — Uses `useSearchParams()` in the root layout with no `<Suspense>` boundary. Currently masked because GA never loads (see above); the day the query is fixed and the owner enables GA, **static prerendering of every page fails** with Next.js's suspense-bailout error.
 - `components/common/GoogleAnalytics.tsx:15-43` — Inline script and `useEffect` both fire `gtag('config')` on initial load (duplicated pageviews), and `page_path: pathname + searchParams.toString()` omits the `?` separator, producing paths like `/menucat=abc`.
 - `components/common/GoogleAnalytics.tsx:28,38` — CMS-sourced GA ID is string-interpolated into an inline script; a malicious value from Sanity escapes into arbitrary JS. Validate against `/^G-[A-Z0-9]+$/`.
 
 ### H2. Import scripts destroy live content (`scripts/`)
+
 - `scripts/import-all-content.ts:337-343,391`, `scripts/import-content.ts:134-139,168` — Both `createOrReplace` the `siteSettings` document with a **legacy flat `socialMedia` shape** that no longer matches the schema, and omit `contactFormRecipients`, `shareButtons`, `analytics`. Running the documented `npm run import:all` wipes the owner's live settings and breaks contact-form routing, with no guard or confirmation.
 - `scripts/import-content.ts:148-160`, `import-all-content.ts:355-381`, `import-additional-content.ts:147-186` — Items created with `client.create()` (no deterministic `_id` / `createIfNotExists`); **every re-run duplicates the entire menu, FAQ, and testimonial catalog.**
 - Multiple scripts write `price: null` while `sanity/schemas/menuItem.ts:34` declares `Rule.required().min(0)` — imported "call for pricing" items carry permanent Studio validation errors and can't be republished without a price.
 
 ### H3. Test suite fails against the real site (`tests/`)
+
 - `tests/e2e/homepage.spec.ts:29` — Asserts footer contains `/248/`; the real footer shows `989-802-0755` / Clare, MI. **Always fails.**
 - `tests/e2e/homepage.spec.ts:19`, `tests/e2e/navigation.spec.ts:15` — Expect a link named "About"; the header labels it "On the Flip Side". **Always fails.**
 - `tests/e2e/navigation.spec.ts:10` — `getByRole('link', { name: 'Menu' })` substring-matches multiple header/footer links → strict-mode violation. Same for "Contact".
@@ -58,17 +61,21 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 - **No CI** — `playwright.config.ts` has `process.env.CI` branches but no workflow exists to use them.
 
 ### H4. Contact API is scriptable and its rate limiting doesn't hold (`app/api/contact/route.ts`)
+
 - Lines 31-34 — Rate-limit key uses the **leftmost** `x-forwarded-for` entry, which is client-supplied on Vercel; a bot rotates fake XFF values to bypass the 3/hour cap and floods the owner's inbox through the Resend account.
 - Lines 5-8 — In-memory `Map` rate limiting is per-lambda-instance; concurrent requests hit fresh instances with empty maps. Needs a shared store (Upstash/Vercel KV) to be real.
 - No honeypot, CAPTCHA/Turnstile, or origin check anywhere in `ContactForm.tsx` / the route — a single `curl` POST triggers N emails (one per configured recipient).
 
 ### H5. Route pages 500 instead of 404 when CMS documents are removed
+
 - `app/services/page.tsx:64-67,142` and `app/fundraising/page.tsx:70-73` — `generateMetadata()` and page bodies dereference `page.seo` / `page.title` / `page.sections` with no null check and no `notFound()` fallback. Deleting or re-slugging the `services` or `fundraising` document in Studio — the exact non-technical-owner scenario this project targets — crashes the route. (`app/[slug]/page.tsx` handles this correctly.)
 
 ### H6. Skip-to-content link is invisible when focused
+
 - `components/common/SkipToContent.tsx:5` — Uses undefined classes `focus:bg-crimson-500` / `focus:ring-crimson-600` (no `crimson` palette exists in Tailwind v4 config or `globals.css`; confirmed absent from built CSS). A keyboard user tabbing to it sees white text on a white page — the accessibility feature is effectively broken.
 
 ### H7. Production dependency vulnerabilities
+
 - `npm audit --omit=dev`: 40 vulnerabilities including `tar <=7.5.20` (**critical**) and `ws 8.0.0–8.20.1` (high), pulled in mostly via the `sanity`/`next-sanity` Studio toolchain. Next.js itself is patched (15.5.12, covers CVE-2025-66478). Run `npm audit fix` and re-verify the Studio.
 
 ---
@@ -76,6 +83,7 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 ## Medium Findings
 
 ### Content/CMS drift (breaks the "owner edits without a developer" goal)
+
 - `app/contact/page.tsx:135-173` — "Follow Us" block reads `settings.socialMedia.facebook/instagram/twitter`, but the schema defines `socialMedia.platforms[]`. The section always renders an empty heading; 40 lines of dead branch.
 - `sanity/schemas/siteSettings.ts:352-583` — `ugcGallery`, `reviewWidgets`, `clickToTweet`, `pinterestBoards` are fully authored in the schema (components exist too) but are **never queried and never rendered**. The owner can configure them in Studio and nothing happens.
 - `components/layout/Footer.tsx:120-135` — "How to Book an Event" and "Day of Event Information" both link to `/about`; the header uses the real routes `/how-to-book` and `/day-of-event`.
@@ -85,6 +93,7 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 - A `test-dynamic-page` Sanity document is live and gets published as a real page (`/test-dynamic-page`) in production builds. Delete it from the dataset.
 
 ### Security hardening
+
 - `next.config.ts:3-15` — No security headers anywhere (no `headers()`, `middleware.ts`, or `vercel.json`): missing CSP, `X-Frame-Options`/`frame-ancestors`, `X-Content-Type-Options`, `Referrer-Policy`. The whole site including `/studio` can be iframed.
 - `components/common/InstagramFeed.tsx:26`, `UGCGallery.tsx:57` — CMS-sourced `embedCode` injected via `dangerouslySetInnerHTML` with zero sanitization: any Studio account (or leaked write token) achieves persistent stored XSS, with no CSP backstop. Doubly broken: `<script>` tags inserted this way never execute, so a real Instagram embed renders as an unstyled blockquote anyway. Sanitize or allowlist embed hosts — or drop the feature (it's currently unrendered anyway).
 - `components/common/SchemaMarkup.tsx:21-27` — JSON-LD injected client-side only (`next/script` with `afterInteractive`), so structured data is absent from initial HTML for non-JS crawlers; and `JSON.stringify` doesn't escape `<`, so CMS text containing `</script>` can break out of the tag (stored-XSS vector). Render inline in the server component and escape `<` as `<`.
@@ -93,6 +102,7 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 - No `robots.txt` / `sitemap` in any form — `/studio` and `/api/contact` are crawlable; no sitemap for SEO.
 
 ### Data layer
+
 - Singleton not enforced for `siteSettings` (`sanity.config.ts:15` uses default `structureTool()`); Studio users can create multiple settings docs while the query takes `[0]` unordered — edits can appear to "not take effect".
 - `lib/sanity.ts:9` — `useCdn: true` stacks CDN TTL on top of 60s ISR; content updates take noticeably longer than 60s to appear. The project's own boilerplate (`sanity/lib/client.ts:9`) says to use `false` with ISR.
 - `sanity.config.ts:10` hardcodes project ID `0fl6fs6u` while every other client reads `NEXT_PUBLIC_SANITY_PROJECT_ID`; `check-sanity-social.js:4` hardcodes the **stale** ID `9t9xlmvm`; `CLAUDE.md` documents both IDs in different sections. Standardize on the env var and fix the docs.
@@ -100,6 +110,7 @@ Additionally, the production dependency graph carries **1 critical and 25 high**
 - `lib/schema.ts:66-75` — Restaurant JSON-LD hardcodes the postal address (ignores `settings.address`) and falls back to `info@chriscakesofmi.com` while imported settings use `chriscakesmi@sbcglobal.net`.
 
 ### Frontend
+
 - `components/sections/PortableTextRenderer.tsx:25` — `value.href.startsWith('/')` throws when a link annotation has no `href` (an editor can save a link mark mid-edit) → 500 on any page containing it.
 - `components/layout/Header.tsx:60-64` — Hamburger button lacks `aria-expanded`/`aria-controls`; open menu has no Escape-to-close or focus containment.
 - Missing `sizes` on all `fill` images (`MenuItemCard.tsx:21-26`, `app/page.tsx:286-317`, `TwoColumnSection.tsx:34-39`), and `TwoColumnSection`/`PortableTextRenderer` call `urlFor(image).url()` with no `.width()` — a 5 MB CMS upload ships at original resolution.

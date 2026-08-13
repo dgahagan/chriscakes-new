@@ -55,7 +55,11 @@ function createTextSection(title: string, paragraphs: string[]): any {
   };
 }
 
-function createTextSectionWithImage(title: string, paragraphs: string[], image: any): any {
+function createTextSectionWithImage(
+  title: string,
+  paragraphs: string[],
+  image: any
+): any {
   const content: any[] = [];
 
   // Add the image first
@@ -191,7 +195,9 @@ async function updatePages() {
     sections: [
       createTextSectionWithImage(
         '',
-        ['Download this GREAT YouTube video and play it during ticket sales and the day of your event… sure to add excitement and create even more FUN prior to your event!'],
+        [
+          'Download this GREAT YouTube video and play it during ticket sales and the day of your event… sure to add excitement and create even more FUN prior to your event!',
+        ],
         book1
       ),
       createHighlightBox(
@@ -208,7 +214,13 @@ async function updatePages() {
         'gray',
         'numbered'
       ),
-      createCTASection('Ready to Book?', '', 'Contact Us Today', '/contact', 'primary'),
+      createCTASection(
+        'Ready to Book?',
+        '',
+        'Contact Us Today',
+        '/contact',
+        'primary'
+      ),
     ],
     seo: {
       metaTitle: 'How to Book an Event - ChrisCakes',
@@ -222,7 +234,9 @@ async function updatePages() {
 
   // Update Fundraising Tips page
   console.log('Updating Fundraising Tips page...');
-  if (howto1) howto1.alt = 'Skrumpy Skedaddle at Almar Orchard - Over 2,025 people fed in just 3 hours';
+  if (howto1)
+    howto1.alt =
+      'Skrumpy Skedaddle at Almar Orchard - Over 2,025 people fed in just 3 hours';
 
   const fundraisingTipsPage = {
     _type: 'page',
@@ -270,9 +284,12 @@ async function updatePages() {
 
   // Update Volunteers page
   console.log('Updating Volunteers page...');
-  if (help1) help1.alt = 'National Cherry Festival Flying Flapjacks prior to the Blue Angels Air Show';
+  if (help1)
+    help1.alt =
+      'National Cherry Festival Flying Flapjacks prior to the Blue Angels Air Show';
   if (help2) help2.alt = 'We Flip Burgers too';
-  if (help3) help3.alt = 'Breakfast with Santa - An ongoing Chris Cakes tradition';
+  if (help3)
+    help3.alt = 'Breakfast with Santa - An ongoing Chris Cakes tradition';
 
   const volunteersPage = {
     _type: 'page',
@@ -320,9 +337,23 @@ async function updatePages() {
       createTextSection('', [
         'One week prior, when you confirm your event numbers, please alert our office if seating times were assigned so our flippers can be prepared. Also, verify your volunteers are ready for the event.',
       ]),
-      createTextSectionWithImage('National Cherry Festival', ['National Cherry Festival Flying Flapjacks prior to the Blue Angels Air Show'], help1),
-      createTextSectionWithImage('We Flip Burgers Too', ['We Flip Burgers too'], help2),
-      createTextSectionWithImage('Breakfast with Santa', ['Breakfast with Santa - An ongoing Chris Cakes tradition'], help3),
+      createTextSectionWithImage(
+        'National Cherry Festival',
+        [
+          'National Cherry Festival Flying Flapjacks prior to the Blue Angels Air Show',
+        ],
+        help1
+      ),
+      createTextSectionWithImage(
+        'We Flip Burgers Too',
+        ['We Flip Burgers too'],
+        help2
+      ),
+      createTextSectionWithImage(
+        'Breakfast with Santa',
+        ['Breakfast with Santa - An ongoing Chris Cakes tradition'],
+        help3
+      ),
     ],
     seo: {
       metaTitle: 'Volunteer Information - ChrisCakes',
@@ -351,16 +382,24 @@ async function updatePages() {
       current: 'day-of-event',
     },
     sections: [
-      createTextSectionWithImage('What to Expect', [
-        'We will arrive 1 hour before the start time of your event, and 1-2 hours prior for Menus N More events. You must have 2-3 volunteers meet us to unload. We will not unload without your help.',
-      ], day1),
+      createTextSectionWithImage(
+        'What to Expect',
+        [
+          'We will arrive 1 hour before the start time of your event, and 1-2 hours prior for Menus N More events. You must have 2-3 volunteers meet us to unload. We will not unload without your help.',
+        ],
+        day1
+      ),
       createTextSection('', [
         'When we arrive, our flippers will assess your room for optimum usage and the flow of your event. If you have questions regarding your room set-up prior to our arrival, please call our office. Outside events require a three-sided tent and prior approval from our office.',
         'After unloading, your volunteers will be asked to help set-up the serving tables, work the serving tables during the event, help with clean-up and reloading. Your group will not be asked to cook! Remember what Grandma used to say… "Many hands make for light work!"',
         'Someone from your group will be responsible for ticket, money, and plate distribution. We invoice based on the number of plates used. You may want to have signage for your guests to "keep their plate until they have had all they can eat."',
         'Payment is due at the conclusion of the event. Take a look at our INVOICE AND PAYMENT page for more information.',
       ]),
-      createTextSectionWithImage('MSU Extension Breakfast on the Farm', [''], day3),
+      createTextSectionWithImage(
+        'MSU Extension Breakfast on the Farm',
+        [''],
+        day3
+      ),
       createTextSectionWithImage('Rogers Athletic Christmas Party', [''], day4),
       createHighlightBox(
         'Testimonial - Scott Kefgen and the staff at UPA',

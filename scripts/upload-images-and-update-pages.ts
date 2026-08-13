@@ -24,7 +24,10 @@ interface ImageAsset {
 }
 
 // Upload an image to Sanity
-async function uploadImage(filePath: string, altText: string): Promise<ImageAsset> {
+async function uploadImage(
+  filePath: string,
+  altText: string
+): Promise<ImageAsset> {
   const imageBuffer = fs.readFileSync(filePath);
   const asset = await client.assets.upload('image', imageBuffer, {
     filename: path.basename(filePath),
@@ -84,7 +87,9 @@ function createTextSection(title: string, paragraphs: string[]): any {
       {
         _type: 'span',
         text: text,
-        marks: text.includes('Chris Cakes has been around since 1969') ? ['strong'] : [],
+        marks: text.includes('Chris Cakes has been around since 1969')
+          ? ['strong']
+          : [],
       },
     ],
   }));
@@ -137,29 +142,68 @@ async function uploadImagesAndUpdatePages() {
   // Upload all images
   console.log('Uploading images to Sanity...\n');
 
-  const services1 = await uploadImage('public/services1.jpg', 'Fundraising Services');
-  const services2 = await uploadImage('public/services2.jpg', 'Premiere Breakfast');
+  const services1 = await uploadImage(
+    'public/services1.jpg',
+    'Fundraising Services'
+  );
+  const services2 = await uploadImage(
+    'public/services2.jpg',
+    'Premiere Breakfast'
+  );
   const services3 = await uploadImage('public/services3.jpg', 'Menus N More');
 
-  const invoice1 = await uploadImage('public/invoice1.jpg', 'University of Michigan Football');
-  const invoice2 = await uploadImage('public/invoice2.jpg', 'Chris Cakes Catering');
-  const invoice3 = await uploadImage('public/invoice3.jpg', 'Nutcake teaches Sparty how to Flip');
-  const invoice4 = await uploadImage('public/invoice4.jpg', 'Licensed and Insured');
+  const invoice1 = await uploadImage(
+    'public/invoice1.jpg',
+    'University of Michigan Football'
+  );
+  const invoice2 = await uploadImage(
+    'public/invoice2.jpg',
+    'Chris Cakes Catering'
+  );
+  const invoice3 = await uploadImage(
+    'public/invoice3.jpg',
+    'Nutcake teaches Sparty how to Flip'
+  );
+  const invoice4 = await uploadImage(
+    'public/invoice4.jpg',
+    'Licensed and Insured'
+  );
 
   const book1 = await uploadImage('public/book1.jpg', 'Chris Cakes Event');
   const book2 = await uploadImage('public/book2.jpg', 'Chris Cakes Event');
 
-  const howto1 = await uploadImage('public/howto1.jpg', 'Skrumpy Skedaddle at Almar Orchard');
+  const howto1 = await uploadImage(
+    'public/howto1.jpg',
+    'Skrumpy Skedaddle at Almar Orchard'
+  );
 
-  const help1 = await uploadImage('public/help1.jpg', 'National Cherry Festival Flying Flapjacks');
+  const help1 = await uploadImage(
+    'public/help1.jpg',
+    'National Cherry Festival Flying Flapjacks'
+  );
   const help2 = await uploadImage('public/help2.jpg', 'We Flip Burgers too');
   const help3 = await uploadImage('public/help3.jpg', 'Breakfast with Santa');
 
-  const day1 = await uploadImage('public/day1.jpg', 'Ausable River Canoe Marathon');
-  const day2 = await uploadImage('public/day2.jpg', 'Ausable River Canoe Marathon');
-  const day3 = await uploadImage('public/day3.jpg', 'MSU Extension Breakfast on the Farm');
-  const day4 = await uploadImage('public/day4.jpg', 'Rogers Athletic Christmas Party');
-  const day5 = await uploadImage('public/day5.jpg', 'Rogers Athletic Christmas Party');
+  const day1 = await uploadImage(
+    'public/day1.jpg',
+    'Ausable River Canoe Marathon'
+  );
+  const day2 = await uploadImage(
+    'public/day2.jpg',
+    'Ausable River Canoe Marathon'
+  );
+  const day3 = await uploadImage(
+    'public/day3.jpg',
+    'MSU Extension Breakfast on the Farm'
+  );
+  const day4 = await uploadImage(
+    'public/day4.jpg',
+    'Rogers Athletic Christmas Party'
+  );
+  const day5 = await uploadImage(
+    'public/day5.jpg',
+    'Rogers Athletic Christmas Party'
+  );
 
   console.log('\n✓ All images uploaded successfully!\n');
   console.log('Updating page content with images...\n');
@@ -205,7 +249,13 @@ async function uploadImagesAndUpdatePages() {
       createTextSection('Emergency Catering', [
         'If you have a catering crisis, Chris Cakes is available. We are a 24/7-365 caterer and we can get you out of a tight spot. We have the ability to feed a large amount of food to massive amounts of people, from serving utility workers to military personnel. Chris Cakes has been even known to provide relief in disaster situations.',
       ]),
-      createCTASection('Contact Us for Emergency Catering', '', 'Contact Us', '/contact', 'primary'),
+      createCTASection(
+        'Contact Us for Emergency Catering',
+        '',
+        'Contact Us',
+        '/contact',
+        'primary'
+      ),
     ],
     seo: {
       metaTitle: '24/7 Catering Services - ChrisCakes Michigan',

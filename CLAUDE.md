@@ -145,6 +145,7 @@ All schemas use `order` field for manual sorting in Sanity Studio.
 5. Update Header navigation if needed
 
 Example:
+
 ```typescript
 import { client } from '@/lib/sanity';
 import { pageBySlugQuery } from '@/lib/queries';
@@ -185,23 +186,27 @@ export default async function NewPage() {
 ## Important Constraints
 
 ### TypeScript Rules
+
 - No `any` types - use proper interfaces or `unknown`
 - Define interfaces for all Sanity data structures
 - Props must be typed explicitly
 
 ### React/Next.js Rules
+
 - No `<img>` tags - always use Next.js `<Image>` component
 - Escape quotes in JSX text with HTML entities (&quot; &apos; etc.)
 - Mark components with interactive features as Client Components
 - Server Components cannot use hooks or event handlers
 
 ### Build Rules
+
 - All ESLint errors must be fixed (zero tolerance)
 - Production builds must complete successfully
 - No webpack/build warnings about missing files
 - Turbopack is intentionally NOT used (removed from scripts)
 
 ### Sanity Rules
+
 - Project ID is public; read from `NEXT_PUBLIC_SANITY_PROJECT_ID` everywhere in code (see Tech Stack above for the current value) — never hardcoded in a `.ts`/`.tsx` file
 - API token (`SANITY_API_TOKEN`) is private, used only by the one-time scripts in `scripts/`, and must be in `.env.local` — the app itself (`lib/sanity.ts`) is token-free and never reads it
 - Never commit `.env.local` to git
@@ -221,6 +226,7 @@ export default async function NewPage() {
 ## Testing & Deployment
 
 ### Pre-deployment Checklist
+
 - CI (`.github/workflows/ci.yml`) must be green on the PR: it runs lint, build, and Playwright (chromium + Mobile Chrome) on every pull request and push to `master`
 - Run `npm run build` - must succeed with zero errors
 - Run `npm run lint` - must pass with zero errors
@@ -230,6 +236,7 @@ export default async function NewPage() {
 - Test menu filtering (all/category switching)
 
 ### Vercel Deployment
+
 - See `SETUP.md` for comprehensive deployment guide
 - Environment variables must be configured in Vercel dashboard
 - Must include: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `RESEND_API_KEY` (contact form returns a 500 without it), `RESEND_FROM_EMAIL` (falls back to `onboarding@resend.dev` if unset — fine for testing, not for production)
@@ -254,6 +261,7 @@ Access at `/studio` route in browser. Configured via `app/studio/page.tsx`. Stud
 ## Documentation Files
 
 Read these files for context:
+
 - **IMPLEMENTATION_PLAN.md** - Complete project phases and progress
 - **reference/CONTENT_AUDIT.md** - Original site content inventory
 - **SETUP.md** - Setup instructions and deployment guide

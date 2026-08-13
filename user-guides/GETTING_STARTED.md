@@ -52,20 +52,24 @@ Congratulations! You just made your first website update.
 ## Important Tips
 
 ### Always Publish
+
 - **Draft** = Not live on the website (only you can see it)
 - **Published** = Live for everyone to see
 - The publish button is your friend—use it when you're ready!
 
 ### Be Patient
+
 - After publishing, wait **60 seconds** before checking the live site
 - Refresh your browser page (F5 or Cmd+R) to see changes
 
 ### Use Good Photos
+
 - Upload clear, well-lit photos of your cakes and food
 - Avoid blurry or dark images
 - Recommended size: At least 1000 pixels wide
 
 ### Save Your Work
+
 - You can save drafts without publishing
 - If you need to step away, just save—your changes will be there when you return
 
@@ -83,6 +87,7 @@ Now that you understand the basics, check out these specific guides:
 ## Need Help?
 
 If you get stuck:
+
 1. Check the relevant guide above for your task
 2. Look for the help icon (?) in the Studio—it often has useful tips
 3. Contact your website administrator

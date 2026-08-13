@@ -52,7 +52,8 @@ export default defineType({
           title: 'Meta Description',
           type: 'text',
           rows: 3,
-          description: 'Brief description for search engines (150-160 characters)',
+          description:
+            'Brief description for search engines (150-160 characters)',
         },
       ],
     }),

@@ -20,12 +20,12 @@
 
 ## Settled Decisions
 
-| Decision | Choice |
-|---|---|
-| Unrendered social features (UGC gallery, review widgets, click-to-tweet, Pinterest boards, Instagram feed) | **Delete entirely** — schema fields, components, and queries |
-| Contact form spam defense | **Honeypot + hardening** — no external services |
-| Visual regression suite | **Delete** `tests/visual/` and its npm script wiring |
-| Scope | **Everything** in the review: Critical/High/Medium/Low + hygiene |
+| Decision                                                                                                   | Choice                                                           |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Unrendered social features (UGC gallery, review widgets, click-to-tweet, Pinterest boards, Instagram feed) | **Delete entirely** — schema fields, components, and queries     |
+| Contact form spam defense                                                                                  | **Honeypot + hardening** — no external services                  |
+| Visual regression suite                                                                                    | **Delete** `tests/visual/` and its npm script wiring             |
+| Scope                                                                                                      | **Everything** in the review: Critical/High/Medium/Low + hygiene |
 
 ---
 
@@ -85,7 +85,7 @@
   - Wrap the `<GoogleAnalytics>` usage in `<Suspense>` in `app/layout.tsx` (required for `useSearchParams` under static prerendering).
   - Rewrite the component: single `gtag('config')` source of truth — initial script does `config` with `send_page_view: false`, the effect sends page views on route change with a correctly-joined `pathname + '?' + searchParams` path (omit `?` when empty).
   - Validate the CMS-sourced ID against `/^G-[A-Z0-9]+$/` before rendering anything.
-- **Delete the dead social features** (owner decision): remove `ugcGallery`, `reviewWidgets`, `clickToTweet`, `pinterestBoards`, and the Instagram `embedCode` fields from `siteSettings.ts`; delete `UGCGallery.tsx`, `ReviewWidgets.tsx`, `ClickToTweet.tsx`, `PinButton.tsx`, `PinnableImage.tsx`, `PinterestBoardWidget.tsx`, `InstagramFeed.tsx`, `ShareButtons.tsx` if unused, and the dead contact-page "Follow Us" flat-shape branch. The contact page's social section is rewritten against `socialMedia.platforms[]` (the real shape) — social *links* stay, embedded *feeds* go.
+- **Delete the dead social features** (owner decision): remove `ugcGallery`, `reviewWidgets`, `clickToTweet`, `pinterestBoards`, and the Instagram `embedCode` fields from `siteSettings.ts`; delete `UGCGallery.tsx`, `ReviewWidgets.tsx`, `ClickToTweet.tsx`, `PinButton.tsx`, `PinnableImage.tsx`, `PinterestBoardWidget.tsx`, `InstagramFeed.tsx`, `ShareButtons.tsx` if unused, and the dead contact-page "Follow Us" flat-shape branch. The contact page's social section is rewritten against `socialMedia.platforms[]` (the real shape) — social _links_ stay, embedded _feeds_ go.
 - **Header/Footer become CMS-driven for contact data:** the root layout already fetches `siteSettings` — pass phone/email/address down to `Header`/`Footer` as props, replacing the hardcoded values. Footer quick-links fixed to the real routes (`/how-to-book`, `/day-of-event`).
 - **Fundraising page:** remove the duplicated-section rendering (filter the subtitle section out before `SectionRenderer`, or stop extracting it); remove the hardcoded `'Hot Dog Bash'` name check — render the fetched items generically with their real `price` field ("Call for pricing" when price is absent, matching the schema change in G).
 - **Singleton enforcement for `siteSettings`:** custom structure in `sanity.config.ts` pinning Site Settings to a single document ID and removing "create new" for that type.
@@ -203,7 +203,7 @@ graph LR
 
 - **G first** (single client, schema fixes) since C, E, and B build on it.
 - **B and D are independent** and can run in parallel with anything.
-- **A (tests) comes after the markup/behavior changes** in C/D/F — tests are written against the *fixed* site, not the current one.
+- **A (tests) comes after the markup/behavior changes** in C/D/F — tests are written against the _fixed_ site, not the current one.
 - **H last** — formatting sweep and doc updates after the code settles.
 
 Each workstream should land as its own commit (or small commit series) with `npm run build && npm run lint` green at every commit boundary; `npm test` green from Workstream A onward.

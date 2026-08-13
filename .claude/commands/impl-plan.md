@@ -6,9 +6,10 @@ model: opus
 
 You are turning a **settled design plan** into an **orchestrated implementation
 plan**, following this repo's `docs/guides/orchestration-playbook.md`. You are only
-*writing the plan* here — do NOT start implementing.
+_writing the plan_ here — do NOT start implementing.
 
 ## Input
+
 Design plan: **$ARGUMENTS**
 (If empty, ask the user which `docs/plans/proposed/*-plan.md` to use, then stop and wait.)
 
@@ -48,10 +49,10 @@ Design plan: **$ARGUMENTS**
    - the **conventional commit message**,
    - dependencies, and a **parallel-safe** marker only when its files are
      disjoint from the task(s) it could run beside.
-   Order tasks so each builds on green predecessors. Put design-sensitive logic
-   (tricky state, soft-accept-style rules, final integration + e2e + docs) on
-   `opus`; put bulk implementation and test-writing on `sonnet`; put trivial
-   mechanical edits on `haiku`.
+     Order tasks so each builds on green predecessors. Put design-sensitive logic
+     (tricky state, soft-accept-style rules, final integration + e2e + docs) on
+     `opus`; put bulk implementation and test-writing on `sonnet`; put trivial
+     mechanical edits on `haiku`.
 
 5. **Think through cross-task consequences** and bake them into the ordering /
    task notes (e.g. a required-column migration forces create-sites to compile;
@@ -70,8 +71,8 @@ Design plan: **$ARGUMENTS**
    - **Task graph** — the phased tasks as specified above.
    - **Progress Tracker** — a `- [ ]` checklist, one line per task
      (`- [ ] T1 — <title> (\`model\`)`), plus a "Done when" line.
-   Keep the Rules of Engagement by reference (link the playbook); do not paste
-   them in wholesale.
+     Keep the Rules of Engagement by reference (link the playbook); do not paste
+     them in wholesale.
 
 7. **Do not implement, branch, or commit.** After writing the file, print a
    concise summary: the task count, the phase breakdown, the model mix, anything

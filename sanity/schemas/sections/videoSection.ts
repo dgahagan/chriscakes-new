@@ -15,7 +15,8 @@ export default defineType({
       name: 'videoUrl',
       title: 'YouTube Video URL',
       type: 'url',
-      description: 'YouTube video URL (e.g., https://www.youtube.com/watch?v=... or https://youtu.be/...)',
+      description:
+        'YouTube video URL (e.g., https://www.youtube.com/watch?v=... or https://youtu.be/...)',
       validation: (Rule) =>
         Rule.uri({
           scheme: ['http', 'https'],

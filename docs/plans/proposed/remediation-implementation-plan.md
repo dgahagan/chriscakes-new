@@ -66,7 +66,7 @@ npm test              # Playwright — see Phase 6 gate contract below
    specs are expected to fail. **Within Phase 6 the gate is lint + build + the
    spec files that task touched passing.** At **T27** the full `npm test` must
    be green, and it is gating for every task after that. Before Phase 6, `npm
-   test` is not gating at all (the suite is known-broken on `master` — that is
+test` is not gating at all (the suite is known-broken on `master` — that is
    the problem being fixed).
 
 ---
@@ -80,12 +80,12 @@ full Critical/High/Medium/Low set from `CODE_REVIEW.md`.
 
 ### Deferred / out of scope
 
-| Item | Reason |
-|---|---|
+| Item                                                  | Reason                                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
 | Turnstile, Upstash, or any external anti-spam service | Owner decision — honeypot + hardening only (design plan, Non-Goals) |
-| Visual regression testing | Owner decision — `tests/visual/` is deleted, not repaired |
-| Visual redesign or new features | Remediation only |
-| Hosting/deployment architecture changes | Stays Vercel + embedded Studio |
+| Visual regression testing                             | Owner decision — `tests/visual/` is deleted, not repaired           |
+| Visual redesign or new features                       | Remediation only                                                    |
+| Hosting/deployment architecture changes               | Stays Vercel + embedded Studio                                      |
 
 ---
 
@@ -99,12 +99,12 @@ duplicates"). These **must not** run against `production`.
 
 **`staging` exists and is seeded from production.** Verified counts:
 
-| | production | staging |
-|---|---|---|
-| pages | 9 | 9 |
-| menuItems | 67 | 67 |
-| menuCategories | 6 | 6 |
-| siteSettings | 1 published + 1 draft | 1 published + 1 draft |
+|                | production            | staging               |
+| -------------- | --------------------- | --------------------- |
+| pages          | 9                     | 9                     |
+| menuItems      | 67                    | 67                    |
+| menuCategories | 6                     | 6                     |
+| siteSettings   | 1 published + 1 draft | 1 published + 1 draft |
 
 <details>
 <summary>Commands used, for reference / re-seeding</summary>
@@ -116,6 +116,7 @@ npx sanity dataset export production ./staging-seed.tar.gz
 npx sanity dataset import ./staging-seed.tar.gz staging
 rm ./staging-seed.tar.gz
 ```
+
 </details>
 
 Point a run at it by overriding one env var — no code change needed:
@@ -126,6 +127,7 @@ NEXT_PUBLIC_SANITY_DATASET=staging npm run import:all -- --yes
 ```
 
 Notes:
+
 - **Never** set `NEXT_PUBLIC_SANITY_DATASET=staging` in Vercel — local override
   only.
 - `staging` is a **point-in-time copy**, not a mirror. It will drift from
@@ -141,8 +143,8 @@ The design plan hedged on two points. Both are now settled by inspection:
 1. **`ShareButtons.tsx` is NOT unused — it stays.** It is imported by
    `app/menu/page.tsx`, `app/services/page.tsx`, `app/fundraising/page.tsx`, and
    `app/[slug]/page.tsx`. The design plan's "delete `ShareButtons.tsx` if unused"
-   resolves to *keep*. Its `next-share` dependency also stays. Only the
-   *embedded feed / widget* components are deleted.
+   resolves to _keep_. Its `next-share` dependency also stays. Only the
+   _embedded feed / widget_ components are deleted.
 
 2. **`menuCategoriesQuery`'s `order` projection is used** — the query sorts by
    `order asc`, and the field is projected. Drop only `image` (never rendered);
@@ -565,7 +567,7 @@ learns it was caught adapts), and the timing gate must not punish slow humans.
 - **Commit:** `feat(security): harden contact endpoint with honeypot and validation`
 - **Deps:** T13 (both touch `ContactForm.tsx`), T2.
 - **⚠ Watch for a false positive:** the 3s floor must be measured from form
-  *mount*, not from page load, and must not fire for someone using a password
+  _mount_, not from page load, and must not fire for someone using a password
   manager or autofill to complete the form quickly. If T26's tests show a
   legitimate fast path tripping it, lower the floor rather than removing the
   honeypot.
@@ -762,7 +764,7 @@ The largest gap in the current suite — the contact form has **zero** coverage.
     sub-3s timing rejection, non-POST method restriction, and subject-line
     newline sanitization.
 - **Accept:** every rejection path from T16 has a test; the honeypot test
-  asserts a 200 response *and* that no send occurred; specs green.
+  asserts a 200 response _and_ that no send occurred; specs green.
 - **Commit:** `test: add contact form and API endpoint coverage`
 - **Deps:** T25.
 
@@ -830,7 +832,7 @@ Final integration — the point where the whole suite must actually pass.
 
 Four root-level docs describe features and a test suite this work deletes.
 Leaving them in place would mislead the next reader worse than deleting them —
-archive rather than delete, so the history of *why* those features existed
+archive rather than delete, so the history of _why_ those features existed
 stays reachable.
 
 - **Files (move via `git mv` into `docs/archive/`):**
@@ -924,13 +926,13 @@ whichever keeps the diff honest).
 
 ## Owner decisions (settled 2026-07-26)
 
-| Question | Decision | Where it landed |
-|---|---|---|
-| Delete `test-dynamic-page` from production? | **Yes — delete it.** No mid-run confirmation needed. | T10 |
-| Scratch Sanity dataset available? | **Created and seeded** — `staging`, verified 2026-07-26. | Prerequisites; T11, T21 |
-| T16 fill-time stamp: signed or opaque? | **Opaque, client-stamped.** No new secret, no token endpoint; ISR stays intact. Forgeable by design — the honeypot is the primary gate. | T16 |
-| Fate of the four superseded docs? | **Archive** into `docs/archive/`, not delete. | T30 |
-| Missing `docs/guides/orchestration-playbook.md`? | **Inline the rules** in this plan. | Rules of Engagement |
+| Question                                         | Decision                                                                                                                                | Where it landed         |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Delete `test-dynamic-page` from production?      | **Yes — delete it.** No mid-run confirmation needed.                                                                                    | T10                     |
+| Scratch Sanity dataset available?                | **Created and seeded** — `staging`, verified 2026-07-26.                                                                                | Prerequisites; T11, T21 |
+| T16 fill-time stamp: signed or opaque?           | **Opaque, client-stamped.** No new secret, no token endpoint; ISR stays intact. Forgeable by design — the honeypot is the primary gate. | T16                     |
+| Fate of the four superseded docs?                | **Archive** into `docs/archive/`, not delete.                                                                                           | T30                     |
+| Missing `docs/guides/orchestration-playbook.md`? | **Inline the rules** in this plan.                                                                                                      | Rules of Engagement     |
 
 ### Still worth knowing at kickoff
 
@@ -946,7 +948,7 @@ whichever keeps the diff honest).
   `git add`, not `git mv`. `.claude/` is untracked too; T0 asks what to do with
   it.
 - **One decision is deliberately deferred to T20:** whether `X-Frame-Options:
-  DENY` and a strict CSP break the embedded Studio. The plan says try DENY
+DENY` and a strict CSP break the embedded Studio. The plan says try DENY
   first and carve out `/studio` only if it actually breaks — that is a
   verify-then-decide, not an unknown blocking kickoff.
 
@@ -958,8 +960,6 @@ whichever keeps the diff honest).
 `generateStaticParams` now filters out `fundraising` and `services`, so the
 dedicated routes render. T8's acceptance was then verified end-to-end and
 **T11 is unblocked**. Original writeup below for the record.
-
-
 
 **`/fundraising` and `/services` are dead routes.** The CMS contains `page`
 documents with slugs `fundraising` and `services`. `app/[slug]/page.tsx`'s
@@ -1046,15 +1046,17 @@ decision on the fix.
 > recipient: all-failed returns 500, partial success still returns 200 and logs
 > the failures. The bot gates are unaffected — they return before any send.
 > T26's API tests should cover this path.
+
 - [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
 - [x] T18 — robots + sitemap (`sonnet`) ∥ T19 — `b23ed8c`
 - [x] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18 — `14eb919`. 41 → 12 vulns (critical + low cleared); 7 high / 5 moderate residuals all need major bumps (`sanity@6`, `next@16`, `next-sanity@13`) and are documented in the commit body. No Sanity bump was applied, so T9's resolver is on an unchanged dependency surface. ✅ **Studio edit/save manually verified by the owner 2026-08-12** against `staging`: changed a menu item price and uploaded an image, both persisted and rendered on `/menu` after ISR revalidation. The earlier "interactive check outstanding" note is cleared.
 
-> **Note on the T18 ∥ T19 marker:** their *file sets* are disjoint, but T19 runs
+> **Note on the T18 ∥ T19 marker:** their _file sets_ are disjoint, but T19 runs
 > `npm audit fix`, which rewrites `node_modules` and would break a concurrent
 > build in T18. They were run **sequentially**. Treat `∥` as a statement about
 > files only — tasks that touch installed dependencies are never actually
 > parallel-safe.
+
 - [x] T20 — Security headers and CSP (`opus`) — `3019ed9`
 
 > **Phase 4 complete.** Owner decision (2026-08-12): `/studio` gets a **relaxed
@@ -1063,7 +1065,7 @@ decision on the fix.
 > keep the strict policy and `X-Frame-Options: DENY`; `/studio` gets
 > `SAMEORIGIN`.
 >
-> **Trap worth remembering:** Next's `headers()` applies *every* matching entry,
+> **Trap worth remembering:** Next's `headers()` applies _every_ matching entry,
 > so a public source and a `/studio` source that both match would emit **two**
 > CSP headers and the browser would enforce their intersection — silently
 > breaking Studio. The public source uses a negative lookahead
@@ -1098,7 +1100,7 @@ decision on the fix.
 > **Deterministic ids alone were not enough — the catalogue writes are now
 > gated on an empty dataset.** The plan assumed `createIfNotExists` with a
 > `menuItem-<slug>` id would make re-runs no-ops. It does not: the live
-> catalogue was imported *before* those ids existed, so its documents carry
+> catalogue was imported _before_ those ids existed, so its documents carry
 > random ids and some slugs have since drifted (Sanity de-duplicated a few to
 > `-2`). Deterministic ids therefore collide with nothing and create a **second
 > full copy** of the catalogue beside the real one. This actually happened
@@ -1172,7 +1174,7 @@ decision on the fix.
 >
 > **⚠ Three scripts still `createOrReplace` live page documents and were left
 > alone:** `add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`,
-> `upload-images-and-update-pages.ts`. These are *update* tools whose purpose
+> `upload-images-and-update-pages.ts`. These are _update_ tools whose purpose
 > is to modify existing pages, so replacement is arguably intended — but each
 > rewrites the whole document from hardcoded content and would discard any
 > owner edits made since. None has a `--yes` guard. Not in scope; flagged for
@@ -1206,6 +1208,7 @@ decision on the fix.
 > **Tooling note for future sessions:** long `git commit` heredocs get blocked
 > by the permission classifier in this environment. Write the message to a file
 > and use `git commit -F <file>` instead.
+
 - [x] T24 — Rewrite navigation and homepage specs (`sonnet`) — `e123134`
 
 > **The root cause of much of the red suite: every nav link exists twice in
@@ -1237,6 +1240,7 @@ decision on the fix.
 > **Note for the contact specs:** the phone number is plain text in `Header`
 > and `Footer`, never a `tel:` anchor — only `/contact` has one. The plan's
 > "assert a `tel:` link exists" has nothing to bind to on the homepage/nav.
+
 - [x] T25 — Rewrite menu spec and add page smoke tests (`sonnet`) — `42b7c29`
 
 > Verified independently: **22 passed, 0 failed** on chromium + Mobile Chrome.
@@ -1253,6 +1257,7 @@ decision on the fix.
 > `services`), mirroring `RESERVED_SLUGS` in `app/[slug]/page.tsx`. The 404
 > test asserts the real HTTP status from the navigation response, which is the
 > first actual coverage of T11's `notFound()` handling.
+
 - [x] T26 — Contact form and API coverage (`sonnet`) — `1e1ca1b`
 
 > Verified independently: **36 passed, 0 failed** on chromium + Mobile Chrome.
@@ -1281,6 +1286,7 @@ decision on the fix.
 > to Resend, so subject-line sanitization is only asserted as "accepted and
 > fails cleanly at the send stage", not as a verified string. Closing that
 > would need an app-code seam or a stubbed Resend backend — neither in scope.
+
 - [x] T27 — Accessibility spec rewrite and full-suite green (`opus`) — `4c2f63e`
 
 > **✅ FULL SUITE GREEN: 115 passed, 0 failed, 5 skipped** on chromium +
@@ -1289,13 +1295,13 @@ decision on the fix.
 >
 > **🐛 Real WCAG AA failure found and fixed (owner approved 2026-08-12).** The
 > footer's "Contact Us Online!" button was white on `#5bc0de` — **2.09:1**
-> against a required 4.5:1 — and being in the footer it failed on *every*
+> against a required 4.5:1 — and being in the footer it failed on _every_
 > page. Now `#31708f` / `#2a6070` hover, measured at 5.46:1 and 6.99:1.
 > Followed T13's precedent: fix the markup, don't weaken the test.
 >
 > **Third-party markup is excluded from axe.** The homepage's YouTube embed
-> reports `aria-allowed-attr` and `aria-prohibited-attr` violations *inside
-> the player iframe* — YouTube's markup, unfixable from this repo, and liable
+> reports `aria-allowed-attr` and `aria-prohibited-attr` violations _inside
+> the player iframe_ — YouTube's markup, unfixable from this repo, and liable
 > to change when they redeploy. `.exclude('iframe')` keeps the scan on our own
 > markup.
 >
@@ -1311,12 +1317,13 @@ decision on the fix.
 > and the live key in `.env.local` plus Sanity's `contactFormRecipients` did
 > the rest. That is the second such incident on this project (see T16).
 >
-> Root cause: safety depended on *remembering a prefix*. `playwright.config.ts`
+> Root cause: safety depended on _remembering a prefix_. `playwright.config.ts`
 > now sets `webServer.env.RESEND_API_KEY` to an invalid value
 > unconditionally, so no test run can deliver mail regardless of how it is
 > invoked. Verified by running the whole suite with **no** prefix: green, with
 > the server logging delivery failures and no successful send. **The manual
 > prefix is no longer needed.**
+
 - [x] T28 — CI workflow (`sonnet`) — `4d74b14`. **Owner decision (2026-08-12): accept one red `format:check`** and clear it at T31; stated explicitly in the commit body, with no `continue-on-error` hiding it.
 
 > **The workflow is deliberately thin because `playwright.config.ts` already
@@ -1324,7 +1331,7 @@ decision on the fix.
 > config's `webServer.command` is `npm run build && npm run start`, and it
 > self-filters to `chromium` + `Mobile Chrome` whenever `CI` is set — which
 > GitHub Actions does automatically. Only the chromium browser is installed,
-> because `Mobile Chrome` is a Pixel 5 *emulation* on chromium, not a separate
+> because `Mobile Chrome` is a Pixel 5 _emulation_ on chromium, not a separate
 > download. Adding `--project` flags or a second server here would duplicate or
 > fight that config.
 >
@@ -1361,7 +1368,7 @@ decision on the fix.
 > pushes, CI re-runs on this same PR and finally exercises the full chain —
 > **that run is what closes T28.** Do not consider T28 fully accepted until a
 > CI run shows `Run Playwright tests` green. The browser-cache half of the
-> acceptance ("the cache is doing its job") needs *two* post-T31 runs to show a
+> acceptance ("the cache is doing its job") needs _two_ post-T31 runs to show a
 > cache hit.
 >
 > The "a deliberately introduced lint error fails the run" clause was **not**
@@ -1411,7 +1418,7 @@ decision on the fix.
 > The subagent's draft twice claimed "CI is green" and that the suite "is
 > green in CI". **Both were false** and were corrected by the orchestrator
 > before commit — `format:check` halts the job before build or tests run, so
-> the suite is green *locally* only. Watch for this specific overstatement in
+> the suite is green _locally_ only. Watch for this specific overstatement in
 > T30–T32.
 >
 > `test:visual` survives in two frozen Phase 5 passages in
@@ -1426,16 +1433,17 @@ decision on the fix.
 > the string. Self-referential, pre-existing, not a defect.
 >
 > Gate: lint clean, build green, 115 passed / 5 skipped / 0 failed, 0 emails.
+
 - [x] T30 — Archive superseded documentation (`haiku`) — `0f2c4ac`
 
 > All four moved at 100% similarity; `git log --follow --oneline --
-> docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
+docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
 > automated testing infrastructure (Phase 5)"), so history survived.
 >
 > **⚠ The acceptance criterion is self-contradictory and cannot be met as
 > literally written.** It asks that
 > `grep -rn "SOCIAL_MEDIA_INTEGRATION\|…" --exclude-dir=docs .` return nothing
-> *and* that referrers be updated to the new paths. An updated reference
+> _and_ that referrers be updated to the new paths. An updated reference
 > **contains the filename**, so the grep can only be empty if every reference
 > is deleted outright. Resolved in substance: **zero root-level references
 > survive**, and every remaining match is a `docs/archive/` path explicitly
@@ -1462,14 +1470,14 @@ decision on the fix.
 > Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
 
 - [x] T30b — Rewrite the stale test suite docs (`sonnet`) — **not in the
-  original plan; added by owner decision 2026-08-12.** T30 revealed that
-  `tests/README.md` and `tests/QUICK_START.md` are stale in exactly the way
-  T30 exists to fix: they document the deleted `visual/` suite and
-  `npm run test:visual`, omit the specs added in T25–T26 (`pages.spec.ts`,
-  `contact.spec.ts`, `tests/api/`), and instruct the reader to run tests
-  against `npm run dev` when T23 switched the suite to a production build.
-  Owner chose **rewrite** over archive. Sequenced before T31 so the format
-  sweep covers final content. — `1aca962`
+      original plan; added by owner decision 2026-08-12.** T30 revealed that
+      `tests/README.md` and `tests/QUICK_START.md` are stale in exactly the way
+      T30 exists to fix: they document the deleted `visual/` suite and
+      `npm run test:visual`, omit the specs added in T25–T26 (`pages.spec.ts`,
+      `contact.spec.ts`, `tests/api/`), and instruct the reader to run tests
+      against `npm run dev` when T23 switched the suite to a production build.
+      Owner chose **rewrite** over archive. Sequenced before T31 so the format
+      sweep covers final content. — `1aca962`
 
 > **The old docs also advertised two helper functions that do not exist:**
 > `testMobileMenu()` and `checkNavigationLinks()`, both deleted in T24 for
@@ -1492,6 +1500,7 @@ decision on the fix.
 > follow-up.
 >
 > Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
+
 - [ ] T31 — Repo-wide format sweep (`haiku`)
 - [ ] T32 — Graduate the plan documents (`opus`)
 

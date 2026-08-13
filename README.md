@@ -5,6 +5,7 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18.x or higher
 - npm or yarn
 - Git
@@ -13,11 +14,13 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
 ### Development Setup
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Configure environment variables**:
+
    ```bash
    cp .env.local.example .env.local
    ```
@@ -25,6 +28,7 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
    Edit `.env.local` with your Sanity credentials (see [SETUP.md](./SETUP.md) for details)
 
 3. **Run development server**:
+
    ```bash
    npm run dev
    ```
@@ -36,12 +40,14 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
 ## 📖 Documentation
 
 ### For Developers
+
 - **[SETUP.md](./SETUP.md)** - Complete setup instructions, Sanity authentication, and **Vercel deployment guide**
 - **[IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md)** - Project roadmap and implementation details
 - **[CONTENT_AUDIT.md](./reference/CONTENT_AUDIT.md)** - Content inventory from original site
 - **[CLAUDE.md](./CLAUDE.md)** - AI assistant guidance and project conventions
 
 ### For Site Managers
+
 - **[User Guides](./user-guides/)** - Complete guides for managing the website through Sanity Studio
   - [Getting Started](./user-guides/GETTING_STARTED.md) - Learn the basics and make your first update
   - [Managing Menu Items](./user-guides/managing-menu-items.md) - Add, edit, and update menu items
@@ -55,27 +61,27 @@ A modernized website for ChrisCakes of Michigan, built with Next.js 15 and Sanit
 
 ### Core Technologies
 
-| Category | Technology | Purpose | Cost |
-|----------|-----------|---------|------|
-| **Framework** | [Next.js 15](https://nextjs.org) | React framework with App Router, SSR, and ISR | Free |
-| **Language** | [TypeScript](https://www.typescriptlang.org) | Type-safe JavaScript | Free |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com) | Utility-first CSS framework | Free |
-| **CMS** | [Sanity.io](https://www.sanity.io) | Headless CMS for content management | Free tier (3 users) |
-| **Deployment** | [Vercel](https://vercel.com) | Serverless deployment platform | Free tier (hobby) |
-| **CDN/Security** | [Cloudflare](https://www.cloudflare.com) | DDoS protection, CDN, DNS | Free tier |
-| **Email** | [Resend](https://resend.com) | Transactional email API | Free tier (3k emails/month) |
-| **Analytics** | [Google Analytics 4](https://analytics.google.com) | User behavior and traffic analytics | Free |
-| **Image CDN** | Sanity CDN | Image optimization and delivery | Included with Sanity |
-| **Version Control** | [Git](https://git-scm.com) / GitHub | Source code management | Free |
+| Category            | Technology                                         | Purpose                                       | Cost                        |
+| ------------------- | -------------------------------------------------- | --------------------------------------------- | --------------------------- |
+| **Framework**       | [Next.js 15](https://nextjs.org)                   | React framework with App Router, SSR, and ISR | Free                        |
+| **Language**        | [TypeScript](https://www.typescriptlang.org)       | Type-safe JavaScript                          | Free                        |
+| **Styling**         | [Tailwind CSS v4](https://tailwindcss.com)         | Utility-first CSS framework                   | Free                        |
+| **CMS**             | [Sanity.io](https://www.sanity.io)                 | Headless CMS for content management           | Free tier (3 users)         |
+| **Deployment**      | [Vercel](https://vercel.com)                       | Serverless deployment platform                | Free tier (hobby)           |
+| **CDN/Security**    | [Cloudflare](https://www.cloudflare.com)           | DDoS protection, CDN, DNS                     | Free tier                   |
+| **Email**           | [Resend](https://resend.com)                       | Transactional email API                       | Free tier (3k emails/month) |
+| **Analytics**       | [Google Analytics 4](https://analytics.google.com) | User behavior and traffic analytics           | Free                        |
+| **Image CDN**       | Sanity CDN                                         | Image optimization and delivery               | Included with Sanity        |
+| **Version Control** | [Git](https://git-scm.com) / GitHub                | Source code management                        | Free                        |
 
 ### Development Tools
 
-| Tool | Purpose |
-|------|---------|
-| **ESLint** | JavaScript/TypeScript linting |
-| **Prettier** | Code formatting |
-| **next/font** | Automatic font optimization |
-| **next/image** | Automatic image optimization |
+| Tool           | Purpose                       |
+| -------------- | ----------------------------- |
+| **ESLint**     | JavaScript/TypeScript linting |
+| **Prettier**   | Code formatting               |
+| **next/font**  | Automatic font optimization   |
+| **next/image** | Automatic image optimization  |
 
 ### Architecture Diagram
 
@@ -161,9 +167,11 @@ graph TB
 ### How It All Works Together
 
 #### 1. **Request Flow** (User Visits Site)
+
 ```
 User Browser → Cloudflare CDN → Vercel Edge → Next.js App → Sanity CMS
 ```
+
 - User requests a page (e.g., `/menu`)
 - **Cloudflare** proxies the request, provides DDoS protection and SSL
 - **Vercel** receives the request at the edge location closest to the user
@@ -171,18 +179,22 @@ User Browser → Cloudflare CDN → Vercel Edge → Next.js App → Sanity CMS
 - Page is rendered and cached, then returned to user via **Cloudflare CDN**
 
 #### 2. **Content Management Flow**
+
 ```
 Restaurant Owner → Sanity Studio → Sanity CMS → Website (auto-updates)
 ```
+
 - Owner logs into **Sanity Studio** at `/studio`
 - Updates menu items, prices, or content
 - Changes are saved to **Sanity CMS**
 - Website automatically fetches new content within 60 seconds (ISR)
 
 #### 3. **Contact Form Flow**
+
 ```
 User Submits Form → API Route → Resend API → Email Recipients
 ```
+
 - User fills out contact form on `/contact`
 - Form data sent to **Next.js API route** (`/api/contact`)
 - API validates data, checks rate limits
@@ -190,18 +202,22 @@ User Submits Form → API Route → Resend API → Email Recipients
 - **Google Analytics** tracks form submission as conversion event
 
 #### 4. **Analytics Flow**
+
 ```
 User Interactions → Google Analytics → GA4 Dashboard
 ```
+
 - **GA4 tracking script** loads on every page
 - Tracks pageviews, events, conversions
 - Data sent to **Google Analytics** for analysis
 - Restaurant owner views reports in GA4 dashboard
 
 #### 5. **Image Delivery Flow**
+
 ```
 Sanity Image → Sanity CDN → Cloudflare Cache → User
 ```
+
 - Images uploaded to **Sanity CMS**
 - Served via **Sanity CDN** with automatic optimization
 - Cached by **Cloudflare** at edge locations
@@ -209,18 +225,18 @@ Sanity Image → Sanity CDN → Cloudflare Cache → User
 
 ### Why This Stack?
 
-| Benefit | Technology | Impact |
-|---------|-----------|--------|
-| **Zero Hosting Costs** | Vercel Free Tier | Suitable for small business traffic |
-| **Content Independence** | Sanity CMS | Owner updates content without developer |
-| **Global Performance** | Cloudflare CDN | Fast page loads worldwide |
-| **DDoS Protection** | Cloudflare | Site stays online during attacks |
-| **Instant Updates** | Next.js ISR | Content changes appear within 60 seconds |
-| **Email Reliability** | Resend | Professional transactional emails |
-| **Data Insights** | Google Analytics 4 | Understand visitor behavior |
-| **SEO Optimized** | Next.js SSR | Better search engine rankings |
-| **Mobile First** | Responsive Design | Works perfectly on all devices |
-| **Type Safety** | TypeScript | Fewer bugs, better code quality |
+| Benefit                  | Technology         | Impact                                   |
+| ------------------------ | ------------------ | ---------------------------------------- |
+| **Zero Hosting Costs**   | Vercel Free Tier   | Suitable for small business traffic      |
+| **Content Independence** | Sanity CMS         | Owner updates content without developer  |
+| **Global Performance**   | Cloudflare CDN     | Fast page loads worldwide                |
+| **DDoS Protection**      | Cloudflare         | Site stays online during attacks         |
+| **Instant Updates**      | Next.js ISR        | Content changes appear within 60 seconds |
+| **Email Reliability**    | Resend             | Professional transactional emails        |
+| **Data Insights**        | Google Analytics 4 | Understand visitor behavior              |
+| **SEO Optimized**        | Next.js SSR        | Better search engine rankings            |
+| **Mobile First**         | Responsive Design  | Works perfectly on all devices           |
+| **Type Safety**          | TypeScript         | Fewer bugs, better code quality          |
 
 ### Performance Features
 
@@ -396,16 +412,19 @@ npm start
 Common issues and solutions:
 
 ### Build Fails
+
 - Check environment variables are set correctly
 - Ensure all dependencies are installed: `npm install`
 - Clear Next.js cache: `rm -rf .next`
 
 ### Sanity Connection Issues
+
 - Verify Sanity project ID and API token
 - Check CORS settings in Sanity dashboard
 - Ensure environment variables start with `NEXT_PUBLIC_` for client-side access
 
 ### Image Optimization Errors
+
 - Confirm `cdn.sanity.io` is in `next.config.ts` allowed domains
 - Verify images are uploaded to Sanity CDN
 
@@ -424,6 +443,7 @@ See [SETUP.md](./SETUP.md) for more troubleshooting help.
 - 🚀 Ready for production deployment
 
 ### Recent Updates
+
 - ✅ Full-featured contact form with email notifications
 - ✅ "Call for pricing!" display for menu items
 - ✅ All content pages from original site migrated

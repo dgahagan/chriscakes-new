@@ -7,23 +7,27 @@ These files are archived on **2026-08-12** as part of the remediation work plann
 ## Archived Files
 
 ### SOCIAL_MEDIA_INTEGRATION.md
+
 Documents the UGC gallery, review widgets, click-to-tweet links, Pinterest board embeds, and Instagram feed widgets that were configurable in Sanity Studio. These components and their schema fields were deleted in T5 because they were configured in Sanity but rendered nowhere in the frontend.
 
-**Note:** Social media *links* (ShareButtons component) remain on four pages; only embedded *feeds and widgets* were removed.
+**Note:** Social media _links_ (ShareButtons component) remain on four pages; only embedded _feeds and widgets_ were removed.
 
 **Superseded by:** The current social media strategy documented in `CLAUDE.md` (no embedded feeds); `docs/plans/proposed/remediation-implementation-plan.md` (T5 deletion rationale).
 
 ### SOCIAL_MEDIA_STATUS.md
+
 Status tracking document for the social media integration features above, describing implementation progress of the UGC gallery, review widgets, and embedded feeds.
 
 **Superseded by:** `docs/plans/proposed/remediation-implementation-plan.md` (status of all remediation tasks).
 
 ### PHASE5_TESTING_SUMMARY.md
+
 Describes the Phase 5 test suite, including the visual regression test suite, baselines, and test execution procedures. This suite was deleted in T23 because the visual regression baselines never existed.
 
 **Superseded by:** `docs/plans/proposed/remediation-implementation-plan.md` (testing strategy); `.github/workflows/ci.yml` (current CI testing).
 
 ### TESTING_GUIDE.md
+
 Documents the pre-rewrite Playwright test suite, test file locations, and the `test:visual` npm script (both deleted). The Playwright suite was completely rewritten from scratch in T23–T27 to match the refactored codebase.
 
 **Superseded by:** `CLAUDE.md` (development commands and testing procedures); `docs/plans/proposed/remediation-implementation-plan.md` (why tests were rewritten); `.github/workflows/ci.yml` (current CI workflow as of T28).

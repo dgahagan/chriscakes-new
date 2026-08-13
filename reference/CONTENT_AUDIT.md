@@ -1,13 +1,16 @@
 # ChrisCakes Website - Content Audit
 
 ## Site Overview
+
 ChrisCakes is a Michigan-based catering company specializing in pancake breakfasts and other catering services. The current site is built using ASP.NET MVC and contains static HTML content.
 
 ## Pages Identified
 
 ### 1. Home (Index.cshtml)
+
 **Content Type**: Marketing/Information page
 **Key Content**:
+
 - Main headline: "Chris Cakes is the catering company that makes pancakes... BY THE MILLIONS!"
 - Company history (since 1969, Guinness World Records)
 - Service description (custom grill, pancake flipping show)
@@ -17,6 +20,7 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 - Photo gallery (home1.png through home6.png)
 
 **Editable Content Needed**:
+
 - Headline text
 - About paragraphs (5 paragraphs)
 - Video URL
@@ -26,12 +30,14 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 2. About (About.cshtml)
+
 **Content Type**: Contact/Information page
 **Expected Content**: Contact information, company background
 
 ---
 
 ### 3. Services (Services.cshtml)
+
 **Content Type**: Service offerings page
 **Expected Content**: Description of catering services
 **Images**: services1.jpg, services2.jpg, services3.jpg
@@ -39,6 +45,7 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 4. Breakfast Menus (BreakfastMenus.cshtml)
+
 **Content Type**: Menu page
 **Menu Items Identified**:
 
@@ -75,35 +82,41 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
    - Price: Call for pricing
 
 **Additional Content**:
+
 - Customer testimonial: "PEOPLE LOVE US… CAUSE WE ARE FLIPPING AWESOME." with quote from Noelle Davis, West Maple Elementary School
 
 ---
 
 ### 5. Breakfast A La Carte (BreakfastALaCarte.cshtml)
+
 **Content Type**: Menu page
 **Expected Content**: Individual breakfast items with pricing
 
 ---
 
 ### 6. Lunch and Dinner (LunchAndDinner.cshtml)
+
 **Content Type**: Menu page
 **Expected Content**: Lunch/dinner menu items and packages
 
 ---
 
 ### 7. Menus N More (MenusNMore.cshtml)
+
 **Content Type**: Menu page
 **Expected Content**: Additional menu options
 
 ---
 
 ### 8. Menus N More A La Carte (MenusNMoreALaCarte.cshtml)
+
 **Content Type**: Menu page
 **Expected Content**: Individual items from Menus N More
 
 ---
 
 ### 9. Fundraising (Fundraising.cshtml)
+
 **Content Type**: Information page
 **Expected Content**: Fundraising event information
 **Images**: fundraising1.jpg, fundraising2.jpg.png, fundraising3.jpg.png
@@ -111,6 +124,7 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 10. How To Book (HowToBook.cshtml)
+
 **Content Type**: Information/Process page
 **Expected Content**: Booking process and instructions
 **Images**: book1.jpg, book2.jpg
@@ -118,6 +132,7 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 11. How To Run A Successful Fundraiser (HowToRunASuccessfulFundraiser.cshtml)
+
 **Content Type**: Information/Guide page
 **Expected Content**: Tips and guidelines for fundraisers
 **Images**: help1.jpg, help1.png, help2.jpg, help3.jpg, howto1.jpg
@@ -125,6 +140,7 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 12. Day Of Event Information (DayOfEventInformation.cshtml)
+
 **Content Type**: Information page
 **Expected Content**: Day-of logistics and requirements
 **Images**: day1.jpg through day6.jpg
@@ -132,12 +148,14 @@ ChrisCakes is a Michigan-based catering company specializing in pancake breakfas
 ---
 
 ### 13. Your Group (YourGroup.cshtml)
+
 **Content Type**: Information page
 **Expected Content**: Information for groups/organizations
 
 ---
 
 ### 14. Invoice Payment (InvoicePayment.cshtml)
+
 **Content Type**: Functional page
 **Expected Content**: Payment processing form
 **Images**: invoice1.jpg through invoice4.jpg
@@ -159,13 +177,16 @@ Based on page structure, the following menu categories exist:
 ## Image Assets
 
 ### Logo
+
 - `logo.png` - Company logo
 
 ### Home Page Images
+
 - `banner1.png` - Main banner
 - `home1.png` through `home6.png` - Gallery images
 
 ### Category/Section Images
+
 - **Services**: services1-3.jpg
 - **Booking**: book1-2.jpg
 - **Fundraising**: fundraising1-3.jpg/png
@@ -178,17 +199,20 @@ Based on page structure, the following menu categories exist:
 ## Content Management Requirements
 
 ### High Priority (Frequently Updated)
+
 1. **Menu Items** - Names, descriptions, prices
 2. **Menu Categories** - Category names, descriptions
 3. **Testimonials** - Customer quotes and attributions
 4. **Photos** - Event photos, food photos
 
 ### Medium Priority (Occasionally Updated)
+
 5. **Page Content** - About, Services, How-To pages
 6. **Contact Information** - Phone, email, address, hours
 7. **Social Media Links** - Facebook, Instagram, etc.
 
 ### Low Priority (Rarely Updated)
+
 8. **Logo** - Company logo
 9. **Site Settings** - Site title, meta descriptions
 
@@ -199,11 +223,13 @@ Based on page structure, the following menu categories exist:
 Based on the audit, consider these additions to the schema:
 
 ### Menu Item Schema - Additional Fields
+
 - `package` (boolean) - Is this a package or single item?
 - `servingSize` (string) - e.g., "Serves 50-100 people"
 - `minimumGuests` (number) - Minimum number of guests
 
 ### Testimonial Schema (New)
+
 ```typescript
 {
   name: 'testimonial',
@@ -219,6 +245,7 @@ Based on the audit, consider these additions to the schema:
 ```
 
 ### Gallery Schema (New)
+
 ```typescript
 {
   name: 'gallery',
@@ -251,6 +278,7 @@ Based on the audit, consider these additions to the schema:
 ## Design Notes
 
 The current site uses:
+
 - Bootstrap framework (responsive design)
 - Lightbox for image galleries
 - YouTube iframe embeds
@@ -263,6 +291,7 @@ These design patterns should be replicated in the new Next.js site.
 ---
 
 ## Technical Stack (Current Site)
+
 - **Framework**: ASP.NET MVC (.NET Framework)
 - **Frontend**: Bootstrap 3/4, jQuery
 - **Language**: C# with Razor views

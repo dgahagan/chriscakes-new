@@ -30,11 +30,7 @@ interface MenuDisplayProps {
 }
 
 type SortOption =
-  | 'default'
-  | 'name-asc'
-  | 'name-desc'
-  | 'price-asc'
-  | 'price-desc';
+  'default' | 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
 
 export default function MenuDisplay({ items, categories }: MenuDisplayProps) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);

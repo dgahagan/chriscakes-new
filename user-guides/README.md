@@ -5,6 +5,7 @@ Welcome to the ChrisCakes website management guides! These step-by-step tutorial
 ## Quick Start
 
 **New to the system?** Start here:
+
 1. Read **[Getting Started](./GETTING_STARTED.md)** - Learn the basics of using the Studio
 2. Try updating your business hours in **[Site Settings](./updating-site-settings.md)**
 3. Add or edit a menu item using **[Managing Menu Items](./managing-menu-items.md)**
@@ -12,9 +13,11 @@ Welcome to the ChrisCakes website management guides! These step-by-step tutorial
 ## All Available Guides
 
 ### 📚 [Getting Started](./GETTING_STARTED.md)
+
 **Start here if you're new!** Learn how to access the Studio, understand how changes work, and make your first update.
 
 **Topics covered:**
+
 - Accessing the Sanity Studio
 - How the publish button works
 - The 60-second auto-update feature
@@ -23,9 +26,11 @@ Welcome to the ChrisCakes website management guides! These step-by-step tutorial
 ---
 
 ### 🥞 [Managing Menu Items](./managing-menu-items.md)
+
 Learn how to add, edit, and remove items from your menu.
 
 **Topics covered:**
+
 - Adding new breakfast packages, lunch items, and catering options
 - Updating prices and descriptions
 - Uploading and changing photos
@@ -34,6 +39,7 @@ Learn how to add, edit, and remove items from your menu.
 - Organizing items with the order field
 
 **Common tasks:**
+
 - Change a price → Page 3
 - Add a new menu package → Page 1
 - Upload a photo → Page 4
@@ -41,9 +47,11 @@ Learn how to add, edit, and remove items from your menu.
 ---
 
 ### 📑 [Managing Categories](./managing-categories.md)
+
 Organize your menu into sections like "Breakfast Menus," "Lunch & Dinner," "A-La-Carte," etc.
 
 **Topics covered:**
+
 - Creating new categories
 - Editing category names and descriptions
 - Reordering how categories appear
@@ -51,15 +59,18 @@ Organize your menu into sections like "Breakfast Menus," "Lunch & Dinner," "A-La
 - Best practices for organization
 
 **Common tasks:**
+
 - Create a new menu section → Page 1
 - Change category order → Page 3
 
 ---
 
 ### ⚙️ [Updating Site Settings](./updating-site-settings.md)
+
 Update your business information that appears throughout the website.
 
 **Topics covered:**
+
 - Changing your phone number and email
 - Updating business hours
 - Adding or updating social media links
@@ -67,6 +78,7 @@ Update your business information that appears throughout the website.
 - Temporary holiday hours
 
 **Common tasks:**
+
 - Update phone number → Page 3
 - Change business hours → Page 3
 - Add social media → Page 4
@@ -74,9 +86,11 @@ Update your business information that appears throughout the website.
 ---
 
 ### ⭐ [Managing Testimonials](./managing-testimonials.md)
+
 Add and manage customer reviews and testimonials on your website.
 
 **Topics covered:**
+
 - Adding new customer testimonials
 - Getting permission from customers
 - Choosing strong testimonials
@@ -84,15 +98,18 @@ Add and manage customer reviews and testimonials on your website.
 - Adding photos to testimonials
 
 **Common tasks:**
+
 - Add a customer review → Page 1
 - Feature a testimonial → Page 2
 
 ---
 
 ### 📄 [Editing Pages](./editing-pages.md)
+
 Understanding what content you can edit vs. what requires developer help.
 
 **Topics covered:**
+
 - What content is editable through Sanity (menus, testimonials, settings, FAQs)
 - What content requires developer assistance (About, Services, and other main pages)
 - How to request page updates from your developer
@@ -105,9 +122,11 @@ Main website pages like About, Services, and Fundraising are currently hard-code
 ---
 
 ### 📧 [Contact Form Guide](./contact-form-guide.md)
+
 Understand how the contact form works and how to respond to customer inquiries.
 
 **Topics covered:**
+
 - How customers submit inquiries
 - The reply-to email feature (just click Reply!)
 - Responding professionally and promptly
@@ -122,43 +141,49 @@ Understand how the contact form works and how to respond to customer inquiries.
 ## Key Features to Remember
 
 ### ⏱️ Auto-Update in 60 Seconds
+
 After you publish a change in the Studio, your website automatically updates within 60 seconds. Just refresh your browser to see the changes!
 
 ### 📬 Easy Email Replies
+
 Contact form emails include a "reply-to" header. Just click "Reply" in your email—no need to copy and paste the customer's email address!
 
 ### 💾 Publish vs. Save
+
 - **Save** = Draft only (not live on the website)
 - **Publish** = Live for everyone to see
 - Always remember to publish when you're ready!
 
 ### 📸 Use Quality Photos
+
 - Upload clear, well-lit images
 - At least 1000 pixels wide recommended
 - Photos of your actual events and food service work best
 
 ## Quick Reference Card
 
-| I want to... | Which guide? |
-|--------------|--------------|
-| Change a menu price | [Managing Menu Items](./managing-menu-items.md) |
-| Add a new menu package | [Managing Menu Items](./managing-menu-items.md) |
-| Update business hours | [Updating Site Settings](./updating-site-settings.md) |
-| Change phone number | [Updating Site Settings](./updating-site-settings.md) |
-| Add a customer review | [Managing Testimonials](./managing-testimonials.md) |
-| Update About page | [Editing Pages](./editing-pages.md) - Requires developer help |
-| Understand contact form emails | [Contact Form Guide](./contact-form-guide.md) |
-| Create a new menu section | [Managing Categories](./managing-categories.md) |
-| Add my Instagram link | [Updating Site Settings](./updating-site-settings.md) |
+| I want to...                   | Which guide?                                                  |
+| ------------------------------ | ------------------------------------------------------------- |
+| Change a menu price            | [Managing Menu Items](./managing-menu-items.md)               |
+| Add a new menu package         | [Managing Menu Items](./managing-menu-items.md)               |
+| Update business hours          | [Updating Site Settings](./updating-site-settings.md)         |
+| Change phone number            | [Updating Site Settings](./updating-site-settings.md)         |
+| Add a customer review          | [Managing Testimonials](./managing-testimonials.md)           |
+| Update About page              | [Editing Pages](./editing-pages.md) - Requires developer help |
+| Understand contact form emails | [Contact Form Guide](./contact-form-guide.md)                 |
+| Create a new menu section      | [Managing Categories](./managing-categories.md)               |
+| Add my Instagram link          | [Updating Site Settings](./updating-site-settings.md)         |
 
 ## Getting Help
 
 ### Still stuck?
+
 1. Check the relevant guide above—they're detailed and have lots of examples
 2. Look for the help icon (?) in the Studio interface
 3. Contact your website administrator or developer
 
 ### Found an error in these guides?
+
 Please let your website administrator know so they can update the documentation.
 
 ## Tips for Success
