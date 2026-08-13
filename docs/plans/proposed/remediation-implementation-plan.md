@@ -1501,7 +1501,28 @@ docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
 >
 > Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
 
-- [ ] T31 — Repo-wide format sweep (`haiku`)
+- [x] T31 — Repo-wide format sweep (`haiku`, run by the orchestrator) — `fead9d8`
+
+> Run directly rather than delegated: the brief is a single deterministic
+> command with an explicit "no hand edits" constraint, so a subagent could
+> only add risk.
+>
+> **41 files, not the ~77 the plan estimated.** Not a miscount — the deletions
+> in T1/T5/T23, the four docs archived in T30, and the files rewritten
+> wholesale along the way cleared most of that debt before the sweep reached
+> it. 17 of the 41 were code (8 `.ts`, 6 `.tsx`, 2 `.mjs`, 1 `.css`); a `-w`
+> diff confirms every code change is line wrapping, ternary breaking, or quote
+> normalization, with nothing semantic moved.
+>
+> **`npm run format:check` is green repo-wide for the first time on this
+> branch, so the known-red CI step from T28 is cleared. format:check is gating
+> from here on.**
+>
+> Gate: lint clean / zero warnings, build green, format:check green repo-wide,
+> 115 passed / 5 skipped / 0 failed, 0 emails. The suite was re-run rather
+> than assumed, because the sweep touched `app/globals.css` and six
+> components.
+
 - [ ] T32 — Graduate the plan documents (`opus`)
 
 **Done when:** all 33 boxes are ticked; `npm run lint`, `npm run format:check`,
