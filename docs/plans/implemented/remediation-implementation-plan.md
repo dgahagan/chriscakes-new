@@ -1364,8 +1364,17 @@ decision on the fix.
 > `npm ci`, and `Lint` all ✅; `Check formatting` ❌; everything after it
 > **skipped**.
 >
-> **⚠ T28's acceptance is therefore only PARTIALLY verified, and the remainder
-> is deferred to T31.** Because a failed step halts the job, `Build`, the
+> **✅ CLOSED after T32 — run `31664594910` is fully green.** Every step ran:
+> Lint, Check formatting, Build, and Run Playwright tests all ✅, in 4m22s.
+> The browser cache demonstrably works — `Install Playwright browsers` was
+> **skipped on a cache hit** while `Install Playwright OS dependencies` ran,
+> which is the exact behaviour the cache-hit branch was written for. That
+> closes the "total runtime is reasonable / the browser cache is doing its
+> job" clause too. **T28 is now fully accepted.** The original partial-
+> verification note is kept below for the record.
+>
+> **⚠ T28's acceptance was only PARTIALLY verified at the time, with the
+> remainder deferred to T31.** Because a failed step halts the job, `Build`, the
 > Playwright browser cache, and `Run Playwright tests` have **never executed in
 > CI**. They are verified locally only. When T31 clears the formatting debt and
 > pushes, CI re-runs on this same PR and finally exercises the full chain —
@@ -1549,7 +1558,41 @@ docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
 > `/run-plan` instruction to update the docs index had nothing to bind to.
 > Creating one was not in T32's brief and was not invented.
 
-**Done when:** all 33 boxes are ticked; `npm run lint`, `npm run format:check`,
+## ✅ COMPLETE — 2026-08-12
+
+All 34 boxes ticked (T0–T32 plus the owner-added T30b). Final state on
+`feat/remediation`, PR #1:
+
+| Gate                                                    | Result                                          |
+| ------------------------------------------------------- | ----------------------------------------------- |
+| `npm run lint`                                          | green, **zero warnings**                        |
+| `npm run format:check`                                  | green **repo-wide**                             |
+| `npm run build`                                         | green                                           |
+| Playwright (chromium + Mobile Chrome, production build) | **115 passed / 5 skipped / 0 failed**, 0 emails |
+| CI run `31664594910`                                    | **all steps green**, 4m22s, browser cache hit   |
+
+**Open items deliberately left for an owner decision — none of them blocking:**
+
+1. **A second Vercel project is misconfigured.** `Vercel – chriscakes` failed
+   on _every_ commit in this PR while `Vercel – chriscakes-new` succeeded on
+   every one — same code, different project settings. Hosting is out of this
+   plan's scope. It will red-flag every future PR until disconnected or fixed.
+2. **Three scripts still `createOrReplace` live page documents** with no
+   `--yes` guard: `add-videos-to-pages.ts`,
+   `update-remaining-pages-with-images.ts`, `upload-images-and-update-pages.ts`.
+   Flagged at T22, still true.
+3. **12 dependency advisories remain** (7 high / 5 moderate), all needing
+   major bumps: `sanity@6`, `next@16`, `next-sanity@13`. See T19.
+4. **The import scripts' empty-dataset create path has never been executed**
+   — the Sanity dataset quota is exhausted at 2, so there was nowhere to test
+   it. See T21.
+5. **`npm run test:e2e` / `test:a11y` carry no port or project overrides** and
+   fail on a fresh dev box. Docs work around it; the scripts themselves could
+   be fixed.
+6. **No `docs/README.md` index exists** — nothing to update at graduation, and
+   one was not invented.
+
+**Original done-when criteria**, all met: all boxes ticked; `npm run lint`, `npm run format:check`,
 `npm run build`, and `npm test` are all green on a fresh checkout of
 `feat/remediation`; the CI workflow is green on a real PR; `/studio` loads,
 edits, and saves with CSP active; `grep -rn "9t9xlmvm\|crimson-\|waitForTimeout"`
