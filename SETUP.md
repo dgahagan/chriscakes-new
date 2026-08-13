@@ -65,7 +65,9 @@ SANITY_API_TOKEN=your_api_token_here
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-**To get your API token:**
+**Note:** `SANITY_API_TOKEN` is only read by the one-time migration scripts in `scripts/` (see "Content Migration Scripts" below) — the app itself (`lib/sanity.ts`) never reads it. You only need it locally if you plan to run a migration script. `NEXT_PUBLIC_SITE_URL` is currently not read anywhere in the app code either (`app/sitemap.ts` and `app/robots.ts` hardcode the production domain directly) — keep it set for forward-compatibility, but changing it has no effect today.
+
+**To get your API token (only needed to run migration scripts):**
 1. Go to https://www.sanity.io/manage
 2. Select your ChrisCakes project
 3. Go to API → Tokens
@@ -175,6 +177,21 @@ Once Sanity Studio is running:
 3. Add menu items and assign them to categories
 4. Configure site settings
 5. Create pages for About, Services, etc.
+
+## Content Migration Scripts (One-Time Use)
+
+The catalogue and page content already live in Sanity were originally loaded by scripts in `scripts/`. These are **one-time migration tooling, not a routine content-management workflow** — day-to-day content edits belong in Sanity Studio, not these scripts. They are documented here in case you ever need to re-seed a fresh/empty dataset.
+
+- `npm run import` — legacy catalogue import (`scripts/import-content.ts`)
+- `npm run import:all` — seeds menu categories/items + site settings (`scripts/import-all-content.ts`)
+- `npm run import:more` — seeds the fundraising category/items, FAQs, and testimonials (`scripts/import-additional-content.ts`)
+- `npx tsx scripts/import-page-content.ts --yes` — seeds the 8 static content pages (no npm alias)
+
+All four refuse to run without a `--yes` flag, print the target Sanity project and dataset before writing anything, and are **safe to re-run against a dataset that already has content**: they use `createIfNotExists` plus a populated-dataset guard, so once real content exists they write nothing and only print a report of what (if anything) is missing. Running them again will not duplicate or overwrite existing documents.
+
+**Three other scripts are not safe to re-run**: `scripts/add-videos-to-pages.ts`, `scripts/update-remaining-pages-with-images.ts`, and `scripts/upload-images-and-update-pages.ts` still use `createOrReplace` on live page documents with no `--yes` guard. Running one of these will overwrite whatever content an owner has since edited in Studio. Read the script source before running any of them.
+
+All migration scripts require `SANITY_API_TOKEN` in `.env.local` (see above) — the running app does not need this token, only these scripts do.
 
 ## Troubleshooting
 
@@ -489,9 +506,12 @@ vercel login
    NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id_here
    NEXT_PUBLIC_SANITY_DATASET=production
    NEXT_PUBLIC_SANITY_API_VERSION=2024-01-01
-   SANITY_API_TOKEN=your_api_token_here
    NEXT_PUBLIC_SITE_URL=https://chriscakes.vercel.app
    ```
+
+   Also add the Resend variables covered in "Contact Form Setup with Resend" below (`RESEND_API_KEY`, `RESEND_FROM_EMAIL`, and optionally `CONTACT_EMAIL_TO`) — the contact form needs them at runtime.
+
+   **`SANITY_API_TOKEN` is not needed here.** The deployed app (`lib/sanity.ts`) never reads it — it's only used locally by the one-time scripts in `scripts/` (see "Content Migration Scripts" above). Adding it to Vercel does nothing for the running site.
 
    **Important**:
    - For staging/preview deployments, add variables to "Preview" environment
@@ -530,9 +550,11 @@ vercel login
    vercel env add NEXT_PUBLIC_SANITY_PROJECT_ID
    vercel env add NEXT_PUBLIC_SANITY_DATASET
    vercel env add NEXT_PUBLIC_SANITY_API_VERSION
-   vercel env add SANITY_API_TOKEN
    vercel env add NEXT_PUBLIC_SITE_URL
+   vercel env add RESEND_API_KEY
+   vercel env add RESEND_FROM_EMAIL
    ```
+   (Skip `SANITY_API_TOKEN` — the deployed app never reads it; it's only used locally by the migration scripts in `scripts/`.)
 
    For each variable, choose the environment:
    - **Production**

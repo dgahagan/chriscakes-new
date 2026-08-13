@@ -904,32 +904,50 @@ npm run dev
 - [ ] Visual regression tests show no unintended changes
 - [ ] Owner can successfully update content via Sanity Studio
 
-## Phase 6: Deployment (Week 5)
+## Phase 6: Remediation (Week 6) - IN PROGRESS 🔄
 
-### 6.1 Hosting Setup
+**Why this phase exists**: Phase 5 testing surfaced enough correctness, security, and reliability issues that a dedicated remediation pass was needed before deployment could responsibly proceed. `CODE_REVIEW.md` captured the full Critical/High/Medium/Low findings, and `docs/plans/proposed/remediation-plan.md` turned them into a design plan. `docs/plans/proposed/remediation-implementation-plan.md` is the task-by-task execution log (tasks T0–T32) for this phase; see it for full detail on every change, including verification notes.
+
+**Branch**: `feat/remediation`
+
+**Scope**: Eight workstreams (A–H) covering the complete Critical/High/Medium/Low finding set from `CODE_REVIEW.md`:
+
+- [x] **Workstream G — Data layer foundation**: Deleted leftover `sanity init` boilerplate and dead components; collapsed to a single, token-free, env-driven Sanity client (`lib/sanity.ts`); corrected GROQ queries and schema drift; cleaned up the JSON-LD helper.
+- [x] **Workstream C — Settings & CMS drift**: Deleted the dead social features (`UGCGallery`, `ReviewWidgets`, `ClickToTweet`, `PinButton`, `PinnableImage`, `PinterestBoardWidget`, `InstagramFeed`, and their schema fields) — `ShareButtons` was kept, it's still live on four pages; fixed Google Analytics end-to-end; made the header/footer and contact page social links CMS-driven; corrected the fundraising page; enforced the `siteSettings` singleton in Studio; deleted a leftover `test-dynamic-page` document from production.
+- [x] **Workstream F — Frontend correctness & accessibility**: Added missing-document resilience and a branded 404 page; swept out references to nonexistent Tailwind palette classes; fixed interactive-component accessibility (mobile nav focus/ARIA); corrected rendering and image `sizes`; cleaned up data-fetching, sorting, and a stray `revalidate: 3600` (normalized to 60).
+- [x] **Workstreams D + E — Endpoint & security hardening**: Hardened the contact API route; fixed JSON-LD server rendering and an XSS gap; added `app/robots.ts` and `app/sitemap.ts`; reduced dependency vulnerabilities from 41 to 12 (all criticals and lows cleared; the 7 high / 5 moderate residuals need major version bumps — `sanity@6`, `next@16`, `next-sanity@13` — and are documented separately); added security headers and a Content-Security-Policy in `next.config.ts`.
+- [x] **Workstream B — Import script safety**: Defanged `import-all-content.ts`, `import-additional-content.ts`, and `import-page-content.ts` — all now refuse to run without `--yes`, print the target Sanity project/dataset before writing, and use `createIfNotExists` plus a populated-dataset guard so they're safe to re-run and will not touch or duplicate existing documents. Fixed swallowed per-page import errors. **Three sibling scripts were flagged but intentionally left unfixed** (out of this workstream's scope): `add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`, and `upload-images-and-update-pages.ts` still `createOrReplace` live page documents with no `--yes` guard.
+- [x] **Workstream A — Test suite rebuild and CI**: Deleted the never-baselined `tests/visual/` suite and the `test:visual` npm script (see Phase 5 above, where it was originally added — it no longer exists); reset the remaining Playwright infrastructure; rewrote the navigation, homepage, menu, contact form, and API specs; rewrote the accessibility spec suite to a fully green run; added `.github/workflows/ci.yml` running lint, format check, build, and Playwright (chromium + Mobile Chrome) on every PR and push to `master`.
+- [ ] **Workstream H — Hygiene** (in progress): Documentation corrections (`CLAUDE.md`, `SETUP.md`, this file — in progress); still to come: archiving four superseded docs that still describe deleted features, a repo-wide Prettier formatting sweep, and graduating the plan documents out of `docs/plans/proposed/`.
+
+**Status**: Workstreams A through G (T0–T28) are complete. Workstream H — Hygiene (T29–T32: this documentation update, archiving superseded docs, the formatting sweep, and graduating the plan documents) is in progress. CI currently fails at one owner-accepted, explicitly-tracked step (`format:check`), which Workstream H's formatting sweep (T31) will clear. Because a failed step halts the job, the `build` and Playwright steps have **not yet run in CI** — they are verified locally only, and the first CI run to exercise them will be the one after T31 lands. The Playwright suite was rebuilt from scratch and passes locally against a production build (115 passed / 5 skipped / 0 failed on chromium + Mobile Chrome, the same matrix CI uses; the full 11-project matrix is available locally but needs Firefox/WebKit installed). See `docs/plans/proposed/remediation-implementation-plan.md`'s Progress Tracker for the complete, per-task verification record and current status.
+
+## Phase 7: Deployment (Week 6-7)
+
+### 7.1 Hosting Setup
 - [ ] Create Vercel account and link to Git repository
 - [ ] Configure environment variables in Vercel
 - [ ] Set up custom domain (if applicable)
 - [ ] Configure SSL certificate
 - [ ] Set up deployment previews for branches
 
-### 6.2 Production Deployment
+### 7.2 Production Deployment
 - [ ] Deploy Sanity Studio to studio.chriscakes.com or subdomain
 - [ ] Deploy Next.js site to Vercel
 - [ ] Configure production dataset in Sanity
 - [ ] Test all functionality in production
 - [ ] Set up monitoring and error tracking (Sentry or similar)
 
-### 6.3 Go-Live Checklist
+### 7.3 Go-Live Checklist
 - [ ] DNS cutover (if using existing domain)
 - [ ] Submit sitemap to Google Search Console
 - [ ] Set up 301 redirects from old URLs if structure changed
 - [ ] Monitor for any issues in first 24-48 hours
 - [ ] Verify analytics tracking works
 
-## Phase 7: Training & Documentation (Week 5-6)
+## Phase 8: Training & Documentation (Week 7-8)
 
-### 7.1 Owner Training
+### 8.1 Owner Training
 - [ ] Create video tutorials for common tasks:
   - [ ] Adding a new menu item
   - [ ] Updating prices
@@ -942,23 +960,23 @@ npm run dev
 - [ ] Schedule live training session(s)
 - [ ] Create quick reference guide
 
-### 7.2 Developer Documentation
+### 8.2 Developer Documentation
 - [ ] Document project structure
 - [ ] Document deployment process
 - [ ] Document environment variables
 - [ ] Create README with setup instructions
 - [ ] Document common maintenance tasks
 
-## Phase 8: Maintenance & Support (Ongoing)
+## Phase 9: Maintenance & Support (Ongoing)
 
-### 8.1 Ongoing Tasks
+### 9.1 Ongoing Tasks
 - [ ] Set up automated dependency updates (Dependabot)
 - [ ] Schedule quarterly reviews of site performance
 - [ ] Monitor Sanity and Vercel usage to stay within free tiers
 - [ ] Keep Next.js and dependencies updated
 - [ ] Regular content backups from Sanity
 
-### 8.2 Support Plan
+### 9.2 Support Plan
 - [ ] Define support hours/availability
 - [ ] Set up communication channel (email, Slack, etc.)
 - [ ] Create FAQ document based on owner questions
@@ -1052,13 +1070,16 @@ npm run dev
   - YouTube video support added
 
 ### ⏭️ Next Steps
+
+_Note (2026-08-12): this bullet list is part of the 2025-10-13 snapshot and predates Phase 6 (Remediation) — see the "Phase 6: Remediation" section and the 2026-08-12 "Recent Updates" entry for what actually happened next and the renumbering that resulted (old Phase 6/7/8 below are now Phase 7/8/9)._
+
 - **Phase 5**: Testing (IN PROGRESS) 🔄
   - Production build: ✅ Passes with zero errors
   - ESLint: ✅ Passes with zero errors
   - Remaining: CRUD testing, ISR testing, device testing, Lighthouse audit
-- **Phase 6**: Deployment (Ready to start after testing)
-- **Phase 7**: Training & Documentation (Not started)
-- **Phase 8**: Maintenance & Support (Not started)
+- **Phase 6** *(now Phase 7)*: Deployment (Ready to start after testing)
+- **Phase 7** *(now Phase 8)*: Training & Documentation (Not started)
+- **Phase 8** *(now Phase 9)*: Maintenance & Support (Not started)
 
 ### 🐛 Known Issues
 1. **CORS configuration** - Needs manual Sanity authentication to configure for production
@@ -1076,9 +1097,9 @@ npm run dev
 
 ---
 
-**Document Version**: 1.4
-**Last Updated**: 2025-10-11
-**Status**: Phase 4 Complete - Ready for Testing
+**Document Version**: 1.5
+**Last Updated**: 2026-08-12
+**Status**: Phase 6 (Remediation) in progress on branch `feat/remediation` — Workstreams A–G done, Workstream H (Hygiene) wrapping up; Phase 7 (Deployment) not yet started. See "Phase 6: Remediation" above and the 2026-08-12 entry under "Recent Updates" below. The "Current Status (as of 2025-10-13)" snapshot above predates this work and is kept as historical record, not current state.
 
 ---
 
@@ -1149,3 +1170,13 @@ The project is now ready for Phase 5 (Testing). Recommended actions:
 4. Performance audit with Lighthouse
 5. Accessibility audit (WCAG 2.1 AA)
 6. Deploy to staging environment (Vercel preview)
+
+### 2026-08-12 - Phase 6: Remediation (Workstreams A-G complete, H wrapping up)
+
+Phase 5 testing surfaced a large enough set of correctness, security, and reliability problems (see `CODE_REVIEW.md`) that a dedicated remediation phase was inserted before deployment, on branch `feat/remediation`. Phases 6 onward were renumbered accordingly (old Phase 6 "Deployment" is now Phase 7, old Phase 7 "Training & Documentation" is now Phase 8, old Phase 8 "Maintenance & Support" is now Phase 9).
+
+- Design plan: `docs/plans/proposed/remediation-plan.md`. Execution log: `docs/plans/proposed/remediation-implementation-plan.md` (tasks T0–T32, full verification detail per task).
+- Seven of eight workstreams (A–G) are done: data-layer foundation, settings/CMS drift (including deleting the dead social components added in the 2025-10-13 Social Media Integration entry above — `ShareButtons` was kept), frontend correctness & accessibility, endpoint & security hardening, import-script safety, and test-suite rebuild + CI. Workstream H (documentation hygiene) is in progress — this entry is part of it.
+- Highlights so far: single token-free Sanity client; dependency vulnerabilities cut from 41 to 12; security headers and a CSP added; the Playwright suite was rebuilt from scratch and is green locally against a production build (115 passed / 5 skipped / 0 failed on chromium + Mobile Chrome); `.github/workflows/ci.yml` now gates every PR, though its build and test steps stay unreached until the `format:check` debt is swept; the one-time import scripts were made idempotent and safe to re-run (`--yes` flag, target print, `createIfNotExists` + populated-dataset guard).
+- Known residual debt, tracked rather than silently dropped: 7 high / 5 moderate dependency vulnerabilities need major version bumps (`sanity@6`, `next@16`, `next-sanity@13`); `npm run format:check` is red pending Workstream H's repo-wide Prettier sweep; three page-mutating scripts (`add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`, `upload-images-and-update-pages.ts`) still `createOrReplace` live content with no safety guard and are flagged for an owner decision, not fixed in this phase.
+- See "Phase 6: Remediation" earlier in this document for the full workstream breakdown.
