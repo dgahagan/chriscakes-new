@@ -1119,6 +1119,18 @@ decision on the fix.
 > / 67 menu items / 6 categories, `siteSettings._updatedAt` still 2026-07-27.
 > Without `--yes` it exits 1 having written nothing.
 >
+> **⚠ The empty-dataset create path is committed but never executed** (owner
+> decision, 2026-08-12: accept as untested). Every verification run hit the
+> populated guard, because there is no empty dataset to run it against: the
+> Sanity plan's **dataset quota is exhausted at 2** (`production` + `staging`),
+> so `sanity dataset create` returns `Payment Required - Quota exceeded`. The
+> fallback — emptying `staging`'s catalogue and restoring it — was declined as
+> not worth the risk. That path now only matters for a from-scratch disaster
+> reimport. **If you ever need it, exercise it against a genuinely empty
+> dataset first.** A full `staging` export (93 docs + 19 assets) was taken
+> before this investigation and lives only in the session scratchpad — it is
+> not committed and will not survive the session.
+>
 > **⚠ Two sibling scripts are still destructive and are outside T21's scope:**
 > `scripts/import-additional-content.ts` (`npm run import:more`) still uses
 > bare `client.create()` for the fundraising category, menu items, FAQs, and
