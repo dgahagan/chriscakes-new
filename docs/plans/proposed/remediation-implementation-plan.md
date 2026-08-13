@@ -1385,7 +1385,47 @@ decision on the fix.
 
 **Phase 7 — Hygiene (H)**
 
-- [ ] T29 — Documentation update (`sonnet`)
+- [x] T29 — Documentation update (`sonnet`) — `a3e32a9`
+
+> **All three docs predated this branch and described a codebase that no
+> longer exists**, so the work was verification-driven: every retained claim
+> was checked against source, not against the plan text.
+>
+> **Corrections beyond the stated brief, all mechanical consequences of
+> already-committed work:** the `page` schema field list said `content` (block
+> content) when the real field is `sections` with five section types; the
+> Vercel env list demanded `SANITY_API_TOKEN` (unnecessary since T2) and
+> omitted the Resend vars the contact form needs at runtime.
+>
+> **⚠ The tracker itself was wrong about a command.** T22's note refers to
+> `npm run import:page`; **no such npm alias exists** in `package.json`
+> (only `import`, `import:all`, `import:more`). The real invocation is
+> `npx tsx scripts/import-page-content.ts --yes`. The docs now say so.
+>
+> **⚠ `NEXT_PUBLIC_SITE_URL` is read nowhere in app code.** `app/sitemap.ts`
+> and `app/robots.ts` hardcode `https://www.chriscakesofmi.com` (T18 built
+> them that way). `.env.local.example` and SETUP.md both implied otherwise.
+> SETUP.md now states that setting it has no effect today. Left as-is —
+> changing T18's committed behaviour is not T29's scope.
+>
+> The subagent's draft twice claimed "CI is green" and that the suite "is
+> green in CI". **Both were false** and were corrected by the orchestrator
+> before commit — `format:check` halts the job before build or tests run, so
+> the suite is green *locally* only. Watch for this specific overstatement in
+> T30–T32.
+>
+> `test:visual` survives in two frozen Phase 5 passages in
+> `IMPLEMENTATION_PLAN.md` (lines ~706 and ~867), deliberately: they are dated
+> historical record of what was built in 2025-10, and the new Phase 6 entry
+> cross-references that the script and suite no longer exist. The live
+> command lists in `CLAUDE.md` and `SETUP.md` are clean.
+>
+> The `9t9xlmvm` grep matches three files, not the two the acceptance
+> predicted: `CODE_REVIEW.md`, `remediation-plan.md`, **and this
+> implementation plan** — whose T29 acceptance criterion literally contains
+> the string. Self-referential, pre-existing, not a defect.
+>
+> Gate: lint clean, build green, 115 passed / 5 skipped / 0 failed, 0 emails.
 - [ ] T30 — Archive superseded documentation (`haiku`)
 - [ ] T31 — Repo-wide format sweep (`haiku`)
 - [ ] T32 — Graduate the plan documents (`opus`)
