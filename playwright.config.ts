@@ -3,8 +3,15 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * Playwright configuration for ChrisCakes website testing
  *
- * Tests cross-browser compatibility, mobile responsiveness, and accessibility
+ * Tests cross-browser compatibility, mobile responsiveness, and accessibility.
+ *
+ * Port: defaults to 3000, override with PLAYWRIGHT_PORT when something else
+ * already owns that port on the host. The suite always starts its own server
+ * (see `reuseExistingServer` below), so the port must be free.
  */
+const PORT = process.env.PLAYWRIGHT_PORT || '3000';
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
 export default defineConfig({
   testDir: './tests',
 
@@ -30,7 +37,7 @@ export default defineConfig({
   // Shared settings for all projects
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: BASE_URL,
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -126,10 +133,14 @@ export default defineConfig({
 
   // Run the production build before starting the tests, since tests must
   // exercise the same build that ships (not `next dev`).
+  // Never reuse an already-running server. Reusing one silently tests
+  // whatever happens to own the port — a stale build, or an unrelated app —
+  // which defeats the point of building first. A busy port now fails loudly
+  // instead; set PLAYWRIGHT_PORT to move off it.
   webServer: {
-    command: 'npm run build && npm run start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    command: `npm run build && npm run start -- --port ${PORT}`,
+    url: BASE_URL,
+    reuseExistingServer: false,
     timeout: 180000,
   },
 });

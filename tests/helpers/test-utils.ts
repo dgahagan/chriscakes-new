@@ -35,19 +35,6 @@ export async function navigateAndWait(page: Page, path: string) {
 }
 
 /**
- * Verify navigation links are present and working
- */
-export async function checkNavigationLinks(
-  page: Page,
-  expectedLinks: string[]
-) {
-  for (const linkText of expectedLinks) {
-    const link = page.getByRole('link', { name: linkText });
-    await expect(link).toBeVisible();
-  }
-}
-
-/**
  * Check if images are properly loaded
  */
 export async function checkImagesLoaded(page: Page) {
@@ -60,27 +47,5 @@ export async function checkImagesLoaded(page: Page) {
       (el) => (el as HTMLImageElement).naturalWidth
     );
     expect(naturalWidth).toBeGreaterThan(0);
-  }
-}
-
-/**
- * Test mobile menu functionality
- */
-export async function testMobileMenu(page: Page) {
-  // Check if hamburger menu button is visible (on mobile)
-  const menuButton = page.getByRole('button', { name: /menu/i });
-
-  if (await menuButton.isVisible()) {
-    // Click to open
-    await menuButton.click();
-    await page.waitForTimeout(500); // Wait for animation
-
-    // Verify menu is open (check for navigation links)
-    const homeLink = page.getByRole('link', { name: 'Home' });
-    await expect(homeLink).toBeVisible();
-
-    // Click to close
-    await menuButton.click();
-    await page.waitForTimeout(500); // Wait for animation
   }
 }
