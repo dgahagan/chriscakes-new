@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+env:
+  # Public, non-secret Sanity coordinates (already documented in CLAUDE.md /
+  # .env.local.example). `npm run build` statically generates pages that
+  # fetch real content from Sanity (see app/page.tsx, app/menu/page.tsx,
+  # app/[slug]/page.tsx, etc.), so the build fails without these. No
+  # SANITY_API_TOKEN is set here: the app client (lib/sanity.ts) never reads
+  # it, only one-off scripts/*.ts migration tools do.
+  NEXT_PUBLIC_SANITY_PROJECT_ID: '0fl6fs6u'
+  NEXT_PUBLIC_SANITY_DATASET: 'production'
+  NEXT_PUBLIC_SANITY_API_VERSION: '2024-01-01'
+
+jobs:
+  ci:
+    name: Lint, build, and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Expected to fail until T31 (the format sweep) lands. This is a known,
+      # owner-accepted red check (decision recorded 2026-08-12) rather than a
+      # regression — do not add continue-on-error to hide it.
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: |
+          echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Run Playwright tests
+        run: npm test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
