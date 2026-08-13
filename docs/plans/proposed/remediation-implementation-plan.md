@@ -1140,7 +1140,45 @@ decision on the fix.
 > content**. T22 touches the latter for error handling only. Neither is in the
 > plan's scope; flagged for an owner decision.
 
-- [ ] T22 — Fix swallowed import errors (`haiku`)
+- [x] T22 — Fix swallowed import errors (`sonnet`, upgraded from `haiku`) — `03beec9`
+
+> **Scope expanded past the plan, with owner approval (2026-08-12).** The
+> stated brief was error handling only, but both remaining import scripts
+> carried the same destructive defects T21 had just fixed next door, so they
+> were closed in the same commit. Model upgraded to `sonnet` because the work
+> was no longer mechanical.
+>
+> **`import-page-content.ts` was the most dangerous script in the repo.** It
+> used `createOrReplace` on all 8 pages, and its hardcoded ids (`about-page`,
+> `services-page`, …) are **exactly** the ids of the real, owner-edited
+> documents live today — verified by query. Unlike T21's case there was no id
+> mismatch to soften the blow: a `--yes` run would have silently replaced real
+> page content with the file's hardcoded 2025 text. Now `createIfNotExists`.
+>
+> `import-additional-content.ts` used bare `client.create()` for the
+> fundraising category, its items, 6 FAQs, and 3 testimonials — all already
+> live — so a re-run duplicated every one. Now uses T21's populated-dataset
+> guard, matching FAQs by `question` and testimonials by `author` (neither
+> schema has a slug).
+>
+> Both also gained T21's `--yes` + target-print + env-validation guard.
+>
+> Verified on `staging`: both refuse without `--yes` (exit 1, no writes); with
+> `--yes` the page script skipped all 8 and the additional script wrote
+> nothing. **All 91 documents byte-identical afterward** (content hash and
+> `_updatedAt`). A forced per-page failure exited 1 and named the page.
+> Page payloads proven unchanged by diffing every string literal against the
+> prior version — only console messages differ.
+>
+> **⚠ Three scripts still `createOrReplace` live page documents and were left
+> alone:** `add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`,
+> `upload-images-and-update-pages.ts`. These are *update* tools whose purpose
+> is to modify existing pages, so replacement is arguably intended — but each
+> rewrites the whole document from hardcoded content and would discard any
+> owner edits made since. None has a `--yes` guard. Not in scope; flagged for
+> an owner decision.
+
+**Phase 5 complete.**
 
 **Phase 6 — Test suite rebuild and CI (A)**
 
