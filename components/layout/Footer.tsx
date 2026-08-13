@@ -142,7 +142,7 @@ export default function Footer({
             </h3>
             <Link
               href="/contact"
-              className="inline-block bg-[#5bc0de] hover:bg-[#46b8da] text-white px-4 py-2 rounded text-sm font-medium mb-3"
+              className="inline-block bg-[#31708f] hover:bg-[#2a6070] text-white px-4 py-2 rounded text-sm font-medium mb-3"
             >
               Contact Us Online!
             </Link>

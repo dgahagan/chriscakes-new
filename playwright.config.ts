@@ -12,6 +12,17 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = process.env.PLAYWRIGHT_PORT || '3000';
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
+/**
+ * The parent environment, minus any undefined values, so it can be handed to
+ * webServer.env (which requires defined string values) without dropping PATH
+ * and friends that the build needs.
+ */
+const SAFE_PARENT_ENV: Record<string, string> = Object.fromEntries(
+  Object.entries(process.env).filter(
+    (entry): entry is [string, string] => entry[1] !== undefined
+  )
+);
+
 export default defineConfig({
   testDir: './tests',
 
@@ -142,5 +153,16 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: false,
     timeout: 180000,
+    // The test server must never be able to deliver mail. tests/api/contact
+    // deliberately drives submissions that clear every bot gate, and the
+    // real key in .env.local plus contactFormRecipients in Sanity would send
+    // those to the owner's actual inbox. Forcing an invalid key here makes
+    // the safe behaviour automatic rather than something each run has to
+    // remember to prefix — getting this wrong has already delivered real
+    // mail twice on this project.
+    env: {
+      ...SAFE_PARENT_ENV,
+      RESEND_API_KEY: 'e2e-invalid-key-never-send',
+    },
   },
 });
