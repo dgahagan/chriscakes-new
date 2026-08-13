@@ -1349,10 +1349,34 @@ decision on the fix.
 > is free with `ss -ltnp | grep :3100`. Note `:3000` is permanently owned by an
 > unrelated service on this host.
 >
-> First real CI run is expected to be red on `format:check` **only**. The one
-> other plausible first-run failure is the build-time Sanity fetch, if the
-> runner cannot reach Sanity's API — that would be a genuine failure, not the
-> expected one.
+> **First real CI run: PR #1, run `31663068264` — failed on `format:check`
+> and nothing else, exactly as predicted.** Per-step: checkout, Set up Node,
+> `npm ci`, and `Lint` all ✅; `Check formatting` ❌; everything after it
+> **skipped**.
+>
+> **⚠ T28's acceptance is therefore only PARTIALLY verified, and the remainder
+> is deferred to T31.** Because a failed step halts the job, `Build`, the
+> Playwright browser cache, and `Run Playwright tests` have **never executed in
+> CI**. They are verified locally only. When T31 clears the formatting debt and
+> pushes, CI re-runs on this same PR and finally exercises the full chain —
+> **that run is what closes T28.** Do not consider T28 fully accepted until a
+> CI run shows `Run Playwright tests` green. The browser-cache half of the
+> acceptance ("the cache is doing its job") needs *two* post-T31 runs to show a
+> cache hit.
+>
+> The "a deliberately introduced lint error fails the run" clause was **not**
+> tested by pushing a broken commit — that would put deliberate noise in the
+> PR history. `Lint` is a plain `run: npm run lint` step with default fail-fast
+> and it demonstrably executed in CI, so a non-zero exit fails the job
+> structurally.
+>
+> **⚠ Unrelated pre-existing failure surfaced by opening the PR: two Vercel
+> projects are attached to this repo.** `Vercel – chriscakes-new` deployed the
+> PR head **successfully**; `Vercel – chriscakes` **failed** on the identical
+> commit. Same code, different project configuration, so this is a Vercel
+> project-settings issue (likely root directory or missing env vars), not a
+> code defect. Hosting/deployment changes are explicitly out of scope for this
+> plan — **flagged for an owner decision**, not fixed here.
 >
 > Throwaway `scripts/cleanup-staging-duplicates.cjs` (untracked, left over from
 > T21's staging verification) was deleted at this point per owner decision, so
