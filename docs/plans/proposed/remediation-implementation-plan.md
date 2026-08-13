@@ -1281,7 +1281,42 @@ decision on the fix.
 > to Resend, so subject-line sanitization is only asserted as "accepted and
 > fails cleanly at the send stage", not as a verified string. Closing that
 > would need an app-code seam or a stubbed Resend backend — neither in scope.
-- [ ] T27 — Accessibility spec rewrite and full-suite green (`opus`)
+- [x] T27 — Accessibility spec rewrite and full-suite green (`opus`) — `4c2f63e`
+
+> **✅ FULL SUITE GREEN: 115 passed, 0 failed, 5 skipped** on chromium +
+> Mobile Chrome against a production build. `grep -rn "waitForTimeout" tests`
+> returns nothing. **From here `npm test` is gating for every remaining task.**
+>
+> **🐛 Real WCAG AA failure found and fixed (owner approved 2026-08-12).** The
+> footer's "Contact Us Online!" button was white on `#5bc0de` — **2.09:1**
+> against a required 4.5:1 — and being in the footer it failed on *every*
+> page. Now `#31708f` / `#2a6070` hover, measured at 5.46:1 and 6.99:1.
+> Followed T13's precedent: fix the markup, don't weaken the test.
+>
+> **Third-party markup is excluded from axe.** The homepage's YouTube embed
+> reports `aria-allowed-attr` and `aria-prohibited-attr` violations *inside
+> the player iframe* — YouTube's markup, unfixable from this repo, and liable
+> to change when they redeploy. `.exclude('iframe')` keeps the scan on our own
+> markup.
+>
+> The two `activeElement` truthiness assertions were replaced with specific
+> focus assertions (they passed on `<body>`, proving nothing). The touch-target
+> test no longer selects filters by CMS category names — it uses
+> `aria-pressed`, and measures all of them rather than the first three.
+>
+> ### ⚠️ Email safety is now enforced by the config, not by discipline
+>
+> **A full-suite run during this task delivered real email** — the run omitted
+> the `RESEND_API_KEY` prefix, the sanitization test cleared every bot gate,
+> and the live key in `.env.local` plus Sanity's `contactFormRecipients` did
+> the rest. That is the second such incident on this project (see T16).
+>
+> Root cause: safety depended on *remembering a prefix*. `playwright.config.ts`
+> now sets `webServer.env.RESEND_API_KEY` to an invalid value
+> unconditionally, so no test run can deliver mail regardless of how it is
+> invoked. Verified by running the whole suite with **no** prefix: green, with
+> the server logging delivery failures and no successful send. **The manual
+> prefix is no longer needed.**
 - [ ] T28 — CI workflow (`sonnet`) — **owner decision (2026-08-12): accept one red `format:check`** and clear it at T31. Include `format:check` in the workflow as planned, and state the expected-red explicitly in the commit body so it is not mistaken for a regression.
 
 **Phase 7 — Hygiene (H)**
