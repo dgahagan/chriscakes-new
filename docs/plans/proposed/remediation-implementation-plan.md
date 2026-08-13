@@ -1253,7 +1253,34 @@ decision on the fix.
 > `services`), mirroring `RESERVED_SLUGS` in `app/[slug]/page.tsx`. The 404
 > test asserts the real HTTP status from the navigation response, which is the
 > first actual coverage of T11's `notFound()` handling.
-- [ ] T26 — Contact form and API coverage (`sonnet`)
+- [x] T26 — Contact form and API coverage (`sonnet`) — `1e1ca1b`
+
+> Verified independently: **36 passed, 0 failed** on chromium + Mobile Chrome.
+>
+> **✅ No email was sent.** Every run exports an invalid `RESEND_API_KEY`;
+> Next's env loader leaves a shell-set variable in place (verified empirically
+> via `@next/env`), so this defeats the live key in `.env.local` **and** the
+> Sanity-sourced `contactFormRecipients` that made blanking `CONTACT_EMAIL_TO`
+> insufficient at T16. Confirmed in the server log: only the sanitization test
+> reaches delivery and it fails; `Email sent successfully` appears nowhere.
+> **Always use this prefix for contact work:**
+> `RESEND_API_KEY=re_invalid_test_key_do_not_send PLAYWRIGHT_PORT=3100 npx playwright test ...`
+>
+> **Rate-limit isolation was required to make the suite runnable at all.** The
+> endpoint allows 3 requests/hour per resolved IP; with no proxy locally every
+> request resolves to `'unknown'`, so the 4th test in the file would start
+> getting 429s. Each request now sends a unique `X-Forwarded-For` derived from
+> the Playwright test id.
+>
+> **Endpoint subtlety worth remembering:** the honeypot check is
+> `typeof website !== 'string'`, so **omitting** the field is rejected exactly
+> like filling it. Any future client that forgets to submit `website: ''` will
+> be silently swallowed with a fake 200.
+>
+> **Known limitation:** there is no seam to inspect the literal subject handed
+> to Resend, so subject-line sanitization is only asserted as "accepted and
+> fails cleanly at the send stage", not as a verified string. Closing that
+> would need an app-code seam or a stubbed Resend backend — neither in scope.
 - [ ] T27 — Accessibility spec rewrite and full-suite green (`opus`)
 - [ ] T28 — CI workflow (`sonnet`) — **owner decision (2026-08-12): accept one red `format:check`** and clear it at T31. Include `format:check` in the workflow as planned, and state the expected-red explicitly in the commit body so it is not mistaken for a regression.
 
