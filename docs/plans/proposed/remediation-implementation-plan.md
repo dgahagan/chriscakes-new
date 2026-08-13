@@ -1469,7 +1469,29 @@ decision on the fix.
   `contact.spec.ts`, `tests/api/`), and instruct the reader to run tests
   against `npm run dev` when T23 switched the suite to a production build.
   Owner chose **rewrite** over archive. Sequenced before T31 so the format
-  sweep covers final content. — commit recorded below.
+  sweep covers final content. — `1aca962`
+
+> **The old docs also advertised two helper functions that do not exist:**
+> `testMobileMenu()` and `checkNavigationLinks()`, both deleted in T24 for
+> using unscoped locators and `waitForTimeout`. The real exports of
+> `tests/helpers/test-utils.ts` are `waitForPageLoad`, `checkTouchTargetSize`,
+> `navigateAndWait`, and `checkImagesLoaded`.
+>
+> The rewrite deliberately foregrounds the suite's hard-won gotchas rather
+> than burying them: the forced-invalid `RESEND_API_KEY` and why it exists,
+> nav-locator scoping against the always-mounted mobile panel, the
+> content-tolerant assertion policy, no `waitForTimeout`, and the unique
+> `X-Forwarded-For` needed to dodge the contact endpoint's 3/hour limit.
+>
+> **⚠ `npm run test:e2e` and `npm run test:a11y` are traps on a fresh dev
+> box.** They carry no `PLAYWRIGHT_PORT` override and no `--project` filter,
+> so they fail both on the busy :3000 and on the missing firefox/webkit. The
+> orchestrator caught the subagent presenting them as ready-to-use; both docs
+> now show the explicit invocation instead. Fixing the scripts themselves in
+> `package.json` was **not** done — out of scope here, but a reasonable
+> follow-up.
+>
+> Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
 - [ ] T31 — Repo-wide format sweep (`haiku`)
 - [ ] T32 — Graduate the plan documents (`opus`)
 
