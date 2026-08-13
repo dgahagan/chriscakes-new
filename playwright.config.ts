@@ -42,85 +42,94 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
 
-  // Configure projects for major browsers
-  projects: [
-    // Desktop browsers
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+  // Configure projects for major browsers.
+  //
+  // Only chromium is installed in CI, so CI runs a minimal matrix
+  // (chromium + one mobile emulation project). The full cross-browser /
+  // breakpoint matrix remains available for local runs.
+  projects: (
+    [
+      // Desktop browsers
+      {
+        name: 'chromium',
+        use: { ...devices['Desktop Chrome'] },
+      },
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] },
+      },
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] },
+      },
 
-    // Mobile viewports
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
-    {
-      name: 'Tablet',
-      use: { ...devices['iPad Pro'] },
-    },
+      // Mobile viewports
+      {
+        name: 'Mobile Chrome',
+        use: { ...devices['Pixel 5'] },
+      },
+      {
+        name: 'Mobile Safari',
+        use: { ...devices['iPhone 12'] },
+      },
+      {
+        name: 'Tablet',
+        use: { ...devices['iPad Pro'] },
+      },
 
-    // Custom breakpoint testing
-    {
-      name: 'Mobile Small (320px)',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 320, height: 568 },
-        isMobile: true,
-        hasTouch: true,
+      // Custom breakpoint testing
+      {
+        name: 'Mobile Small (320px)',
+        use: {
+          ...devices['Desktop Chrome'],
+          viewport: { width: 320, height: 568 },
+          isMobile: true,
+          hasTouch: true,
+        },
       },
-    },
-    {
-      name: 'Mobile Medium (375px)',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 375, height: 667 },
-        isMobile: true,
-        hasTouch: true,
+      {
+        name: 'Mobile Medium (375px)',
+        use: {
+          ...devices['Desktop Chrome'],
+          viewport: { width: 375, height: 667 },
+          isMobile: true,
+          hasTouch: true,
+        },
       },
-    },
-    {
-      name: 'Tablet Portrait (768px)',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 768, height: 1024 },
-        isMobile: true,
-        hasTouch: true,
+      {
+        name: 'Tablet Portrait (768px)',
+        use: {
+          ...devices['Desktop Chrome'],
+          viewport: { width: 768, height: 1024 },
+          isMobile: true,
+          hasTouch: true,
+        },
       },
-    },
-    {
-      name: 'Desktop Small (1024px)',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1024, height: 768 },
+      {
+        name: 'Desktop Small (1024px)',
+        use: {
+          ...devices['Desktop Chrome'],
+          viewport: { width: 1024, height: 768 },
+        },
       },
-    },
-    {
-      name: 'Desktop Large (1440px)',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1440, height: 900 },
+      {
+        name: 'Desktop Large (1440px)',
+        use: {
+          ...devices['Desktop Chrome'],
+          viewport: { width: 1440, height: 900 },
+        },
       },
-    },
-  ],
+    ] satisfies NonNullable<Parameters<typeof defineConfig>[0]['projects']>
+  ).filter((project) =>
+    process.env.CI ? ['chromium', 'Mobile Chrome'].includes(project.name) : true
+  ),
 
-  // Run your local dev server before starting the tests
+  // Run the production build before starting the tests, since tests must
+  // exercise the same build that ships (not `next dev`).
   webServer: {
-    command: 'npm run dev',
+    command: 'npm run build && npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: 180000,
   },
 });

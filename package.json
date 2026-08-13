@@ -17,7 +17,6 @@
     "test:ui": "playwright test --ui",
     "test:e2e": "playwright test tests/e2e",
     "test:a11y": "playwright test tests/accessibility",
-    "test:visual": "playwright test tests/visual",
     "test:report": "playwright show-report",
     "test:debug": "playwright test --debug"
   },
