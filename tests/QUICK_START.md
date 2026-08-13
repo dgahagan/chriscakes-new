@@ -89,8 +89,8 @@ npm run test:visual -- --update-snapshots
 1. Run `npm test` to see current status
 2. Fix any failures
 3. View report: `npm run test:report`
-4. Read full guide: `../TESTING_GUIDE.md`
+4. Read historical guide: `../docs/archive/TESTING_GUIDE.md` (archived — see `CLAUDE.md` for current testing commands)
 
 ---
 
-**Need Help?** See `README.md` or `../TESTING_GUIDE.md`
+**Need Help?** See `README.md` or `CLAUDE.md` (for current testing commands); historical guide: `../docs/archive/TESTING_GUIDE.md` (archived)

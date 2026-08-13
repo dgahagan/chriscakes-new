@@ -259,4 +259,4 @@ npx playwright install
 
 ---
 
-*For comprehensive testing guide, see [TESTING_GUIDE.md](../TESTING_GUIDE.md)*
+*For historical testing guide, see [TESTING_GUIDE.md](../docs/archive/TESTING_GUIDE.md) (archived — testing suite was rewritten in T23–T27)*

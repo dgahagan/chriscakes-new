@@ -228,9 +228,9 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 - [x] Print-friendly menu view ✅
 - [x] SEO optimization (meta tags, structured data) ✅
 - [x] Analytics integration (Google Analytics 4) ✅
-- [x] **Social Media Integration** ✅ **COMPLETE (2025-10-13)**
-  - **Document**: See `SOCIAL_MEDIA_INTEGRATION.md` for comprehensive details
-  - **Approach**: CMS-first strategy - all features controlled via Sanity Studio
+- [x] **Social Media Integration** ✅ **COMPLETE (2025-10-13)** *[archived: features removed in T5]*
+  - **Document**: See `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` for historical details (features were deleted during remediation; only social links remain)
+  - **Approach**: CMS-first strategy - all features controlled via Sanity Studio (archived)
   - **Phases Completed**:
     - [x] Phase 1: Foundation (6-8 hours) ✅
       - [x] Enhanced Sanity siteSettings schema with social media controls
@@ -1106,14 +1106,14 @@ _Note (2026-08-12): this bullet list is part of the 2025-10-13 snapshot and pred
 ## Recent Updates
 
 ### 2025-10-11 - Social Media Integration Planning
-- Created comprehensive `SOCIAL_MEDIA_INTEGRATION.md` document
+- Created comprehensive `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` document (see archive for historical record)
 - Added social media integration to Phase 4.5 (Advanced Features)
 - CMS-first approach: All features controlled via Sanity Studio
 - 3-phase implementation plan (Foundation, Visual Integration, Advanced)
 - Estimated effort: 12-28 hours depending on phases implemented
 - Added to "Next Steps" as recommended before testing phase
-- Enables owners to manage social media display independently
-- Key features: social icons, Open Graph tags, share buttons, Instagram widget, Pinterest integration
+- *Note (2026-08-12)*: These embedded social widgets (Instagram feed, Pinterest boards, UGC gallery, review widgets, click-to-tweet) were removed during remediation (T5) as they were configured but not rendered. Social links via ShareButtons remain. See `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` and `docs/archive/SOCIAL_MEDIA_STATUS.md` for archived details.
+- Key features (archived): social icons, Open Graph tags, share buttons, Instagram widget, Pinterest integration
 - Reference added to IMPLEMENTATION_PLAN.md for visibility
 
 ### 2025-10-11 - Dynamic Page Content Planning (Enhanced with Sections + Import Strategy)
