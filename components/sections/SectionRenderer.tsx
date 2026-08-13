@@ -75,7 +75,10 @@ export default function SectionRenderer({ sections }: SectionRendererProps) {
                 content={section.content}
                 items={section.items}
                 backgroundColor={section.backgroundColor}
-                style={section.style as 'default' | 'checklist' | 'numbered' | undefined}
+                style={
+                  section.style as
+                    'default' | 'checklist' | 'numbered' | undefined
+                }
               />
             );
 

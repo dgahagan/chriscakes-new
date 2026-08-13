@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface ContactFormData {
@@ -32,6 +32,24 @@ export default function ContactForm() {
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
+  const statusRef = useRef<HTMLDivElement>(null);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+  // Stamped on mount (not page load) so autofill and password managers are not
+  // penalised. Sent with the submission so the server can reject posts that
+  // never rendered the form.
+  const mountedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    mountedAtRef.current = Date.now();
+  }, []);
+
+  // Move focus to the status message so screen readers announce the
+  // submission result as soon as it's available.
+  useEffect(() => {
+    if (submitStatus.type) {
+      statusRef.current?.focus();
+    }
+  }, [submitStatus]);
 
   const {
     register,
@@ -50,7 +68,11 @@ export default function ContactForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          website: honeypotRef.current?.value ?? '',
+          formRenderedAt: mountedAtRef.current,
+        }),
       });
 
       const result = await response.json();
@@ -81,6 +103,26 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/*
+        Honeypot. Positioned off-screen rather than display:none, since some
+        bots skip hidden inputs. Hidden from assistive tech and the tab order,
+        so no real user can fill it in.
+      */}
+      <div
+        aria-hidden="true"
+        className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
+      >
+        <label htmlFor="website">Website</label>
+        <input
+          type="text"
+          id="website"
+          name="website"
+          ref={honeypotRef}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+
       {/* Event Date and Time */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
@@ -452,6 +494,10 @@ export default function ContactForm() {
       {/* Status Messages */}
       {submitStatus.type && (
         <div
+          ref={statusRef}
+          role="status"
+          aria-live="polite"
+          tabIndex={-1}
           className={`rounded-md p-4 ${
             submitStatus.type === 'success'
               ? 'bg-green-50 text-green-800'

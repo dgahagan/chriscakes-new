@@ -19,6 +19,7 @@ The social media integration is **production-ready** with Phases 1-3 infrastruct
 All Phase 1 features are **fully functional** and ready for immediate use.
 
 #### ✅ Social Media Icons (Footer/Header)
+
 - **Status:** Integrated and functional
 - **Location:** components/layout/Footer.tsx
 - **CMS Control:** Full - via siteSettings.socialMedia.platforms
@@ -31,6 +32,7 @@ All Phase 1 features are **fully functional** and ready for immediate use.
 - **Default Behavior:** Disabled until configured in Sanity
 
 #### ✅ Open Graph & Twitter Card Meta Tags
+
 - **Status:** Integrated on ALL pages
 - **Pages:** Homepage, Menu, Services, Fundraising, Dynamic pages
 - **Pinterest Meta:** Added to all pages
@@ -38,6 +40,7 @@ All Phase 1 features are **fully functional** and ready for immediate use.
 - **Site Owner Action:** None required - works out of the box
 
 #### ✅ Social Share Buttons
+
 - **Status:** Integrated on target pages
 - **Locations:**
   - app/menu/page.tsx ✅
@@ -55,6 +58,7 @@ All Phase 1 features are **fully functional** and ready for immediate use.
 - **Default Behavior:** Enabled for menu, services, and dynamic pages
 
 #### ✅ Web Share API (Native Mobile Sharing)
+
 - **Status:** Integrated within ShareButtons component
 - **CMS Control:** Full - enabled if 'native' is in platforms array
 - **Behavior:** Automatically detects mobile support
@@ -66,6 +70,7 @@ All Phase 1 features are **fully functional** and ready for immediate use.
 All Phase 2 components are **built and integrated**, awaiting site owner configuration.
 
 #### ✅ Instagram Feed Widget
+
 - **Status:** Integrated on homepage, ready for other pages
 - **Location:** app/page.tsx (homepage)
 - **Component:** components/common/InstagramFeed.tsx
@@ -79,6 +84,7 @@ All Phase 2 components are **built and integrated**, awaiting site owner configu
 - **Default Behavior:** Hidden until embed code is added
 
 #### ✅ Pinterest Pin Button
+
 - **Status:** Component built, not yet integrated on images
 - **Component:** components/common/PinButton.tsx
 - **Helper:** components/common/PinnableImage.tsx (wrapper)
@@ -87,6 +93,7 @@ All Phase 2 components are **built and integrated**, awaiting site owner configu
 - **Priority:** Optional enhancement
 
 #### ✅ Social Call-to-Action (CTA)
+
 - **Status:** Integrated on homepage
 - **Location:** app/page.tsx
 - **Component:** components/common/SocialCTA.tsx
@@ -106,6 +113,7 @@ All Phase 2 components are **built and integrated**, awaiting site owner configu
 All Phase 3 components are **built with full CMS control**, awaiting site owner configuration and page integration.
 
 #### ✅ Schema Markup (SEO)
+
 - **Status:** Integrated on homepage and menu
 - **Locations:**
   - Homepage: Restaurant + AggregateRating schema
@@ -119,6 +127,7 @@ All Phase 3 components are **built with full CMS control**, awaiting site owner 
   - Add Review schema to testimonials
 
 #### ⏳ User-Generated Content (UGC) Gallery
+
 - **Status:** Component built, NOT integrated
 - **Component:** components/common/UGCGallery.tsx
 - **CMS Control:** Full - via siteSettings.ugcGallery
@@ -133,6 +142,7 @@ All Phase 3 components are **built with full CMS control**, awaiting site owner 
 - **Default Behavior:** Hidden until configured
 
 #### ⏳ Review Widgets (Facebook/Yelp)
+
 - **Status:** Component built, NOT integrated
 - **Components:**
   - components/common/ReviewWidgets.tsx
@@ -149,6 +159,7 @@ All Phase 3 components are **built with full CMS control**, awaiting site owner 
 - **Default Behavior:** Hidden until enabled
 
 #### ⏳ Click-to-Tweet Quotes
+
 - **Status:** Component built, NOT integrated
 - **Components:**
   - components/common/ClickToTweet.tsx
@@ -164,6 +175,7 @@ All Phase 3 components are **built with full CMS control**, awaiting site owner 
 - **Default Behavior:** Hidden until enabled
 
 #### ⏳ Pinterest Board Showcase
+
 - **Status:** Component built, NOT integrated
 - **Components:**
   - components/common/PinterestBoardWidget.tsx
@@ -183,12 +195,15 @@ All Phase 3 components are **built with full CMS control**, awaiting site owner 
 ## What Site Owners Need to Do
 
 ### Immediate (No Setup Required) ✅
+
 These features work immediately:
+
 - ✅ Open Graph / Twitter / Pinterest meta tags
 - ✅ Schema markup (Restaurant, Menu, Ratings)
 - ✅ Social Share Buttons (if enabled in Sanity)
 
 ### Quick Setup (5-10 minutes)
+
 Site owners can enable these by configuring Sanity settings:
 
 1. **Add Social Media Platform URLs**
@@ -210,6 +225,7 @@ Site owners can enable these by configuring Sanity settings:
    - Add promoted hashtag
 
 ### Moderate Setup (30-60 minutes)
+
 Requires external service signup:
 
 4. **Instagram Feed Widget**
@@ -236,6 +252,7 @@ Requires external service signup:
    - Enable and select pages
 
 ### No Action Needed
+
 7. **Review Widgets** - Will work automatically if Facebook/Yelp URLs are added to platforms
 8. **Click-to-Tweet** - Will use existing testimonials from Sanity
 9. **Schema Markup** - Already working automatically
@@ -245,6 +262,7 @@ Requires external service signup:
 ## Developer Integration Checklist
 
 ### ✅ Completed
+
 - [x] ShareButtons integrated on menu, services, fundraising, dynamic pages
 - [x] Pinterest meta tags added to all pages
 - [x] Instagram feed integrated on homepage
@@ -255,6 +273,7 @@ Requires external service signup:
 - [x] Zero linter errors in app files
 
 ### ⏳ Optional Enhancements
+
 These are **nice-to-have** features that can be added later:
 
 - [ ] Integrate UGCGallery on homepage (awaits site owner embed code)
@@ -270,6 +289,7 @@ These are **nice-to-have** features that can be added later:
 ## Testing Checklist
 
 ### Functional Testing ✅
+
 - [x] Build completes successfully
 - [x] Linter passes (app files clean)
 - [x] All pages render without errors
@@ -277,6 +297,7 @@ These are **nice-to-have** features that can be added later:
 - [x] Sanity schema validated
 
 ### Manual Testing Required
+
 Site owner should test after configuration:
 
 - [ ] Social icons appear in footer when enabled
@@ -290,6 +311,7 @@ Site owner should test after configuration:
 - [ ] All Sanity toggles work (enable/disable features)
 
 ### SEO Validation
+
 Use these tools to validate:
 
 - [ ] Facebook Debugger: https://developers.facebook.com/tools/debug/
@@ -302,6 +324,7 @@ Use these tools to validate:
 ## File Locations Reference
 
 ### Page Integrations
+
 - `app/page.tsx` - Homepage (Instagram, SocialCTA, Schema)
 - `app/menu/page.tsx` - Menu page (ShareButtons, Schema)
 - `app/services/page.tsx` - Services page (ShareButtons)
@@ -309,6 +332,7 @@ Use these tools to validate:
 - `app/[slug]/page.tsx` - Dynamic pages (ShareButtons)
 
 ### Components
+
 - `components/common/ShareButtons.tsx` - Social share buttons
 - `components/common/InstagramFeed.tsx` - Instagram widget
 - `components/common/SocialCTA.tsx` - Social call-to-action
@@ -321,6 +345,7 @@ Use these tools to validate:
 - `components/common/PinterestBoardWidget.tsx` - Pinterest boards
 
 ### Utilities
+
 - `lib/schema.ts` - Schema.org generators
 - `sanity/schemas/siteSettings.ts` - CMS configuration
 
@@ -329,9 +354,11 @@ Use these tools to validate:
 ## Deployment Notes
 
 ### Environment Variables
+
 No additional environment variables needed. Existing Sanity credentials are sufficient.
 
 ### Vercel Deployment
+
 1. Push changes to repository
 2. Vercel will automatically build and deploy
 3. Configure Sanity content in Studio
@@ -339,6 +366,7 @@ No additional environment variables needed. Existing Sanity credentials are suff
 5. Add production URL to Sanity CORS settings (if needed)
 
 ### Post-Deployment
+
 1. Validate Open Graph tags on production
 2. Test share buttons on production URLs
 3. Ensure Instagram embed loads on production
@@ -359,11 +387,13 @@ No additional environment variables needed. Existing Sanity credentials are suff
 ## Support & Documentation
 
 ### For Site Owners
+
 - See user guides in `/user-guides/` directory
 - Sanity Studio has inline help text for all fields
 - All settings include descriptions and examples
 
 ### For Developers
+
 - See `SOCIAL_MEDIA_INTEGRATION.md` for comprehensive planning document
 - All components have JSDoc comments
 - Schema utilities are documented in `lib/schema.ts`

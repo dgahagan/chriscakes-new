@@ -17,7 +17,6 @@
     "test:ui": "playwright test --ui",
     "test:e2e": "playwright test tests/e2e",
     "test:a11y": "playwright test tests/accessibility",
-    "test:visual": "playwright test tests/visual",
     "test:report": "playwright show-report",
     "test:debug": "playwright test --debug"
   },
@@ -46,7 +45,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "axe-playwright": "^2.2.2",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",

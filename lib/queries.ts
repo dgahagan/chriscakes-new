@@ -6,12 +6,11 @@ export const menuCategoriesQuery = groq`*[_type == "menuCategory"] | order(order
   title,
   slug,
   description,
-  order,
-  image
+  order
 }`;
 
 // Get all menu items
-export const menuItemsQuery = groq`*[_type == "menuItem" && available == true] | order(order asc) {
+export const menuItemsQuery = groq`*[_type == "menuItem" && available != false] | order(order asc) {
   _id,
   name,
   slug,
@@ -28,7 +27,7 @@ export const menuItemsQuery = groq`*[_type == "menuItem" && available == true] |
 }`;
 
 // Get menu items by category
-export const menuItemsByCategoryQuery = groq`*[_type == "menuItem" && available == true && category->slug.current == $categorySlug] | order(order asc) {
+export const menuItemsByCategoryQuery = groq`*[_type == "menuItem" && available != false && category->slug.current == $categorySlug] | order(order asc) {
   _id,
   name,
   slug,
@@ -37,20 +36,6 @@ export const menuItemsByCategoryQuery = groq`*[_type == "menuItem" && available 
   image,
   featured,
   allergens
-}`;
-
-// Get featured menu items
-export const featuredMenuItemsQuery = groq`*[_type == "menuItem" && featured == true && available == true] | order(order asc) {
-  _id,
-  name,
-  slug,
-  description,
-  price,
-  image,
-  category->{
-    title,
-    slug
-  }
 }`;
 
 // Get site settings
@@ -64,6 +49,7 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   hours,
   socialMedia,
   shareButtons,
+  analytics,
   logo
 }`;
 
@@ -97,7 +83,7 @@ export const pageBySlugQuery = groq`*[_type == "page" && slug.current == $slug][
 }`;
 
 // Get all pages
-export const allPagesQuery = groq`*[_type == "page"] {
+export const allPagesQuery = groq`*[_type == "page" && defined(slug.current)] | order(title asc) {
   _id,
   title,
   slug
@@ -109,25 +95,6 @@ export const faqsQuery = groq`*[_type == "faq"] | order(order asc) {
   question,
   answer,
   category,
-  order
-}`;
-
-// Get FAQs by category
-export const faqsByCategoryQuery = groq`*[_type == "faq" && category == $category] | order(order asc) {
-  _id,
-  question,
-  answer,
-  order
-}`;
-
-// Get all testimonials
-export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
-  _id,
-  quote,
-  author,
-  authorTitle,
-  image,
-  featured,
   order
 }`;
 

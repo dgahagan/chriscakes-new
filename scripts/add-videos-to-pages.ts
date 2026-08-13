@@ -33,7 +33,11 @@ async function getImageAsset(filename: string): Promise<any> {
 }
 
 // Helper functions
-function createTextSectionWithImage(title: string, paragraphs: string[], image: any): any {
+function createTextSectionWithImage(
+  title: string,
+  paragraphs: string[],
+  image: any
+): any {
   const content: any[] = [];
 
   // Add the image first
@@ -159,7 +163,9 @@ async function addVideosToPages() {
     sections: [
       createTextSectionWithImage(
         '',
-        ['Download this GREAT YouTube video and play it during ticket sales and the day of your event… sure to add excitement and create even more FUN prior to your event!'],
+        [
+          'Download this GREAT YouTube video and play it during ticket sales and the day of your event… sure to add excitement and create even more FUN prior to your event!',
+        ],
         book1
       ),
       createVideoSection(
@@ -181,7 +187,13 @@ async function addVideosToPages() {
         'gray',
         'numbered'
       ),
-      createCTASection('Ready to Book?', '', 'Contact Us Today', '/contact', 'primary'),
+      createCTASection(
+        'Ready to Book?',
+        '',
+        'Contact Us Today',
+        '/contact',
+        'primary'
+      ),
     ],
     seo: {
       metaTitle: 'How to Book an Event - ChrisCakes',
@@ -207,11 +219,7 @@ async function addVideosToPages() {
       createTextSection('', [
         'SCHOOLS - CHURCHES - BENEFITS - CLUBS/ORGANIZATIONS - FESTIVALS - AIRPORT FLY-INS',
       ]),
-      createVideoSection(
-        '',
-        'https://www.youtube.com/embed/o1iOkNDGkFA',
-        ''
-      ),
+      createVideoSection('', 'https://www.youtube.com/embed/o1iOkNDGkFA', ''),
       createCTASection(
         'WE put the FUN… in FUNdraising!',
         'Contact us today for more information!',

@@ -1,9 +1,11 @@
 # ChrisCakes Website Upgrade - Implementation Plan
 
 ## Project Overview
+
 Modernize the ChrisCakes restaurant website by implementing a content management system (CMS) that allows owners to update content independently without requiring manual HTML edits or developer intervention.
 
 ## Goals
+
 - Enable non-technical owners to update menu items, categories, prices, images, and text content
 - Maintain current design aesthetic while modernizing the technical foundation
 - Implement a scalable, maintainable solution
@@ -12,6 +14,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ## Technology Stack
 
 ### Recommended Stack
+
 - **Frontend**: Next.js (React-based)
   - Benefits: SEO optimization, image optimization, static site generation, easy deployment
   - Alternative: Plain React if simpler needs
@@ -26,18 +29,21 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ## Phase 1: Project Setup & Planning (Week 1) ✅
 
 ### 1.1 Repository & Environment Setup ✅
+
 - [x] Create new Git repository for the upgraded site
 - [x] Initialize Next.js project: `npx create-next-app@latest chriscakes-new`
 - [x] Configure ESLint and Prettier for code quality
 - [x] Set up environment variables structure (.env.local.example)
 
 ### 1.2 Sanity CMS Setup ✅
+
 - [x] Create Sanity account and project structure (manual auth step required)
 - [x] Configure Sanity Studio (admin interface) - schemas created
 - [x] Set up Sanity configuration files (sanity.config.ts, schemas, queries)
 - [ ] Configure CORS origins for local development and production domains (requires manual auth)
 
 ### 1.3 Content Analysis ✅
+
 - [x] Audit current ChrisCakes website
 - [x] Document all content types (menu items, categories, pages, images) - See CONTENT_AUDIT.md
 - [x] Document current site structure and navigation
@@ -49,6 +55,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ### 2.1 Define Sanity Schemas ✅
 
 #### Menu Category Schema ✅
+
 ```javascript
 {
   name: 'menuCategory',
@@ -65,6 +72,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 #### Menu Item Schema ✅
+
 ```javascript
 {
   name: 'menuItem',
@@ -86,6 +94,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 #### Site Settings Schema ✅
+
 ```javascript
 {
   name: 'siteSettings',
@@ -105,6 +114,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 #### Page Content Schema (for About, Contact, etc.) ✅
+
 ```javascript
 {
   name: 'page',
@@ -120,6 +130,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 ### 2.2 Schema Implementation Tasks ✅
+
 - [x] Create all schema files in `/sanity/schemas/`
 - [x] Configure schema validation rules
 - [x] Set up custom input components if needed
@@ -129,6 +140,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ## Phase 3: Content Migration (Week 2) ✅
 
 ### 3.1 Data Extraction ✅
+
 - [x] Extract all menu categories from current site (5 categories)
 - [x] Extract all menu items with prices and descriptions (64 items)
 - [x] Extract all images and optimize them (logo.png copied)
@@ -136,6 +148,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 - [x] Extract page content (About, Contact, etc.)
 
 ### 3.2 Data Import ✅
+
 - [x] Create migration script using Sanity's import tools (scripts/import-all-content.ts)
 - [x] Import all menu categories and items into Sanity
 - [x] Upload logo image to public folder
@@ -146,6 +159,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ## Phase 4: Frontend Development (Week 2-4) - Complete ✅
 
 ### 4.1 Project Structure
+
 ```
 /chriscakes-new
 ├── /app                    # Next.js App Router
@@ -167,6 +181,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 ```
 
 ### 4.2 Core Components Development ✅
+
 - [x] **Layout Components**
   - [x] Header with navigation
   - [x] Footer with contact info and social links
@@ -199,6 +214,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
   - [x] Invoice & Payment page
 
 ### 4.3 Sanity Integration ✅
+
 - [x] Install Sanity client: `npm install @sanity/client @sanity/image-url`
 - [x] Configure Sanity client in `/lib/sanity.ts`
 - [x] Create GROQ queries for all content types
@@ -207,6 +223,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 - [x] Implement image optimization using next/image with Sanity CDN
 
 ### 4.4 Styling ✅
+
 - [x] Set up Tailwind CSS v4
 - [x] Apply ChrisCakes branding (crimson red #dc143c, dark nav #2d2d2d)
 - [x] Ensure mobile responsiveness (basic layout wrapping)
@@ -222,15 +239,16 @@ Modernize the ChrisCakes restaurant website by implementing a content management
   - [x] Color contrast compliance
 
 ### 4.5 Advanced Features ✅ COMPLETE
+
 - [x] Search functionality for menu items ✅
 - [x] Filter by category (on menu page) ✅
 - [x] Sort by price/name ✅
 - [x] Print-friendly menu view ✅
 - [x] SEO optimization (meta tags, structured data) ✅
 - [x] Analytics integration (Google Analytics 4) ✅
-- [x] **Social Media Integration** ✅ **COMPLETE (2025-10-13)**
-  - **Document**: See `SOCIAL_MEDIA_INTEGRATION.md` for comprehensive details
-  - **Approach**: CMS-first strategy - all features controlled via Sanity Studio
+- [x] **Social Media Integration** ✅ **COMPLETE (2025-10-13)** _[archived: features removed in T5]_
+  - **Document**: See `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` for historical details (features were deleted during remediation; only social links remain)
+  - **Approach**: CMS-first strategy - all features controlled via Sanity Studio (archived)
   - **Phases Completed**:
     - [x] Phase 1: Foundation (6-8 hours) ✅
       - [x] Enhanced Sanity siteSettings schema with social media controls
@@ -257,12 +275,14 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 **Goal**: Enable owners to manage page content through Sanity CMS instead of hard-coded content in React components.
 
 **Current State**:
+
 - Page schema exists in Sanity with title, slug, content (block content), and SEO fields
 - `pageBySlugQuery` exists in `lib/queries.ts`
 - User guide (`user-guides/editing-pages.md`) written assuming dynamic pages
 - Most pages currently have hard-coded content in their `page.tsx` files
 
 **Pages Converted**:
+
 - [x] About page (`app/[slug]/page.tsx` - dynamic)
 - [x] Services page (`app/services/page.tsx`) - hybrid with sections + FAQs
 - [x] Fundraising page (`app/fundraising/page.tsx`) - hybrid with CTA section + menu items
@@ -276,6 +296,7 @@ Modernize the ChrisCakes restaurant website by implementing a content management
 
 **⚠️ IMPORTANT: Task Ordering**
 Follow this order to avoid data loss:
+
 1. Create section schemas (4.6.3)
 2. Import all content to Sanity (4.6.4) - **DO THIS BEFORE REMOVING ANY HARD-CODED CONTENT**
 3. Create components (4.6.1)
@@ -285,6 +306,7 @@ Follow this order to avoid data loss:
 #### 4.6.1 Create Section Renderer Components ✅
 
 **A. PortableText Renderer (for text within sections)** ✅
+
 - [x] Install `@portabletext/react`: `npm install @portabletext/react`
 - [x] Create `components/sections/PortableTextRenderer.tsx` component
 - [x] Configure custom serializers for:
@@ -298,6 +320,7 @@ Follow this order to avoid data loss:
 - [x] Style all elements to match existing brand design (crimson red, proper spacing)
 
 **B. Section Components (for rendering different section types)** ✅
+
 - [x] Create `components/sections/` directory
 
 - [x] **TextSection Component**
@@ -345,6 +368,7 @@ Follow this order to avoid data loss:
   - [x] Add spacing between sections
 
 #### 4.6.2 Create Generic Dynamic Page Template ✅
+
 - [x] Create `app/[slug]/page.tsx` dynamic route (integrated directly, not separate component)
 - [x] Fetch page data using `pageBySlugQuery`
 - [x] Render page title in header section (styled consistently with other pages)
@@ -361,6 +385,7 @@ Follow this order to avoid data loss:
 **Strategy**: Replace simple `content` field with flexible `sections` array to support both single-column and multi-column layouts.
 
 **Schema Structure**:
+
 ```javascript
 {
   name: 'page',
@@ -427,6 +452,7 @@ Follow this order to avoid data loss:
   - [x] Responsive iframe embedding
 
 **Schema Implementation Tasks**: ✅
+
 - [x] Review existing page schema in `sanity/schemas/page.ts`
 - [x] Create new `sanity/schemas/sections/` directory
 - [x] Create all section type schemas
@@ -440,10 +466,12 @@ Follow this order to avoid data loss:
 **Goal**: Import all hard-coded page content into Sanity CMS BEFORE converting any pages. This creates a safety backup and allows verification before removing hard-coded content.
 
 **Prerequisites**: ✅
+
 - [x] Section schemas (4.6.3) must be completed and deployed to Sanity Studio
 - [x] Verify schemas appear in Sanity Studio and can create documents
 
 **Script Development**: ✅
+
 - [x] Create `scripts/import-page-content.ts` (similar to existing `import-all-content.ts`)
 - [x] Set up Sanity client with write permissions (use SANITY_API_TOKEN)
 - [x] Create helper functions:
@@ -500,12 +528,14 @@ Follow this order to avoid data loss:
   - [x] Import to Sanity
 
 **Image Handling**: ✅
+
 - [x] Upload images to Sanity (services1.jpg, services2.jpg, services3.jpg)
 - [x] Get Sanity asset IDs for each image
 - [x] Reference images in twoColumnSection image fields
 - [x] Verify images appear in Sanity Studio
 
 **Verification**: ✅ COMPLETE
+
 - [x] Open Sanity Studio at `/studio`
 - [x] Verify all 8 pages appear in "Pages" section
 - [x] Open each page and verify:
@@ -520,11 +550,13 @@ Follow this order to avoid data loss:
 - [x] **ALL PAGES VERIFIED IN SANITY - PROCEEDED TO 4.6.5** ✅
 
 **Safety Check**: ✅
+
 - [x] Content safely imported to Sanity
 - [x] Commit import script to git
 - [x] All content preserved in git history
 
 **Script Execution**:
+
 ```bash
 # After schemas are deployed
 npm run sanity deploy  # Ensures schemas are in Sanity
@@ -543,6 +575,7 @@ npm run dev
 **✅ PREREQUISITE COMPLETED**: Section 4.6.4 (Content Import) was 100% complete and verified before starting conversions. All content was safely in Sanity before removing hard-coded content.
 
 **Conversion Process Followed** (for each page):
+
 1. ✅ Verify page content exists in Sanity Studio
 2. ✅ Update `page.tsx` to fetch from Sanity
 3. ✅ Test locally to ensure rendering is identical
@@ -605,6 +638,7 @@ npm run dev
   - [x] Commit changes
 
 #### 4.6.6 Special Considerations ✅
+
 - [x] **Homepage**: Decided to keep custom (not section-based)
 - [x] **Menu Page**: Keep dynamic with menu items (already implemented correctly)
 - [x] **Contact Page**: Keep as-is with form functionality (not converting to sections)
@@ -623,6 +657,7 @@ npm run dev
   - [x] Future-proof: easy to add new section types as needed
 
 #### 4.6.7 Quality Assurance ✅
+
 - [x] Test all converted pages in development
 - [x] Verify content editing in Sanity Studio works smoothly
 - [x] Test ISR - confirm changes appear within 60 seconds
@@ -633,6 +668,7 @@ npm run dev
 - [x] Cross-browser testing on converted pages (production build successful)
 
 #### 4.6.8 Documentation Updates ✅
+
 - [x] Update `CLAUDE.md` with dynamic page patterns
 - [x] Document PortableText customization
 - [x] Add examples of adding/editing pages in Sanity
@@ -640,6 +676,7 @@ npm run dev
 - [x] Ensure `user-guides/editing-pages.md` matches final implementation
 
 **Success Criteria**: ✅ ALL ACHIEVED
+
 - [x] All listed pages pull content from Sanity CMS using section-based approach
 - [x] Owners can edit page content through Sanity Studio using rich text editor
 - [x] Owners can add, remove, and reorder sections without developer assistance
@@ -657,6 +694,7 @@ npm run dev
 **Branch**: `feature/dynamic-pages` ✅ COMPLETE (merged to main)
 
 **Actual Effort**: ~20 hours (within estimate)
+
 - PortableText component: 2-3 hours
 - Section schemas (4 types): 2-3 hours
 - Section renderer components (5 components): 4-6 hours
@@ -666,6 +704,7 @@ npm run dev
 - Testing and refinements: 3-4 hours
 
 **Note**: The section-based approach adds complexity but provides:
+
 - Full support for single and multi-column layouts
 - Owner ability to reorder and rearrange sections
 - Flexibility to add new section types in the future
@@ -676,6 +715,7 @@ npm run dev
 ### 5.0 Testing Infrastructure Setup ✅ COMPLETE
 
 **MCP Server Configuration**:
+
 - [x] Install and configure **Playwright** for cross-browser and mobile testing ✅
   - Repository: https://github.com/microsoft/playwright-mcp
   - Purpose: Automated E2E testing, screenshot capture, mobile viewport testing
@@ -690,6 +730,7 @@ npm run dev
   - Note: Manual Chrome DevTools can be used for performance testing
 
 **Testing Scripts**: ✅ COMPLETE
+
 - [x] Create `tests/` directory structure ✅
   - Created: `tests/e2e/`, `tests/accessibility/`, `tests/visual/`, `tests/helpers/`
 - [x] Set up Playwright configuration (`playwright.config.ts`) ✅
@@ -744,6 +785,7 @@ npm run dev
   - **Note**: Menu search, sorting, print view, and social media widgets can be added as features evolve
 
 **Test Execution**:
+
 - [ ] Run test suite with dev server running (`npm run dev` then `npm test`)
 - [ ] Review test results and fix any failures
 - [ ] Verify tests pass across all browsers and viewports
@@ -819,6 +861,7 @@ npm run dev
     - Color contrast checks
 
 **Test Execution**:
+
 - [ ] Run accessibility tests (`npm run test:a11y`)
 - [ ] Fix any WCAG violations identified
 - [ ] Manual testing with screen readers (recommended)
@@ -864,6 +907,7 @@ npm run dev
     - Components: Header, Footer, Menu filters
 
 **Test Execution**:
+
 - [ ] Run visual tests to create initial baselines (`npm run test:visual`)
 - [ ] Review generated screenshots
 - [ ] Commit baselines to version control
@@ -887,11 +931,11 @@ npm run dev
 
 ### Testing Tools Summary
 
-| Tool | Purpose | Key Features |
-|------|---------|--------------|
-| **Playwright MCP** | Cross-browser & mobile testing | E2E tests, screenshots, accessibility snapshots, multi-browser support |
-| **Chrome DevTools MCP** | Performance & debugging | Performance traces, Lighthouse audits, network analysis, console debugging |
-| **axe-core** | Accessibility testing | WCAG 2.1 AA compliance checks, automated a11y audits |
+| Tool                    | Purpose                        | Key Features                                                               |
+| ----------------------- | ------------------------------ | -------------------------------------------------------------------------- |
+| **Playwright MCP**      | Cross-browser & mobile testing | E2E tests, screenshots, accessibility snapshots, multi-browser support     |
+| **Chrome DevTools MCP** | Performance & debugging        | Performance traces, Lighthouse audits, network analysis, console debugging |
+| **axe-core**            | Accessibility testing          | WCAG 2.1 AA compliance checks, automated a11y audits                       |
 
 ### Success Criteria
 
@@ -904,32 +948,54 @@ npm run dev
 - [ ] Visual regression tests show no unintended changes
 - [ ] Owner can successfully update content via Sanity Studio
 
-## Phase 6: Deployment (Week 5)
+## Phase 6: Remediation (Week 6) - IN PROGRESS 🔄
 
-### 6.1 Hosting Setup
+**Why this phase exists**: Phase 5 testing surfaced enough correctness, security, and reliability issues that a dedicated remediation pass was needed before deployment could responsibly proceed. `CODE_REVIEW.md` captured the full Critical/High/Medium/Low findings, and `docs/plans/implemented/remediation-plan.md` turned them into a design plan. `docs/plans/implemented/remediation-implementation-plan.md` is the task-by-task execution log (tasks T0–T32) for this phase; see it for full detail on every change, including verification notes.
+
+**Branch**: `feat/remediation`
+
+**Scope**: Eight workstreams (A–H) covering the complete Critical/High/Medium/Low finding set from `CODE_REVIEW.md`:
+
+- [x] **Workstream G — Data layer foundation**: Deleted leftover `sanity init` boilerplate and dead components; collapsed to a single, token-free, env-driven Sanity client (`lib/sanity.ts`); corrected GROQ queries and schema drift; cleaned up the JSON-LD helper.
+- [x] **Workstream C — Settings & CMS drift**: Deleted the dead social features (`UGCGallery`, `ReviewWidgets`, `ClickToTweet`, `PinButton`, `PinnableImage`, `PinterestBoardWidget`, `InstagramFeed`, and their schema fields) — `ShareButtons` was kept, it's still live on four pages; fixed Google Analytics end-to-end; made the header/footer and contact page social links CMS-driven; corrected the fundraising page; enforced the `siteSettings` singleton in Studio; deleted a leftover `test-dynamic-page` document from production.
+- [x] **Workstream F — Frontend correctness & accessibility**: Added missing-document resilience and a branded 404 page; swept out references to nonexistent Tailwind palette classes; fixed interactive-component accessibility (mobile nav focus/ARIA); corrected rendering and image `sizes`; cleaned up data-fetching, sorting, and a stray `revalidate: 3600` (normalized to 60).
+- [x] **Workstreams D + E — Endpoint & security hardening**: Hardened the contact API route; fixed JSON-LD server rendering and an XSS gap; added `app/robots.ts` and `app/sitemap.ts`; reduced dependency vulnerabilities from 41 to 12 (all criticals and lows cleared; the 7 high / 5 moderate residuals need major version bumps — `sanity@6`, `next@16`, `next-sanity@13` — and are documented separately); added security headers and a Content-Security-Policy in `next.config.ts`.
+- [x] **Workstream B — Import script safety**: Defanged `import-all-content.ts`, `import-additional-content.ts`, and `import-page-content.ts` — all now refuse to run without `--yes`, print the target Sanity project/dataset before writing, and use `createIfNotExists` plus a populated-dataset guard so they're safe to re-run and will not touch or duplicate existing documents. Fixed swallowed per-page import errors. **Three sibling scripts were flagged but intentionally left unfixed** (out of this workstream's scope): `add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`, and `upload-images-and-update-pages.ts` still `createOrReplace` live page documents with no `--yes` guard.
+- [x] **Workstream A — Test suite rebuild and CI**: Deleted the never-baselined `tests/visual/` suite and the `test:visual` npm script (see Phase 5 above, where it was originally added — it no longer exists); reset the remaining Playwright infrastructure; rewrote the navigation, homepage, menu, contact form, and API specs; rewrote the accessibility spec suite to a fully green run; added `.github/workflows/ci.yml` running lint, format check, build, and Playwright (chromium + Mobile Chrome) on every PR and push to `master`.
+- [x] **Workstream H — Hygiene**: Corrected `CLAUDE.md`, `SETUP.md`, and this file; archived four superseded docs into `docs/archive/`; rewrote the two stale `tests/` docs against the rebuilt suite; applied a repo-wide Prettier sweep (41 files, formatting only, its own commit); graduated both plan documents to `docs/plans/implemented/`.
+
+**Status**: Complete. All eight workstreams landed on branch `feat/remediation` (PR #1), across tasks T0–T32. The full gate is green: `npm run lint` clean with zero warnings, `npm run format:check` green repo-wide, `npm run build` green, and the Playwright suite at 115 passed / 5 skipped / 0 failed on chromium + Mobile Chrome against a production build. The full 11-project matrix remains available locally but requires `npx playwright install` for Firefox and WebKit. See `docs/plans/implemented/remediation-implementation-plan.md`'s Progress Tracker for the complete, per-task verification record, including the deviations execution forced on the original design.
+
+## Phase 7: Deployment (Week 6-7)
+
+### 7.1 Hosting Setup
+
 - [ ] Create Vercel account and link to Git repository
 - [ ] Configure environment variables in Vercel
 - [ ] Set up custom domain (if applicable)
 - [ ] Configure SSL certificate
 - [ ] Set up deployment previews for branches
 
-### 6.2 Production Deployment
+### 7.2 Production Deployment
+
 - [ ] Deploy Sanity Studio to studio.chriscakes.com or subdomain
 - [ ] Deploy Next.js site to Vercel
 - [ ] Configure production dataset in Sanity
 - [ ] Test all functionality in production
 - [ ] Set up monitoring and error tracking (Sentry or similar)
 
-### 6.3 Go-Live Checklist
+### 7.3 Go-Live Checklist
+
 - [ ] DNS cutover (if using existing domain)
 - [ ] Submit sitemap to Google Search Console
 - [ ] Set up 301 redirects from old URLs if structure changed
 - [ ] Monitor for any issues in first 24-48 hours
 - [ ] Verify analytics tracking works
 
-## Phase 7: Training & Documentation (Week 5-6)
+## Phase 8: Training & Documentation (Week 7-8)
 
-### 7.1 Owner Training
+### 8.1 Owner Training
+
 - [ ] Create video tutorials for common tasks:
   - [ ] Adding a new menu item
   - [ ] Updating prices
@@ -942,23 +1008,26 @@ npm run dev
 - [ ] Schedule live training session(s)
 - [ ] Create quick reference guide
 
-### 7.2 Developer Documentation
+### 8.2 Developer Documentation
+
 - [ ] Document project structure
 - [ ] Document deployment process
 - [ ] Document environment variables
 - [ ] Create README with setup instructions
 - [ ] Document common maintenance tasks
 
-## Phase 8: Maintenance & Support (Ongoing)
+## Phase 9: Maintenance & Support (Ongoing)
 
-### 8.1 Ongoing Tasks
+### 9.1 Ongoing Tasks
+
 - [ ] Set up automated dependency updates (Dependabot)
 - [ ] Schedule quarterly reviews of site performance
 - [ ] Monitor Sanity and Vercel usage to stay within free tiers
 - [ ] Keep Next.js and dependencies updated
 - [ ] Regular content backups from Sanity
 
-### 8.2 Support Plan
+### 9.2 Support Plan
+
 - [ ] Define support hours/availability
 - [ ] Set up communication channel (email, Slack, etc.)
 - [ ] Create FAQ document based on owner questions
@@ -967,6 +1036,7 @@ npm run dev
 ## Risk Mitigation
 
 ### Technical Risks
+
 - **Risk**: Sanity free tier limits exceeded
   - **Mitigation**: Monitor usage, optimize queries, consider paid plan if needed
 
@@ -977,6 +1047,7 @@ npm run dev
   - **Mitigation**: Regular backups, Sanity's built-in version history
 
 ### User Adoption Risks
+
 - **Risk**: Owners find CMS too complex
   - **Mitigation**: Simplify UI, create comprehensive training, provide ongoing support
 
@@ -984,6 +1055,7 @@ npm run dev
   - **Mitigation**: Create content guidelines, establish review process
 
 ## Success Criteria
+
 - [ ] Owners can independently update all content types
 - [ ] Site performance: Lighthouse score >90 for all metrics
 - [ ] Mobile responsive on all major devices
@@ -993,6 +1065,7 @@ npm run dev
 - [ ] Owner satisfaction score: 4/5 or higher
 
 ## Timeline Summary
+
 - **Week 1**: Setup and planning
 - **Week 2**: CMS schema design and content migration
 - **Week 3-4**: Frontend development
@@ -1003,6 +1076,7 @@ npm run dev
 **Total Estimated Time**: 5-6 weeks for initial launch
 
 ## Budget Estimate
+
 - **Development Time**: 80-120 hours (depending on complexity)
 - **Recurring Costs**: $0 (assuming free tiers sufficient)
 - **Optional Costs**:
@@ -1011,6 +1085,7 @@ npm run dev
   - Vercel Pro (if needed): $20/month
 
 ## Next Steps
+
 1. Review and approve this plan
 2. Set up development environment
 3. Create Sanity account and project
@@ -1022,6 +1097,7 @@ npm run dev
 ## Current Status (as of 2025-10-13)
 
 ### ✅ Completed Phases
+
 - **Phase 1**: Project Setup & Planning (Complete)
 - **Phase 2**: CMS Schema Design (Complete)
 - **Phase 3**: Content Migration (Complete - menu content imported successfully)
@@ -1033,6 +1109,7 @@ npm run dev
   - **Phase 4.6**: Dynamic Page Content Implementation (COMPLETE) ✅
 
 ### ✅ Recently Completed
+
 - **Social Media Integration** (COMPLETE - 2025-10-13)
   - Branch: `feature/social-media-integration`
   - Completed all 3 phases (Foundation, Visual Integration, Advanced Features)
@@ -1052,20 +1129,25 @@ npm run dev
   - YouTube video support added
 
 ### ⏭️ Next Steps
+
+_Note (2026-08-12): this bullet list is part of the 2025-10-13 snapshot and predates Phase 6 (Remediation) — see the "Phase 6: Remediation" section and the 2026-08-12 "Recent Updates" entry for what actually happened next and the renumbering that resulted (old Phase 6/7/8 below are now Phase 7/8/9)._
+
 - **Phase 5**: Testing (IN PROGRESS) 🔄
   - Production build: ✅ Passes with zero errors
   - ESLint: ✅ Passes with zero errors
   - Remaining: CRUD testing, ISR testing, device testing, Lighthouse audit
-- **Phase 6**: Deployment (Ready to start after testing)
-- **Phase 7**: Training & Documentation (Not started)
-- **Phase 8**: Maintenance & Support (Not started)
+- **Phase 6** _(now Phase 7)_: Deployment (Ready to start after testing)
+- **Phase 7** _(now Phase 8)_: Training & Documentation (Not started)
+- **Phase 8** _(now Phase 9)_: Maintenance & Support (Not started)
 
 ### 🐛 Known Issues
+
 1. **CORS configuration** - Needs manual Sanity authentication to configure for production
 2. **Cross-browser testing** - Manual testing needed across Chrome, Firefox, Safari, Edge
 3. **Accessibility audit** - WCAG 2.1 AA compliance review needed
 
 ### 🎯 Completed Improvements (2025-10-08)
+
 1. ✅ Fixed all linting errors (TypeScript types and escaped quotes)
 2. ✅ Updated build script to use webpack instead of Turbopack
 3. ✅ Implemented mobile hamburger menu with state management
@@ -1076,26 +1158,28 @@ npm run dev
 
 ---
 
-**Document Version**: 1.4
-**Last Updated**: 2025-10-11
-**Status**: Phase 4 Complete - Ready for Testing
+**Document Version**: 1.5
+**Last Updated**: 2026-08-12
+**Status**: Phase 6 (Remediation) in progress on branch `feat/remediation` — Workstreams A–G done, Workstream H (Hygiene) wrapping up; Phase 7 (Deployment) not yet started. See "Phase 6: Remediation" above and the 2026-08-12 entry under "Recent Updates" below. The "Current Status (as of 2025-10-13)" snapshot above predates this work and is kept as historical record, not current state.
 
 ---
 
 ## Recent Updates
 
 ### 2025-10-11 - Social Media Integration Planning
-- Created comprehensive `SOCIAL_MEDIA_INTEGRATION.md` document
+
+- Created comprehensive `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` document (see archive for historical record)
 - Added social media integration to Phase 4.5 (Advanced Features)
 - CMS-first approach: All features controlled via Sanity Studio
 - 3-phase implementation plan (Foundation, Visual Integration, Advanced)
 - Estimated effort: 12-28 hours depending on phases implemented
 - Added to "Next Steps" as recommended before testing phase
-- Enables owners to manage social media display independently
-- Key features: social icons, Open Graph tags, share buttons, Instagram widget, Pinterest integration
+- _Note (2026-08-12)_: These embedded social widgets (Instagram feed, Pinterest boards, UGC gallery, review widgets, click-to-tweet) were removed during remediation (T5) as they were configured but not rendered. Social links via ShareButtons remain. See `docs/archive/SOCIAL_MEDIA_INTEGRATION.md` and `docs/archive/SOCIAL_MEDIA_STATUS.md` for archived details.
+- Key features (archived): social icons, Open Graph tags, share buttons, Instagram widget, Pinterest integration
 - Reference added to IMPLEMENTATION_PLAN.md for visibility
 
 ### 2025-10-11 - Dynamic Page Content Planning (Enhanced with Sections + Import Strategy)
+
 - Added comprehensive Phase 4.6: Dynamic Page Content Implementation
 - **Enhanced approach**: Section-based schema instead of simple block content
 - Created 4 section types: textSection, twoColumnSection, highlightBox, ctaSection
@@ -1118,34 +1202,50 @@ npm run dev
 ### 2025-10-08 - Phase 4 Completion
 
 ### Code Quality Improvements
+
 - Fixed all TypeScript linting errors (replaced `any` types with proper interfaces)
 - Fixed all React linting errors (escaped quotes using HTML entities)
 - Replaced `<img>` tags with Next.js `<Image>` component for optimization
 - Added proper TypeScript interfaces for MenuItem, MenuCategory, and Testimonial types
 
 ### Mobile Responsiveness
+
 - Implemented hamburger menu for mobile navigation
 - Converted Header to client component with React state management
 - Mobile menu shows/hides on toggle with smooth UX
 - Menu closes automatically when a link is clicked
 
 ### Menu Filtering
+
 - Created CategoryFilter component for real-time menu filtering
 - Created MenuDisplay client component to handle filtering logic
 - Users can filter menu items by category or view all items
 - Maintains organized category display when showing all items
 
 ### Build & Configuration
+
 - Removed Turbopack from build scripts (was causing build failures)
 - Added outputFileTracingRoot to next.config.ts (eliminated warnings)
 - Configured Sanity CDN as allowed image source
 - All builds pass successfully with zero errors
 
 ### Next Steps
+
 The project is now ready for Phase 5 (Testing). Recommended actions:
+
 1. Manual authentication with Sanity to enable CORS for production
 2. User acceptance testing with site owners
 3. Cross-browser compatibility testing
 4. Performance audit with Lighthouse
 5. Accessibility audit (WCAG 2.1 AA)
 6. Deploy to staging environment (Vercel preview)
+
+### 2026-08-12 - Phase 6: Remediation (Workstreams A-G complete, H wrapping up)
+
+Phase 5 testing surfaced a large enough set of correctness, security, and reliability problems (see `CODE_REVIEW.md`) that a dedicated remediation phase was inserted before deployment, on branch `feat/remediation`. Phases 6 onward were renumbered accordingly (old Phase 6 "Deployment" is now Phase 7, old Phase 7 "Training & Documentation" is now Phase 8, old Phase 8 "Maintenance & Support" is now Phase 9).
+
+- Design plan: `docs/plans/implemented/remediation-plan.md`. Execution log: `docs/plans/implemented/remediation-implementation-plan.md` (tasks T0–T32, full verification detail per task).
+- Seven of eight workstreams (A–G) are done: data-layer foundation, settings/CMS drift (including deleting the dead social components added in the 2025-10-13 Social Media Integration entry above — `ShareButtons` was kept), frontend correctness & accessibility, endpoint & security hardening, import-script safety, and test-suite rebuild + CI. Workstream H (documentation hygiene) is in progress — this entry is part of it.
+- Highlights so far: single token-free Sanity client; dependency vulnerabilities cut from 41 to 12; security headers and a CSP added; the Playwright suite was rebuilt from scratch and is green locally against a production build (115 passed / 5 skipped / 0 failed on chromium + Mobile Chrome); `.github/workflows/ci.yml` now gates every PR, though its build and test steps stay unreached until the `format:check` debt is swept; the one-time import scripts were made idempotent and safe to re-run (`--yes` flag, target print, `createIfNotExists` + populated-dataset guard).
+- Known residual debt, tracked rather than silently dropped: 7 high / 5 moderate dependency vulnerabilities need major version bumps (`sanity@6`, `next@16`, `next-sanity@13`); `npm run format:check` is red pending Workstream H's repo-wide Prettier sweep; three page-mutating scripts (`add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`, `upload-images-and-update-pages.ts`) still `createOrReplace` live content with no safety guard and are flagged for an owner decision, not fixed in this phase.
+- See "Phase 6: Remediation" earlier in this document for the full workstream breakdown.

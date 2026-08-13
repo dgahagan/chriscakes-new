@@ -1,8 +1,12 @@
 import { client } from '@/lib/sanity';
-import { groq } from 'next-sanity';
-import { pageBySlugQuery, siteSettingsQuery } from '@/lib/queries';
+import {
+  pageBySlugQuery,
+  siteSettingsQuery,
+  menuItemsByCategoryQuery,
+} from '@/lib/queries';
 import SectionRenderer from '@/components/sections/SectionRenderer';
 import ShareButtons from '@/components/common/ShareButtons';
+import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PortableTextBlock } from '@portabletext/react';
 
@@ -10,7 +14,7 @@ interface MenuItem {
   _id: string;
   name: string;
   description: string;
-  price: number | null;
+  price?: number | null;
 }
 
 interface SanityImage {
@@ -53,25 +57,35 @@ interface PageData {
 
 export const revalidate = 60;
 
-async function getPageData(): Promise<PageData> {
-  return client.fetch(pageBySlugQuery, { slug: 'fundraising' }, { next: { revalidate: 60 } });
+async function getPageData(): Promise<PageData | null> {
+  return client.fetch(
+    pageBySlugQuery,
+    { slug: 'fundraising' },
+    { next: { revalidate: 60 } }
+  );
 }
 
 async function getFundraisingItems(): Promise<MenuItem[]> {
-  const query = groq`*[_type == "menuItem" && category->slug.current == "fundraising-menus" && available == true] | order(order asc) {
-    _id,
-    name,
-    description,
-    price
-  }`;
-  return client.fetch(query, {}, { next: { revalidate: 60 } });
+  return client.fetch(
+    menuItemsByCategoryQuery,
+    { categorySlug: 'fundraising-menus' },
+    { next: { revalidate: 60 } }
+  );
 }
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPageData();
 
+  if (!page) {
+    return {
+      title: 'Page Not Found - ChrisCakes',
+    };
+  }
+
   const title = page.seo?.metaTitle || `${page.title} - ChrisCakes`;
-  const description = page.seo?.metaDescription || 'Fundraising menus for schools, churches, benefits, clubs, festivals and more. Delicious options to make your fundraiser a success!';
+  const description =
+    page.seo?.metaDescription ||
+    'Fundraising menus for schools, churches, benefits, clubs, festivals and more. Delicious options to make your fundraiser a success!';
 
   return {
     title,
@@ -109,21 +123,29 @@ export default async function FundraisingPage() {
   const [page, menuItems, settings] = await Promise.all([
     getPageData(),
     getFundraisingItems(),
-    client.fetch(siteSettingsQuery),
+    client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } }),
   ]);
+
+  if (!page) {
+    notFound();
+  }
 
   // Get the first text section and extract plain text from PortableText content
   const firstTextSection = page.sections?.find(
-    (section) => section._type === 'textSection',
+    (section) => section._type === 'textSection'
   );
 
   // Extract plain text from PortableText blocks
   let subtitle = '';
   if (firstTextSection?.content) {
-    const firstBlock = firstTextSection.content.find((block) => block._type === 'block') as {
-      _type: string;
-      children?: Array<{ _type: string; text?: string }>;
-    } | undefined;
+    const firstBlock = firstTextSection.content.find(
+      (block) => block._type === 'block'
+    ) as
+      | {
+          _type: string;
+          children?: Array<{ _type: string; text?: string }>;
+        }
+      | undefined;
     if (firstBlock?.children) {
       subtitle = firstBlock.children
         .filter((child) => child._type === 'span')
@@ -131,6 +153,11 @@ export default async function FundraisingPage() {
         .join('');
     }
   }
+
+  // Avoid rendering the extracted subtitle section a second time via SectionRenderer
+  const remainingSections = subtitle
+    ? page.sections.filter((section) => section._key !== firstTextSection?._key)
+    : page.sections;
 
   // Check if share buttons should be displayed
   const shareButtonsEnabled =
@@ -146,11 +173,7 @@ export default async function FundraisingPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             {page.title}
           </h1>
-          {subtitle && (
-            <p className="text-lg text-gray-600">
-              {subtitle}
-            </p>
-          )}
+          {subtitle && <p className="text-lg text-gray-600">{subtitle}</p>}
 
           {/* Share Buttons */}
           {shareButtonsEnabled && (
@@ -160,8 +183,18 @@ export default async function FundraisingPage() {
                 title="ChrisCakes Fundraising Menus"
                 description="Fundraising menus for schools, churches, benefits, clubs, festivals and more. Delicious options to make your fundraiser a success!"
                 image="https://www.chriscakesofmi.com/logo.png"
-                platforms={settings?.shareButtons?.platforms || ['facebook', 'twitter', 'pinterest', 'whatsapp', 'native']}
-                showNativeShare={settings?.shareButtons?.platforms?.includes('native')}
+                platforms={
+                  settings?.shareButtons?.platforms || [
+                    'facebook',
+                    'twitter',
+                    'pinterest',
+                    'whatsapp',
+                    'native',
+                  ]
+                }
+                showNativeShare={settings?.shareButtons?.platforms?.includes(
+                  'native'
+                )}
               />
             </div>
           )}
@@ -175,16 +208,17 @@ export default async function FundraisingPage() {
             <div key={item._id}>
               <div className="grid gap-8 md:grid-cols-2">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">{item.name}</h2>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                    {item.name}
+                  </h2>
                 </div>
                 <div>
                   <p className="text-gray-700 mb-4">{item.description}</p>
-                  <p className="text-center font-bold text-lg">Call for pricing!</p>
-                  {item.name === 'Hot Dog Bash' && (
-                    <p className="text-center text-[#dc143c] font-bold mt-2">
-                      CONEY SAUCE ADD $1.00 pp
-                    </p>
-                  )}
+                  <p className="text-center font-bold text-lg">
+                    {item.price != null
+                      ? `$${item.price.toFixed(2)}`
+                      : 'Call for pricing!'}
+                  </p>
                 </div>
               </div>
               <hr className="mt-8 border-gray-300" />
@@ -194,7 +228,7 @@ export default async function FundraisingPage() {
 
         {/* CTA Section - Dynamic from Sanity */}
         <div className="mt-12">
-          <SectionRenderer sections={page.sections} />
+          <SectionRenderer sections={remainingSections} />
         </div>
       </div>
     </div>

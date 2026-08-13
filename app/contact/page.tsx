@@ -3,7 +3,7 @@ import { siteSettingsQuery } from '@/lib/queries';
 import ContactForm from '@/components/contact/ContactForm';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export const metadata: Metadata = {
   title: 'Contact Us - ChrisCakes | Book Your Event',
@@ -35,9 +35,30 @@ export const metadata: Metadata = {
   },
 };
 
+interface SocialPlatform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SiteSettings {
+  phone?: string;
+  email?: string;
+  address?: string;
+  hours?: { day: string; hours: string }[];
+  socialMedia?: {
+    platforms?: SocialPlatform[];
+  };
+}
+
 async function getSiteSettings() {
   try {
-    const settings = await client.fetch(siteSettingsQuery);
+    const settings = await client.fetch<SiteSettings>(
+      siteSettingsQuery,
+      {},
+      { next: { revalidate: 60 } }
+    );
     return settings;
   } catch (error) {
     console.error('Error fetching site settings:', error);
@@ -115,10 +136,7 @@ export default async function ContactPage() {
                   </h3>
                   <div className="space-y-2">
                     {settings.hours.map(
-                      (
-                        day: { day: string; hours: string },
-                        index: number,
-                      ) => (
+                      (day: { day: string; hours: string }, index: number) => (
                         <div
                           key={index}
                           className="flex justify-between text-gray-700"
@@ -126,51 +144,37 @@ export default async function ContactPage() {
                           <span className="font-medium">{day.day}</span>
                           <span>{day.hours}</span>
                         </div>
-                      ),
+                      )
                     )}
                   </div>
                 </div>
               )}
 
-              {settings?.socialMedia && (
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                    Follow Us
-                  </h3>
-                  <div className="flex space-x-4">
-                    {settings.socialMedia.facebook && (
-                      <a
-                        href={settings.socialMedia.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-600 hover:text-blue-600"
-                      >
-                        Facebook
-                      </a>
-                    )}
-                    {settings.socialMedia.instagram && (
-                      <a
-                        href={settings.socialMedia.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-600 hover:text-blue-600"
-                      >
-                        Instagram
-                      </a>
-                    )}
-                    {settings.socialMedia.twitter && (
-                      <a
-                        href={settings.socialMedia.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-600 hover:text-blue-600"
-                      >
-                        Twitter
-                      </a>
-                    )}
+              {settings?.socialMedia?.platforms &&
+                settings.socialMedia.platforms.filter((p) => p.enabled).length >
+                  0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                      Follow Us
+                    </h3>
+                    <div className="flex space-x-4">
+                      {settings.socialMedia.platforms
+                        .filter((platform) => platform.enabled)
+                        .map((platform) => (
+                          <a
+                            key={platform.platform}
+                            href={platform.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-600 hover:text-blue-600"
+                          >
+                            {platform.platform.charAt(0).toUpperCase() +
+                              platform.platform.slice(1)}
+                          </a>
+                        ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
 

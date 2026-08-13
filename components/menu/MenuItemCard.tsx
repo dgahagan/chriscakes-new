@@ -15,13 +15,17 @@ interface MenuItemCardProps {
 
 export default function MenuItemCard({ item }: MenuItemCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div
+      data-testid="menu-item"
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+    >
       {item.image && (
         <div className="relative h-48 bg-gray-200">
           <Image
             src={urlFor(item.image).width(400).height(300).url()}
             alt={item.name}
             fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="object-cover"
           />
         </div>

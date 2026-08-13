@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -83,9 +83,9 @@ textarea:disabled {
 /* Improve touch targets (minimum 44x44px for WCAG AA) */
 button,
 a,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
+input[type='button'],
+input[type='submit'],
+input[type='reset'] {
   min-height: 44px;
   min-width: 44px;
 }
@@ -115,7 +115,7 @@ input[type="reset"] {
   }
 
   /* Hide elements marked with print:hidden */
-  [class*="print:hidden"] {
+  [class*='print:hidden'] {
     display: none !important;
   }
 
@@ -132,7 +132,9 @@ input[type="reset"] {
   }
 
   /* Better spacing for print */
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     page-break-after: avoid;
     break-after: avoid;
   }

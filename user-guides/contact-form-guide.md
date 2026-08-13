@@ -7,6 +7,7 @@ Your website has a contact form that lets customers reach out to you with questi
 ### What Customers See
 
 When someone fills out your contact form, they provide:
+
 - **Name**: Their full name
 - **Email**: Their email address
 - **Phone**: Their phone number (optional)
@@ -17,6 +18,7 @@ After they click "Send," they see a confirmation that their message was sent.
 ### What You Receive
 
 You'll get an email notification with:
+
 - The customer's name
 - Their message
 - Their email address
@@ -38,6 +40,7 @@ That's it! The reply will go directly to the customer's email address.
 ### Response Time Tips
 
 **Fast responses = happy customers!**
+
 - Try to respond within **24 hours** (sooner is better)
 - Even if you don't have a full answer yet, acknowledge receipt:
   - "Thanks for your message! I'll get back to you with details by tomorrow."
@@ -51,6 +54,7 @@ That's it! The reply will go directly to the customer's email address.
 "Hi, I'd like to get a quote for a pancake breakfast for our school fundraiser. We're expecting about 200 people on June 15th. Can you help?"
 
 **Your response might include:**
+
 - Thank them for contacting you
 - Ask any additional questions (menu preferences, setup details, dietary restrictions)
 - Provide pricing information or next steps
@@ -58,6 +62,7 @@ That's it! The reply will go directly to the customer's email address.
 - Confirm availability for their date
 
 **Example response:**
+
 ```
 Hi [Name],
 
@@ -87,6 +92,7 @@ ChrisCakes
 "Can you accommodate gluten-free diets for our event?"
 
 **Simple, direct response:**
+
 ```
 Hi [Name],
 
@@ -106,6 +112,7 @@ Thanks!
 "I need catering for this Saturday! Is that possible?"
 
 **Be honest about availability:**
+
 ```
 Hi [Name],
 
@@ -135,6 +142,7 @@ Talk soon!
 ### Professional Email Responses
 
 **DO:**
+
 - ✅ Respond promptly (within 24 hours)
 - ✅ Use a friendly, professional tone
 - ✅ Answer all their questions
@@ -144,6 +152,7 @@ Talk soon!
 - ✅ Use a professional email signature
 
 **DON'T:**
+
 - ❌ Leave them waiting more than 2 days without a response
 - ❌ Use all caps or excessive exclamation points!!!
 - ❌ Forget to answer part of their question
@@ -167,6 +176,7 @@ Follow us on Instagram: @chriscakesofmi
 ## Handling Different Types of Inquiries
 
 ### Large Event Inquiries (500+ people)
+
 - These are high-value and deserve extra attention
 - Suggest a phone call to discuss logistics
 - Ask for their event date first (check availability)
@@ -174,6 +184,7 @@ Follow us on Instagram: @chriscakesofmi
 - Send a formal follow-up email summarizing what you discussed
 
 ### Corporate Event Inquiries
+
 - Ask about budget and timeline upfront
 - Confirm expected attendance
 - Discuss setup, service staff, and equipment needs
@@ -181,12 +192,14 @@ Follow us on Instagram: @chriscakesofmi
 - Be professional and detail-oriented
 
 ### Dietary Restrictions
+
 - Ask specific questions (vegan, gluten-free, nut allergy, etc.)
 - Be honest about what you can and can't accommodate
 - Explain any cross-contamination risks if relevant
 - Provide clear pricing for specialty items
 
 ### Complaints or Issues
+
 - Respond quickly and professionally
 - Acknowledge their concern
 - Apologize if appropriate
@@ -194,6 +207,7 @@ Follow us on Instagram: @chriscakesofmi
 - Take the conversation offline (phone call) for sensitive issues
 
 **Example:**
+
 ```
 Hi [Name],
 
@@ -210,7 +224,9 @@ Sincerely,
 ## Tracking and Following Up
 
 ### Keep Records
+
 Consider keeping track of:
+
 - Customer name and contact info
 - Date they inquired
 - Event date
@@ -219,6 +235,7 @@ Consider keeping track of:
 - Status (quoted, booked, completed)
 
 You can use:
+
 - A simple spreadsheet
 - A notebook
 - Order management software
@@ -267,21 +284,25 @@ A: Yes! Even if it's just to say "Thanks, but we don't offer that service." Ever
 ## Tips for Success
 
 ### Be Personal
+
 - Use the customer's name
 - Reference specific details from their message
 - Sign with your name (not just "ChrisCakes")
 
 ### Be Clear
+
 - Answer their questions directly
 - Provide specific information (prices, dates, options)
 - Tell them exactly what to do next
 
 ### Be Prompt
+
 - Fast responses show professionalism
 - Customers often contact multiple vendors—don't lose business by being slow
 - Even a quick "I'll get back to you by tomorrow" is better than silence
 
 ### Be Professional
+
 - Check spelling and grammar
 - Use complete sentences
 - Avoid text-speak or emojis (unless it fits your brand)
@@ -304,5 +325,6 @@ The contact form is a key part of your business—it's often the first real inte
 ---
 
 **Related Guides**:
+
 - [Updating Site Settings](./updating-site-settings.md) - Where to change the email address that receives form submissions
 - [Getting Started](./GETTING_STARTED.md) - Back to the main guide

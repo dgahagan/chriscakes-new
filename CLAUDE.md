@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ChrisCakes website modernization project transforming a legacy .NET/HTML site into a modern Next.js + Sanity CMS platform. The goal is to enable non-technical restaurant owners to independently manage menu items, prices, images, and content without developer intervention.
 
-**Current Status**: Phase 4 Complete (Frontend Development) - Ready for Testing
+**Current Status**: Phase 6 (Remediation) in progress on branch `feat/remediation` — CI, the Playwright test suite, security hardening, and CMS-drift fixes are landing task-by-task. See `IMPLEMENTATION_PLAN.md`'s Phase 6 entry for a summary.
 
 ## Repository Structure
 
@@ -16,11 +16,13 @@ chriscakes/
 ├── components/              # React components
 ├── lib/                     # Utilities and Sanity client
 ├── sanity/                  # Sanity schemas and configuration
-├── scripts/                 # Content import scripts
+├── scripts/                 # One-time content migration scripts (see below)
+├── tests/                   # Playwright suite (e2e, accessibility, api)
 ├── public/                  # Static assets
 ├── reference/               # Design resources and legacy site archives
 │   └── CONTENT_AUDIT.md    # Content inventory from original site
 ├── user-guides/             # Non-technical user documentation
+├── docs/plans/               # Design and implementation plan documents
 ├── IMPLEMENTATION_PLAN.md   # Detailed roadmap with progress tracking
 ├── PROJECT_DESCRIPTION.md   # Original project requirements
 ├── README.md               # Project overview and quick start
@@ -45,9 +47,25 @@ npm run lint         # ESLint (must pass with zero errors)
 npm run format       # Format all files with Prettier
 npm run format:check # Check formatting without modifying
 
-# Content Management
-npm run import:all   # Import all content to Sanity (requires auth)
+# Content Management (one-time migration scripts — see note below)
+npm run import        # Legacy catalogue import (scripts/import-content.ts)
+npm run import:all    # Seed menu categories/items + site settings (scripts/import-all-content.ts)
+npm run import:more   # Seed fundraising category/items, FAQs, testimonials (scripts/import-additional-content.ts)
+
+# Testing (Playwright — see note below)
+npm test              # Full 11-project matrix (desktop/mobile/tablet x browsers)
+npm run test:e2e      # E2E specs only (tests/e2e)
+npm run test:a11y     # Accessibility specs only (tests/accessibility)
+npm run test:ui       # Playwright UI mode
+npm run test:debug    # Playwright debug mode
+npm run test:report   # Open the last HTML report
 ```
+
+**Import scripts are one-time migration tooling, not routine commands.** `import`, `import:all`, and `import:more` all refuse to run without `--yes`, print the target Sanity project and dataset before writing anything, and are safe to re-run against a populated dataset: they use `createIfNotExists` plus a populated-dataset guard, so once real content exists they write nothing and only print a divergence report. `scripts/import-page-content.ts` (no npm alias — run directly with `npx tsx scripts/import-page-content.ts --yes`) follows the same safe pattern for the 8 static content pages.
+
+**Three other scripts are NOT safe to re-run**: `scripts/add-videos-to-pages.ts`, `scripts/update-remaining-pages-with-images.ts`, and `scripts/upload-images-and-update-pages.ts` still call `createOrReplace` on live page documents with no `--yes` guard — running them will silently overwrite owner-edited page content. Read the script before running any of these.
+
+**Local test note**: only Chromium is typically installed on a dev box, so run `npx playwright test --project=chromium --project="Mobile Chrome"` locally rather than the bare `npm test`, which targets all 11 configured projects (including Firefox/WebKit) and will fail if those browsers aren't installed. `playwright.config.ts` forces an invalid `RESEND_API_KEY` for the test server, so no local or CI test run can send real email.
 
 **Build Requirements**: Production builds must complete successfully with zero errors. Linting errors are blocking and must be fixed before committing.
 
@@ -103,7 +121,7 @@ Located in `sanity/schemas/`:
   - Fields: name, slug, description, price, image, category (reference), available, featured, allergens, order
 
 - **page.ts** - Dynamic pages (About, Services, etc.)
-  - Fields: title, slug, content (block content), seo
+  - Fields: title, slug, sections (array of `textSection` / `twoColumnSection` / `highlightBox` / `ctaSection` / `videoSection`), seo
 
 - **siteSettings.ts** - Global site configuration (singleton)
   - Fields: title, description, phone, email, address, hours, socialMedia, logo
@@ -127,6 +145,7 @@ All schemas use `order` field for manual sorting in Sanity Studio.
 5. Update Header navigation if needed
 
 Example:
+
 ```typescript
 import { client } from '@/lib/sanity';
 import { pageBySlugQuery } from '@/lib/queries';
@@ -167,25 +186,29 @@ export default async function NewPage() {
 ## Important Constraints
 
 ### TypeScript Rules
+
 - No `any` types - use proper interfaces or `unknown`
 - Define interfaces for all Sanity data structures
 - Props must be typed explicitly
 
 ### React/Next.js Rules
+
 - No `<img>` tags - always use Next.js `<Image>` component
 - Escape quotes in JSX text with HTML entities (&quot; &apos; etc.)
 - Mark components with interactive features as Client Components
 - Server Components cannot use hooks or event handlers
 
 ### Build Rules
+
 - All ESLint errors must be fixed (zero tolerance)
 - Production builds must complete successfully
 - No webpack/build warnings about missing files
 - Turbopack is intentionally NOT used (removed from scripts)
 
 ### Sanity Rules
-- Project ID is public and hardcoded (9t9xlmvm)
-- API token is private and must be in `.env.local`
+
+- Project ID is public; read from `NEXT_PUBLIC_SANITY_PROJECT_ID` everywhere in code (see Tech Stack above for the current value) — never hardcoded in a `.ts`/`.tsx` file
+- API token (`SANITY_API_TOKEN`) is private, used only by the one-time scripts in `scripts/`, and must be in `.env.local` — the app itself (`lib/sanity.ts`) is token-free and never reads it
 - Never commit `.env.local` to git
 - CORS configuration requires manual authentication
 - Dataset is `production` (not `development`)
@@ -198,20 +221,26 @@ export default async function NewPage() {
 
 3. **Mobile Menu**: Header must be a Client Component to manage hamburger menu state. This is by design.
 
+4. **Prettier formatting debt**: `npm run format:check` currently fails against a batch of pre-existing files, tracked for a dedicated repo-wide formatting sweep. This is a known, owner-accepted red CI check (decision recorded 2026-08-12), not a regression — don't fix it piecemeal inside unrelated commits.
+
 ## Testing & Deployment
 
 ### Pre-deployment Checklist
+
+- CI (`.github/workflows/ci.yml`) must be green on the PR: it runs lint, build, and Playwright (chromium + Mobile Chrome) on every pull request and push to `master`
 - Run `npm run build` - must succeed with zero errors
 - Run `npm run lint` - must pass with zero errors
-- Run `npm run format:check` - all files must be formatted
+- Run `npm run format:check` - has known pre-existing failures (see Known Issues above); don't block on it until the repo-wide format sweep lands
 - Test locally with `npm run start` after build
 - Verify mobile responsiveness (hamburger menu works)
 - Test menu filtering (all/category switching)
 
 ### Vercel Deployment
+
 - See `SETUP.md` for comprehensive deployment guide
 - Environment variables must be configured in Vercel dashboard
-- Must include: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `SANITY_API_TOKEN`
+- Must include: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `RESEND_API_KEY` (contact form returns a 500 without it), `RESEND_FROM_EMAIL` (falls back to `onboarding@resend.dev` if unset — fine for testing, not for production)
+- `SANITY_API_TOKEN` is **not** needed on Vercel — the deployed app never reads it; it's only used locally by the `scripts/` migration tooling
 - Production URL must be added to Sanity CORS settings
 - **Root Directory**: Set to `./` (default) in Vercel project settings
 
@@ -232,6 +261,7 @@ Access at `/studio` route in browser. Configured via `app/studio/page.tsx`. Stud
 ## Documentation Files
 
 Read these files for context:
+
 - **IMPLEMENTATION_PLAN.md** - Complete project phases and progress
 - **reference/CONTENT_AUDIT.md** - Original site content inventory
 - **SETUP.md** - Setup instructions and deployment guide

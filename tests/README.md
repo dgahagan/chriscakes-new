@@ -1,262 +1,182 @@
 # ChrisCakes Test Suite
 
+Playwright end-to-end, API, and accessibility tests. This suite was rebuilt
+from scratch in T23–T27; if you're looking at old screenshots or a `visual/`
+directory in your memory of this repo, that's gone — see the historical note
+at the bottom.
+
 ## Directory Structure
 
 ```
 tests/
-├── e2e/                    # End-to-end functional tests
-│   ├── homepage.spec.ts    # Homepage functionality
-│   ├── menu.spec.ts        # Menu page and filtering
-│   └── navigation.spec.ts  # Site-wide navigation
-├── accessibility/          # WCAG 2.1 AA compliance tests
-│   └── wcag-compliance.spec.ts
-├── visual/                 # Visual regression tests
-│   └── screenshots.spec.ts
-├── helpers/                # Test utilities
-│   └── test-utils.ts      # Shared test functions
-└── README.md              # This file
+├── e2e/
+│   ├── homepage.spec.ts    # Title/h1, heading order, images, landmarks,
+│   │                       # mailto link, homepage CTA, meta description,
+│   │                       # console-error check
+│   ├── navigation.spec.ts  # Desktop nav list, mobile hamburger menu,
+│   │                       # skip-to-content link, logo-to-home link
+│   ├── menu.spec.ts        # Category filtering, search, sort, print button
+│   ├── pages.spec.ts       # /fundraising, a sitemap-sourced [slug] page,
+│   │                       # and the 404 page
+│   └── contact.spec.ts     # Contact form UI: happy path (mocked), client
+│                           # validation, honeypot field
+├── api/
+│   └── contact.spec.ts     # POST /api/contact: honeypot + fill-time bot
+│                           # gates, field validation, malformed/oversized
+│                           # bodies, wrong method, subject-line sanitization
+├── accessibility/
+│   └── wcag-compliance.spec.ts  # axe-core WCAG 2.1 AA scan of every page
+│                                 # in SCANNED_PAGES, keyboard nav, mobile
+│                                 # keyboard access, touch target size,
+│                                 # heading hierarchy
+├── helpers/
+│   └── test-utils.ts        # navigateAndWait, checkTouchTargetSize,
+│                             # checkImagesLoaded, waitForPageLoad
+├── QUICK_START.md           # The short version — start here
+└── README.md                 # This file
 ```
 
-## Quick Start
+There is no `tests/visual/` directory and no `test:visual` npm script —
+both were removed in T23. Screenshot/visual-regression testing is not part
+of this suite.
 
-### 1. Install Dependencies
+## Running the suite
 
-```bash
-npm install
-npx playwright install
-```
-
-### 2. Start Development Server
-
-```bash
-npm run dev
-```
-
-### 3. Run Tests
+The suite builds and starts its own production server — you do **not** run
+`npm run dev` first. `playwright.config.ts`'s `webServer.command` is
+`npm run build && npm run start -- --port ${PORT}`, and
+`reuseExistingServer` is `false`, so whatever port it wants must be free
+when the run starts.
 
 ```bash
-# Run all tests
+# Full 11-project matrix (all browsers/breakpoints) — requires all
+# Playwright browsers installed (see below)
 npm test
 
-# Run specific suite
-npm run test:e2e       # E2E tests only
-npm run test:a11y      # Accessibility tests only
-npm run test:visual    # Visual regression only
+# The realistic local command: only chromium is normally installed on a
+# dev box, and the port is usually free on 3100, not 3000
+PLAYWRIGHT_PORT=3100 npx playwright test --project=chromium --project="Mobile Chrome"
 ```
 
-## Test Suites
+**Port**: defaults to 3000 (override with `PLAYWRIGHT_PORT`). On a dev box
+where something else already owns 3000, set `PLAYWRIGHT_PORT` to a free
+port — a busy port now fails loudly (address already in use) instead of
+silently testing whatever app happens to already be listening there.
 
-### E2E Tests (`e2e/`)
+**Browser matrix**: `playwright.config.ts` defines 11 projects (chromium,
+firefox, webkit, Mobile Chrome, Mobile Safari, Tablet, plus five custom
+breakpoint projects on Desktop Chrome). When `CI` is set, the project list
+is filtered down to exactly `chromium` and `Mobile Chrome` — that's what
+CI actually runs. `Mobile Chrome` is Pixel 5 emulation on the chromium
+engine, not a separate browser download, so it works with a chromium-only
+install. Running the full 11-project matrix locally requires
+`npx playwright install` first (firefox and webkit are not installed by
+default).
 
-Functional tests covering:
-- Page loading and navigation
-- Menu filtering and search
-- Mobile menu functionality
-- Form submissions
-- Cross-browser compatibility
-
-**Browsers tested:**
-- Chromium (Chrome/Edge)
-- Firefox
-- WebKit (Safari)
-- Mobile viewports (iPhone, Pixel, iPad)
-
-### Accessibility Tests (`accessibility/`)
-
-WCAG 2.1 AA compliance using axe-core:
-- Color contrast
-- Keyboard navigation
-- Screen reader compatibility
-- Touch target sizes (mobile)
-- Image alt text
-- Heading hierarchy
-- ARIA labels and roles
-
-### Visual Regression Tests (`visual/`)
-
-Screenshot comparison tests:
-- Desktop layouts (1440x900)
-- Mobile layouts (375x667)
-- Tablet layouts (768x1024)
-- Component snapshots (header, footer, filters)
-
-**First run**: Creates baseline screenshots
-**Subsequent runs**: Compares against baselines
-
-To update baselines after intentional changes:
-```bash
-npm test -- --update-snapshots
-```
-
-## Test Helpers
-
-### `test-utils.ts`
-
-Shared utility functions:
-
-```typescript
-// Navigate and wait for page load
-await navigateAndWait(page, '/menu');
-
-// Check touch target size (WCAG compliance)
-await checkTouchTargetSize(page, 'button');
-
-// Test mobile menu
-await testMobileMenu(page);
-
-// Check images loaded
-await checkImagesLoaded(page);
-
-// Verify navigation links
-await checkNavigationLinks(page, ['Home', 'Menu', 'About']);
-```
-
-## Writing New Tests
-
-### Example E2E Test
-
-```typescript
-import { test, expect } from '@playwright/test';
-import { navigateAndWait } from '../helpers/test-utils';
-
-test.describe('My Feature', () => {
-  test('should do something', async ({ page }) => {
-    await navigateAndWait(page, '/my-page');
-
-    const button = page.getByRole('button', { name: 'Click me' });
-    await expect(button).toBeVisible();
-    await button.click();
-
-    const result = page.getByText('Success!');
-    await expect(result).toBeVisible();
-  });
-});
-```
-
-### Example Accessibility Test
-
-```typescript
-import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
-
-test('my page should not have a11y violations', async ({ page }) => {
-  await page.goto('/my-page');
-
-  const results = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa'])
-    .analyze();
-
-  expect(results.violations).toEqual([]);
-});
-```
-
-### Example Visual Test
-
-```typescript
-import { test, expect } from '@playwright/test';
-
-test('my component should match baseline', async ({ page }) => {
-  await page.goto('/my-page');
-
-  const component = page.locator('.my-component');
-  await expect(component).toHaveScreenshot('my-component.png');
-});
-```
-
-## Debugging Tests
-
-### UI Mode (Recommended)
+Other npm scripts (from `package.json`):
 
 ```bash
-npm run test:ui
+npm run test:e2e     # tests/e2e only
+npm run test:a11y    # tests/accessibility only
+npm run test:headed  # headed browser
+npm run test:ui      # interactive UI mode
+npm run test:debug   # Playwright Inspector, step-by-step
+npm run test:report  # open the last HTML report
 ```
 
-Interactive mode with:
-- Test explorer
-- Time travel debugging
-- Watch mode
-- Screenshots and videos
-
-### Debug Mode
+**These shortcuts carry no port or project overrides**, so on a dev box where
+port 3000 is taken or firefox/webkit aren't installed, they fail for the two
+reasons above. Add the overrides when you need them, e.g.
 
 ```bash
-npm run test:debug
+PLAYWRIGHT_PORT=3100 npx playwright test tests/e2e \
+  --project=chromium --project="Mobile Chrome"
 ```
 
-Opens Playwright Inspector for step-by-step debugging.
+There is no `test:visual` script.
 
-### Headed Mode
+## Email safety — read this before touching `playwright.config.ts`
+
+`playwright.config.ts` forces `webServer.env.RESEND_API_KEY` to an invalid
+value (`'e2e-invalid-key-never-send'`) unconditionally, overriding whatever
+is in `.env.local`. This exists because `tests/api/contact.spec.ts`
+deliberately drives submissions that clear every bot gate (honeypot,
+fill-time, validation) to test the endpoint's later behavior, and a real
+`RESEND_API_KEY` plus `contactFormRecipients` configured in Sanity has
+already caused **real email to be delivered to the owner's inbox — twice**
+— before this guard existed.
+
+**Do not remove or weaken this override.** If you need to test real email
+delivery, do it manually outside this suite, never by changing
+`webServer.env`.
+
+To verify no run sent mail, check the endpoint's success-path log line
+never appears:
 
 ```bash
-npm run test:headed
+grep -c "Email sent successfully" <playwright-output>
+# must be 0
 ```
 
-See the browser while tests run.
+## Conventions for writing new tests
 
-## CI/CD Integration
+These are hard-won; breaking them is the most common way to introduce a
+flaky or misleading test in this repo.
 
-Tests are designed to run in CI environments:
+- **Scope nav locators to one container.** Every nav link exists twice in
+  the DOM at once: the mobile `#mobile-menu` panel is always mounted
+  (toggled via the `hidden` class, not conditionally rendered, so
+  `aria-controls` always resolves) and the desktop list is always mounted
+  too. A bare `page.getByRole('link', { name: 'Menus' })` matches both and
+  fails Playwright's strict mode. Scope to `desktopNav(page)` or
+  `mobileMenu(page)` first — see `tests/e2e/navigation.spec.ts` for the
+  pattern.
 
-```bash
-# Set CI environment variable
-export CI=true
+- **Assert shapes, not CMS content.** Menu items, category names, page
+  copy, contact details — all of it is owner-editable in Sanity and can
+  change at any time. Tests assert structural/behavioral shape instead:
+  "at least one category button renders," "the grid is non-empty,"
+  "search narrows the result count." Category filters are located by
+  `button[aria-pressed]` rather than by label text, and
+  `tests/e2e/pages.spec.ts` sources its `[slug]` test target from
+  `/sitemap.xml` at runtime rather than hardcoding a slug. Follow this
+  pattern for new content-adjacent tests.
 
-# Install with dependencies
-npx playwright install --with-deps
+- **No `waitForTimeout`.** The suite has zero uses of it. Use
+  condition-based waits (`expect(...).toPass()`, `waitForURL`,
+  `toBeVisible`, etc.) instead — a fixed sleep is either too short (flaky)
+  or too long (slow) and hides the actual condition you care about.
 
-# Run tests
-npm test
-```
+- **Contact API tests need a unique `X-Forwarded-For` per request.** The
+  `/api/contact` rate limiter allows ~3 requests/hour per resolved client
+  IP, and every request from a local/CI test run resolves to `'unknown'`
+  without an explicit header. `tests/api/contact.spec.ts` sends a
+  `X-Forwarded-For` derived from Playwright's own `testInfo.testId` on
+  every request so tests never share a rate-limit budget. Any new contact
+  API test must do the same or it will get spurious 429s once the suite
+  has enough tests in the file.
 
-Tests will automatically:
-- Retry failed tests (2x on CI)
-- Run serially on CI
-- Generate HTML reports
-- Capture screenshots/videos on failure
+- **Contact form UI tests must not reach the real endpoint.**
+  `tests/e2e/contact.spec.ts` mocks `**/api/contact` via `page.route()`
+  for its happy-path test, and its other tests never trigger a submission
+  at all. Server-side rejection-path coverage belongs in
+  `tests/api/contact.spec.ts`, which is safe to hit directly because every
+  case it covers returns before an email send is attempted (the one
+  exception, subject-line sanitization, is safe only because of the
+  `RESEND_API_KEY` override above).
 
-## Performance Targets
+## CI
 
-Tests verify these metrics:
+`.github/workflows/ci.yml` runs on every PR and on push to `master`: lint,
+`format:check`, build, then Playwright (chromium + Mobile Chrome only,
+via `npm test` with `CI` set). As of this writing, `format:check` is a
+known-red step pending the repo-wide format sweep (T31) and it halts the
+job before the build/test steps run — so a currently-red CI run doesn't by
+itself mean the test suite is broken; check what step actually failed.
 
-| Metric | Target |
-|--------|--------|
-| Page Load | <3s |
-| FCP | <1.8s |
-| LCP | <2.5s |
-| TTI | <3.5s |
-| CLS | <0.1 |
-| Lighthouse Performance | >90 |
-| Lighthouse Accessibility | >90 |
+## Historical reference
 
-## Troubleshooting
-
-### Tests fail with timeouts
-- Ensure dev server is running (`npm run dev`)
-- Check `http://localhost:3000` is accessible
-- Increase timeout in `playwright.config.ts` if needed
-
-### Browser not found
-```bash
-npx playwright install
-```
-
-### Visual tests fail unexpectedly
-- Check if you made intentional design changes
-- Update baselines: `npm test -- --update-snapshots`
-- Run on same OS (screenshots vary by platform)
-
-### Accessibility violations
-- Review detailed report: `npm run test:report`
-- Check axe-core docs for specific violation
-- Fix in component and re-run
-
-## Resources
-
-- [Playwright Docs](https://playwright.dev)
-- [axe-core Rules](https://github.com/dequelabs/axe-core/blob/develop/doc/rule-descriptions.md)
-- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
-- [Web.dev Performance](https://web.dev/performance/)
-
----
-
-*For comprehensive testing guide, see [TESTING_GUIDE.md](../TESTING_GUIDE.md)*
+For the pre-T23 suite (`visual/` directory, `npm run dev`-based workflow,
+different helper API), see
+[TESTING_GUIDE.md](../docs/archive/TESTING_GUIDE.md) — archived, not
+current, kept for history only.

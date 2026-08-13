@@ -1,25 +1,47 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { isValidMeasurementId } from '@/lib/analytics';
+
+type GtagWindow = Window & {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+};
 
 interface GoogleAnalyticsProps {
   measurementId: string;
 }
 
-export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
+export default function GoogleAnalytics({
+  measurementId,
+}: GoogleAnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isConfigured, setIsConfigured] = useState(false);
+
+  const isValidId = isValidMeasurementId(measurementId);
 
   useEffect(() => {
-    const w = window as Window & { gtag?: (...args: unknown[]) => void };
-    if (typeof window !== 'undefined' && w.gtag) {
-      w.gtag('config', measurementId, {
-        page_path: pathname + searchParams.toString(),
-      });
-    }
-  }, [pathname, searchParams, measurementId]);
+    // Page views are sent only once `gtag('config')` has run, so the first one
+    // can never be queued ahead of the config command that gives it a target.
+    if (!isValidId || !isConfigured) return;
+
+    const w = window as GtagWindow;
+    if (typeof w.gtag !== 'function') return;
+
+    const queryString = searchParams.toString();
+    const pagePath = queryString ? `${pathname}?${queryString}` : pathname;
+
+    w.gtag('event', 'page_view', {
+      page_path: pagePath,
+      page_location: window.location.href,
+      send_to: measurementId,
+    });
+  }, [pathname, searchParams, measurementId, isValidId, isConfigured]);
+
+  if (!isValidId) return null;
 
   return (
     <>
@@ -30,14 +52,13 @@ export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps)
       <Script
         id="google-analytics"
         strategy="afterInteractive"
+        onReady={() => setIsConfigured(true)}
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${measurementId}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', '${measurementId}', { send_page_view: false });
           `,
         }}
       />

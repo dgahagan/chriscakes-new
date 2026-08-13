@@ -66,7 +66,9 @@ export default function HighlightBox({
   };
 
   return (
-    <section className={`p-8 rounded-lg mb-12 ${bgColorClasses[backgroundColor]}`}>
+    <section
+      className={`p-8 rounded-lg mb-12 ${bgColorClasses[backgroundColor]}`}
+    >
       <h2 className="text-2xl font-bold text-gray-900 mb-4">{title}</h2>
       {content && (
         <div className="prose max-w-none">

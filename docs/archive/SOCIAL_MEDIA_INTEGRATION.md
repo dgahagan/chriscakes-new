@@ -94,7 +94,7 @@ These elements require code implementation (but should still read settings from 
    - Responsive behavior
    - Animation effects
 
-**Key Distinction:** The code provides the *functionality*, but Sanity provides the *content and configuration*. Owners control what displays and where, while developers maintain how it technically works.
+**Key Distinction:** The code provides the _functionality_, but Sanity provides the _content and configuration_. Owners control what displays and where, while developers maintain how it technically works.
 
 ### Benefits of This Approach
 
@@ -123,6 +123,7 @@ These elements require code implementation (but should still read settings from 
 ### What We're Missing ❌
 
 **Display & Functionality:**
+
 - **No Social Media Icons** - URLs exist in CMS but aren't displayed anywhere
 - **No Open Graph Tags** - Shared links show generic previews without images
 - **No Twitter Cards** - Twitter/X shares lack rich media
@@ -133,6 +134,7 @@ These elements require code implementation (but should still read settings from 
 - **No User-Generated Content** - Not leveraging customer photos/tags
 
 **Sanity CMS Controls (Critical Gap):**
+
 - **No Display Toggles** - Can't control where social icons appear (header/footer)
 - **No Visibility Controls** - Can't show/hide individual platforms
 - **No Display Order** - Can't prioritize which platforms appear first
@@ -163,6 +165,7 @@ These elements require code implementation (but should still read settings from 
 ### Where Social Features Belong on Websites
 
 **Most Common Placements:**
+
 - Footer social icons (universal standard)
 - Header social icons (secondary)
 - Homepage Instagram feed
@@ -178,6 +181,7 @@ These elements require code implementation (but should still read settings from 
 **Goal:** Make it effortless for website visitors to find and follow ChrisCakes on social platforms.
 
 **Components:**
+
 - **Footer Social Icons** - Always visible, standard placement
 - **Header Social Icons** - Optional secondary placement
 - **Explicit CTAs** - "Follow us for daily specials!" with incentives
@@ -188,6 +192,7 @@ These elements require code implementation (but should still read settings from 
   - Pinterest: Link to boards
 
 **Implementation Notes:**
+
 - All settings managed via Sanity siteSettings schema
 - Pull social URLs and display preferences from Sanity
 - Conditionally render based on Sanity toggle fields
@@ -197,6 +202,7 @@ These elements require code implementation (but should still read settings from 
 - Add `rel="noopener noreferrer"` for security
 
 **Sanity Control:**
+
 - ✅ Social platform URLs
 - ✅ Enable/disable each platform individually
 - ✅ Show icons in footer (toggle)
@@ -215,6 +221,7 @@ These elements require code implementation (but should still read settings from 
 **Critical for making shared links beautiful and clickable.**
 
 **What Gets Shared:**
+
 - Homepage (business overview)
 - Menu items (specific pancake/item pages if created)
 - Services page (catering info)
@@ -222,6 +229,7 @@ These elements require code implementation (but should still read settings from 
 - Event/fundraising information
 
 **Required Meta Tags:**
+
 ```html
 <!-- Open Graph (Facebook, LinkedIn, etc) -->
 <meta property="og:title" content="ChrisCakes - Premier Breakfast Caterer" />
@@ -238,6 +246,7 @@ These elements require code implementation (but should still read settings from 
 ```
 
 **Next.js Implementation:**
+
 - Use Next.js 15 Metadata API
 - Define in page.tsx files or layout.tsx
 - Dynamic for menu items, static for fixed pages
@@ -245,6 +254,7 @@ These elements require code implementation (but should still read settings from 
 #### B. Social Share Buttons
 
 **Best Platforms for Food Businesses:**
+
 - Facebook (most common for restaurant sharing)
 - Pinterest (critical for food photos, recipes, cake designs)
 - WhatsApp (personal recommendations to friends/family)
@@ -252,6 +262,7 @@ These elements require code implementation (but should still read settings from 
 - Native Web Share API (mobile-first, works with installed apps)
 
 **Where to Add Share Buttons:**
+
 - Menu item pages (if individual item pages exist)
 - Menu page (share whole menu)
 - Services page (share catering info)
@@ -259,6 +270,7 @@ These elements require code implementation (but should still read settings from 
 - Blog posts (if added in future)
 
 **Package Options:**
+
 1. **next-share** (npm: `next-share`)
    - 19+ platforms supported
    - Server Component compatible
@@ -287,12 +299,14 @@ These elements require code implementation (but should still read settings from 
 #### A. Instagram Feed Widget
 
 **Why It Matters:**
+
 - Shows you're active and engaged
 - Fresh content without manual updates
 - Visual proof of food quality
 - Builds trust with real photos
 
 **Best Placement:**
+
 - Homepage (hero section or below)
 - About page
 - Potentially footer (smaller widget)
@@ -316,12 +330,14 @@ These elements require code implementation (but should still read settings from 
    - Free tier available
 
 **Technical Approach:**
+
 - Embed via iframe or script tag
 - Wrap in Client Component if interactivity needed
 - Add loading skeleton for better UX
 - Lazy load if below fold
 
 **Sanity Control:**
+
 - ✅ Instagram feed embed code (stored in siteSettings)
 - ✅ Enable/disable Instagram widget display
 - ✅ Choose pages to display on (homepage, about, etc.)
@@ -334,12 +350,14 @@ These elements require code implementation (but should still read settings from 
 **Concept:** Display customer photos from Instagram tagged with #chriscakes or @chriscakesmi
 
 **Benefits:**
+
 - Social proof from real customers
 - Encourages more customers to share and tag
 - Free marketing content
 - Builds community feeling
 
 **Implementation:**
+
 - Use Instagram hashtag feeds (via EmbedSocial, Taggbox, etc)
 - Moderate content (filter inappropriate)
 - Get permission for featured content
@@ -352,11 +370,13 @@ These elements require code implementation (but should still read settings from 
 #### A. Pinterest Integration
 
 **Critical for Food Businesses:**
+
 - Pinterest users actively search for recipes, cake designs, event ideas
 - High conversion potential (planning purchases)
 - Long content lifespan (pins resurface for months)
 
 **Components:**
+
 - **"Pin It" Button** on all food/cake images
 - **Pinterest Follow Button** in footer/header
 - **Optimized Images** for Pinterest:
@@ -365,6 +385,7 @@ These elements require code implementation (but should still read settings from 
   - Branded watermarks
 
 **Implementation:**
+
 - Pinterest Widget Builder: https://developers.pinterest.com/tools/widget-builder/
 - Add Pinterest meta tags for rich pins
 - Create Pinterest board for different categories (breakfast cakes, custom cakes, events)
@@ -374,11 +395,13 @@ These elements require code implementation (but should still read settings from 
 **Display Social Proof from Trusted Platforms**
 
 **Options:**
+
 - Facebook Page Plugin (embed timeline/reviews)
 - Yelp Business Widgets (show rating/reviews)
 - Manual curation (fetch via API, display statically)
 
 **Placement:**
+
 - Homepage (testimonials section)
 - About page
 - Services page
@@ -390,11 +413,13 @@ These elements require code implementation (but should still read settings from 
 **Pre-written shareable content**
 
 **Use Cases:**
+
 - Customer testimonials ("Just had @chriscakesmi cater our event - amazing!")
 - Special promotions ("ChrisCakes is offering 10% off corporate breakfasts this month!")
 - Fun facts ("Did you know @chriscakesmi has been serving pancakes since 1969?")
 
 **Implementation:**
+
 - Simple link format: `https://twitter.com/intent/tweet?text=YOUR_TEXT&url=YOUR_URL`
 - Style as clickable quote boxes
 - Track engagement via UTM parameters
@@ -402,6 +427,7 @@ These elements require code implementation (but should still read settings from 
 #### D. Social Login (Lower Priority)
 
 **Not Recommended for ChrisCakes:**
+
 - Most catering sites don't need user accounts
 - Contact forms are sufficient
 - Adds complexity without clear benefit
@@ -417,6 +443,7 @@ These elements require code implementation (but should still read settings from 
 **Helps both SEO and social sharing**
 
 **Recommended Schema Types:**
+
 - **LocalBusiness** / **Restaurant** - Name, address, phone, hours
 - **Menu** - Menu items with prices
 - **Review** / **AggregateRating** - Testimonials and ratings
@@ -424,11 +451,13 @@ These elements require code implementation (but should still read settings from 
 - **Event** - Fundraisers, special events
 
 **Implementation:**
+
 - Add JSON-LD script tags to pages
 - Use Next.js script component
 - Validate with Google Rich Results Test
 
 **Example:**
+
 ```json
 {
   "@context": "https://schema.org",
@@ -450,6 +479,7 @@ These elements require code implementation (but should still read settings from 
 #### B. Consistent NAP (Name, Address, Phone)
 
 **Critical for Local SEO and Social Trust:**
+
 - Must match exactly across all platforms:
   - Website (siteSettings)
   - Google Business Profile
@@ -458,6 +488,7 @@ These elements require code implementation (but should still read settings from 
   - Any directories
 
 **Current State:**
+
 - siteSettings schema supports this
 - Footer displays contact info
 - Good foundation already in place
@@ -473,6 +504,7 @@ These elements require code implementation (but should still read settings from 
 **Tasks:**
 
 **A. Sanity Schema Updates (REQUIRED FIRST):** ✅ COMPLETED
+
 1. **✅ Enhance siteSettings Schema**
    - ✅ Replace simple `socialMedia` object with comprehensive array-based structure
    - ✅ Add `platforms` array with enable/disable toggles
@@ -482,15 +514,15 @@ These elements require code implementation (but should still read settings from 
    - ✅ Add `shareButtons` settings object
    - ✅ Test in Sanity Studio interface
 
-**B. Display Implementation:** ✅ COMPLETED
-2. **✅ Add Social Media Icons to Footer**
-   - ✅ Fetch social URLs and settings from enhanced siteSettings
-   - ✅ Display icons only if `showInFooter` is enabled
-   - ✅ Filter platforms by `enabled` toggle
-   - ✅ Respect array order for icon display order
-   - ✅ Use react-icons for consistent icon set
-   - ✅ Open in new tab with proper security attributes
-   - ✅ Conditionally render based on Sanity settings
+**B. Display Implementation:** ✅ COMPLETED 2. **✅ Add Social Media Icons to Footer**
+
+- ✅ Fetch social URLs and settings from enhanced siteSettings
+- ✅ Display icons only if `showInFooter` is enabled
+- ✅ Filter platforms by `enabled` toggle
+- ✅ Respect array order for icon display order
+- ✅ Use react-icons for consistent icon set
+- ✅ Open in new tab with proper security attributes
+- ✅ Conditionally render based on Sanity settings
 
 3. **✅ Implement Open Graph & Twitter Card Meta Tags**
    - ✅ Add to all major pages (homepage, menu, services, contact, dynamic pages, fundraising)
@@ -518,6 +550,7 @@ These elements require code implementation (but should still read settings from 
 
 **Completion Date:** October 2025
 **Additional Work Completed:**
+
 - ✅ Fixed ESLint errors with Link components
 - ✅ Made fundraising page fully dynamic from Sanity CMS
 - ✅ Installed dependencies: `react-icons` and `next-share`
@@ -529,17 +562,17 @@ These elements require code implementation (but should still read settings from 
 
 **Goal:** Add dynamic social content with CMS control to make the site feel active and build trust.
 
-**Tasks:**
-6. **✅ Instagram Feed Widget (CMS-Controlled)**
-   - ✅ Site owner signs up for EmbedSocial or Elfsight
-   - ✅ Site owner generates embed code for ChrisCakes Instagram
-   - ✅ Site owner pastes embed code into Sanity `instagramWidget.embedCode` field
-   - ✅ Site owner selects which pages to display on via Sanity
-   - ✅ Site owner customizes heading and CTA text in Sanity
-   - ✅ Developer creates InstagramFeed component that reads from Sanity
-   - ✅ Component only renders if `instagramWidget.enabled` is true
-   - ✅ Respects `displayPages` array for page-specific display
-   - ✅ Style to match brand colors
+**Tasks:** 6. **✅ Instagram Feed Widget (CMS-Controlled)**
+
+- ✅ Site owner signs up for EmbedSocial or Elfsight
+- ✅ Site owner generates embed code for ChrisCakes Instagram
+- ✅ Site owner pastes embed code into Sanity `instagramWidget.embedCode` field
+- ✅ Site owner selects which pages to display on via Sanity
+- ✅ Site owner customizes heading and CTA text in Sanity
+- ✅ Developer creates InstagramFeed component that reads from Sanity
+- ✅ Component only renders if `instagramWidget.enabled` is true
+- ✅ Respects `displayPages` array for page-specific display
+- ✅ Style to match brand colors
 
 7. **✅ Pinterest Pin Button (CMS-Controlled)**
    - ✅ Enable via `shareButtons.pinterestEnabled` toggle in Sanity
@@ -567,6 +600,7 @@ These elements require code implementation (but should still read settings from 
 
 **Completion Date:** October 2025
 **Additional Work Completed:**
+
 - ✅ Created InstagramFeed component (components/common/InstagramFeed.tsx)
 - ✅ Created PinButton component (components/common/PinButton.tsx)
 - ✅ Created PinnableImage wrapper component (components/common/PinnableImage.tsx)
@@ -584,23 +618,23 @@ These elements require code implementation (but should still read settings from 
 
 **Tasks:**
 
-**A. Schema Markup (SEO Enhancement):** ✅ COMPLETED
-8. **✅ Schema Markup (Structured Data)**
-   - ✅ Created reusable SchemaMarkup component (components/common/SchemaMarkup.tsx)
-   - ✅ Created schema generation utilities (lib/schema.ts)
-   - ✅ LocalBusiness/Restaurant schema added to homepage
-   - ✅ Menu schema added to menu page
-   - ✅ Review/AggregateRating schema added to homepage
-   - ✅ Event schema generator created (ready for future events)
-   - ✅ All schemas use afterInteractive strategy for optimal performance
+**A. Schema Markup (SEO Enhancement):** ✅ COMPLETED 8. **✅ Schema Markup (Structured Data)**
 
-**B. Advanced Social Components:** ✅ COMPLETED
-9. **✅ User-Generated Content Gallery**
-   - ✅ Created UGCGallery component (components/common/UGCGallery.tsx)
-   - ✅ Supports EmbedSocial, Taggbox, and Walls.io embed codes
-   - ✅ Fully controlled via Sanity CMS (ugcGallery settings)
-   - ✅ Customizable heading, message, and hashtag promotion
-   - ✅ Page-specific display control
+- ✅ Created reusable SchemaMarkup component (components/common/SchemaMarkup.tsx)
+- ✅ Created schema generation utilities (lib/schema.ts)
+- ✅ LocalBusiness/Restaurant schema added to homepage
+- ✅ Menu schema added to menu page
+- ✅ Review/AggregateRating schema added to homepage
+- ✅ Event schema generator created (ready for future events)
+- ✅ All schemas use afterInteractive strategy for optimal performance
+
+**B. Advanced Social Components:** ✅ COMPLETED 9. **✅ User-Generated Content Gallery**
+
+- ✅ Created UGCGallery component (components/common/UGCGallery.tsx)
+- ✅ Supports EmbedSocial, Taggbox, and Walls.io embed codes
+- ✅ Fully controlled via Sanity CMS (ugcGallery settings)
+- ✅ Customizable heading, message, and hashtag promotion
+- ✅ Page-specific display control
 
 10. **✅ Review Integration (Facebook/Yelp Widgets)**
     - ✅ Created ReviewWidgets components (components/common/ReviewWidgets.tsx)
@@ -626,15 +660,7 @@ These elements require code implementation (but should still read settings from 
     - ✅ Support for multiple boards with descriptions
     - ✅ Page-specific display control
 
-**C. Sanity Schema Updates:** ✅ COMPLETED
-13. **✅ Enhanced siteSettings Schema for Phase 3**
-    - ✅ Added ugcGallery object with embed code and display settings
-    - ✅ Added reviewWidgets object with Facebook/Yelp controls
-    - ✅ Added clickToTweet object with testimonial sharing settings
-    - ✅ Added pinterestBoards object with board showcase configuration
-    - ✅ All features have enable/disable toggles
-    - ✅ All features have page-specific display controls
-    - ✅ All features have customizable text and headings
+**C. Sanity Schema Updates:** ✅ COMPLETED 13. **✅ Enhanced siteSettings Schema for Phase 3** - ✅ Added ugcGallery object with embed code and display settings - ✅ Added reviewWidgets object with Facebook/Yelp controls - ✅ Added clickToTweet object with testimonial sharing settings - ✅ Added pinterestBoards object with board showcase configuration - ✅ All features have enable/disable toggles - ✅ All features have page-specific display controls - ✅ All features have customizable text and headings
 
 **Estimated Effort:** 10-12 hours
 **Actual Effort:** ~8 hours
@@ -642,6 +668,7 @@ These elements require code implementation (but should still read settings from 
 
 **Completion Date:** October 2025
 **Additional Work Completed:**
+
 - ✅ All Phase 3 components created with full TypeScript type safety
 - ✅ Zero ESLint errors in all new Phase 3 code
 - ✅ Production build tested successfully with zero errors
@@ -656,6 +683,7 @@ These elements require code implementation (but should still read settings from 
 ### Prerequisites
 
 **Packages to Install:**
+
 ```bash
 npm install next-share
 npm install react-icons  # if not already installed
@@ -666,12 +694,14 @@ npm install react-icons  # if not already installed
 **File:** `components/layout/Footer.tsx`
 
 **Approach:**
+
 - Fetch siteSettings data (already available via Sanity)
 - Pass social URLs as props or fetch in Footer Server Component
 - Conditionally render icons only if URLs exist
 - Use react-icons for Facebook, Instagram, Twitter, Yelp icons
 
 **Example Structure:**
+
 ```tsx
 import { FaFacebook, FaInstagram, FaTwitter, FaYelp } from 'react-icons/fa';
 
@@ -686,7 +716,7 @@ const { socialMedia } = await client.fetch(siteSettingsQuery);
     </a>
   )}
   {/* Repeat for other platforms */}
-</div>
+</div>;
 ```
 
 **Note:** Footer is currently a Server Component, which is fine for static social links.
@@ -698,21 +728,25 @@ const { socialMedia } = await client.fetch(siteSettingsQuery);
 **Files:** All `page.tsx` files (homepage, menu, services, contact, dynamic pages)
 
 **Approach:**
+
 - Use Next.js 15 `Metadata` API
 - Define `generateMetadata()` function for dynamic pages
 - Export static `metadata` object for static pages
 
 **Example (Homepage):**
+
 ```typescript
 // app/page.tsx
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'ChrisCakes - Premier Breakfast Caterer | Michigan Pancake Catering',
-  description: 'Michigan\'s premier breakfast caterer serving delicious pancakes and catering services since 1969.',
+  description:
+    "Michigan's premier breakfast caterer serving delicious pancakes and catering services since 1969.",
   openGraph: {
     title: 'ChrisCakes - Premier Breakfast Caterer',
-    description: 'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969.',
+    description:
+      "Michigan's premier breakfast caterer serving delicious pancakes since 1969.",
     url: 'https://www.chriscakesofmi.com',
     siteName: 'ChrisCakes',
     images: [
@@ -729,13 +763,15 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'ChrisCakes - Premier Breakfast Caterer',
-    description: 'Michigan\'s premier breakfast caterer serving delicious pancakes since 1969.',
+    description:
+      "Michigan's premier breakfast caterer serving delicious pancakes since 1969.",
     images: ['https://www.chriscakesofmi.com/og-image.jpg'],
   },
 };
 ```
 
 **Example (Dynamic Page):**
+
 ```typescript
 // app/[slug]/page.tsx
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -761,11 +797,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 ```
 
 **Required Assets:**
+
 - Create OG images (1200x630px) for each major page
 - Store in `public/og-images/` or use Sanity images
 - Ensure images are optimized (< 200KB)
 
 **Testing:**
+
 - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
 - Twitter Card Validator: https://cards-dev.twitter.com/validator
 - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
@@ -777,6 +815,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 **Package:** `next-share`
 
 **Installation:**
+
 ```bash
 npm install next-share
 ```
@@ -834,6 +873,7 @@ export default function ShareButtons({ url, title, description, image }: ShareBu
 ```
 
 **Usage Example (Menu Page):**
+
 ```typescript
 // app/menu/page.tsx
 import ShareButtons from '@/components/common/ShareButtons';
@@ -856,6 +896,7 @@ export default async function MenuPage() {
 ```
 
 **Web Share API Integration:**
+
 ```typescript
 'use client';
 
@@ -893,6 +934,7 @@ export default function NativeShareButton({ url, title, text }: Props) {
 **Option 1: EmbedSocial (Recommended)**
 
 **Steps:**
+
 1. Sign up at https://embedsocial.com/free-instagram-widget/
 2. Connect Facebook account (required by Instagram API)
 3. Select ChrisCakes Instagram account
@@ -934,6 +976,7 @@ export default function InstagramFeed() {
 ```
 
 **Add Script to Layout:**
+
 ```typescript
 // app/layout.tsx
 import Script from 'next/script';
@@ -958,6 +1001,7 @@ export default function RootLayout({ children }: Props) {
 ```
 
 **Option 2: Custom Instagram API Integration**
+
 - More complex, requires Facebook Developer account
 - Better performance control
 - More customization options
@@ -968,6 +1012,7 @@ export default function RootLayout({ children }: Props) {
 ### 5. Pinterest Integration
 
 **Pinterest Meta Tags:**
+
 ```typescript
 // Add to page metadata
 export const metadata: Metadata = {
@@ -1011,6 +1056,7 @@ export default function PinButton({ url, media, description }: PinButtonProps) {
 ```
 
 **Add to Menu Item Images:**
+
 ```typescript
 // Wherever food images are displayed
 <div className="relative group">
@@ -1051,6 +1097,7 @@ export default function SchemaMarkup({ type, data }: SchemaProps) {
 ```
 
 **Usage (Homepage):**
+
 ```typescript
 // app/page.tsx
 import SchemaMarkup from '@/components/common/SchemaMarkup';
@@ -1416,6 +1463,7 @@ const settings = await client.fetch(siteSettingsQuery);
 ### 4. Benefits of This Schema Design
 
 **For Site Owners:**
+
 - ✅ Add/remove social platforms without code changes
 - ✅ Toggle visibility with a single click
 - ✅ Customize all user-facing text
@@ -1424,12 +1472,14 @@ const settings = await client.fetch(siteSettingsQuery);
 - ✅ Reorder platforms by dragging in Sanity Studio
 
 **For Developers:**
+
 - ✅ Single source of truth for all social settings
 - ✅ Type-safe queries from Sanity
 - ✅ Easy to extend with new platforms
 - ✅ Consistent pattern across all integrations
 
 **For Maintenance:**
+
 - ✅ No code deployments needed for content changes
 - ✅ Immediate updates (within 60s ISR window)
 - ✅ Version history in Sanity
@@ -1442,16 +1492,19 @@ const settings = await client.fetch(siteSettingsQuery);
 ### Phase 1 Benefits
 
 **Social Icons in Footer:**
+
 - 5-10% increase in social media followers (industry average)
 - Always visible, no extra clicks required
 - Professional appearance
 
 **Open Graph & Twitter Cards:**
+
 - 2-3x higher click-through rate on shared links (with image vs without)
 - Professional brand appearance
 - Increased trust when content is shared
 
 **Social Share Buttons:**
+
 - 7x more shares when buttons are present vs relying on manual sharing
 - Viral potential for popular content
 - Extended reach beyond existing audience
@@ -1463,17 +1516,20 @@ const settings = await client.fetch(siteSettingsQuery);
 ### Phase 2 Benefits
 
 **Instagram Feed Widget:**
+
 - Proves business is active and engaged
 - Fresh content without manual website updates
 - Average 2-5% of visitors click through to Instagram profile
 - Builds trust with visual social proof
 
 **Pinterest Integration:**
+
 - Pinterest drives 33% more referral traffic than Facebook for food businesses
 - Pins have longer lifespan (months vs days on other platforms)
 - High-intent traffic (users actively planning purchases)
 
 **Social CTAs:**
+
 - 3-5% of customers will tag/share when prompted
 - User-generated content marketing value: $500-2000/month equivalent
 - Community building effect
@@ -1485,15 +1541,18 @@ const settings = await client.fetch(siteSettingsQuery);
 ### Phase 3 Benefits
 
 **User-Generated Content:**
+
 - 85% of consumers find UGC more influential than brand content
 - Authenticity and trust building
 - Free marketing content creation
 
 **Review Integration:**
+
 - 93% of consumers say online reviews impact purchase decisions
 - Displaying reviews can increase conversions by 270%
 
 **Schema Markup:**
+
 - Rich snippets in search results increase CTR by 30%
 - Better visibility in Google Search, Google Maps
 
@@ -1506,12 +1565,14 @@ const settings = await client.fetch(siteSettingsQuery);
 **Time Investment:** 20-26 hours total across all phases
 **Cost:** Minimal (most tools have free tiers, ~$0-50/month for premium features)
 **Expected Impact:**
+
 - 30-50% increase in social media followers (6 months)
 - 40-60% increase in social-driven website traffic
 - 20-30% improvement in inquiry conversion rate
 - Ongoing value: fresh content, social proof, viral potential
 
 **Break-Even Analysis:**
+
 - If implementation leads to just 1-2 additional bookings per month, ROI is positive
 - Typical catering booking value: $500-2000+
 - Conservative estimate: 3-5 additional bookings over 6 months = $1500-10000 value
@@ -1523,40 +1584,47 @@ const settings = await client.fetch(siteSettingsQuery);
 ### Development Resources
 
 **Next.js Social Integration:**
+
 - next-share package: https://next-share.js.org/
 - Next.js Metadata API: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
 - Next.js Image Optimization: https://nextjs.org/docs/app/building-your-application/optimizing/images
 
 **Social Media Widgets:**
+
 - EmbedSocial (Instagram): https://embedsocial.com/free-instagram-widget/
 - Elfsight (Instagram): https://elfsight.com/instagram-feed-instashow/
 - Pinterest Widget Builder: https://developers.pinterest.com/tools/widget-builder/
 - Facebook Page Plugin: https://developers.facebook.com/docs/plugins/page-plugin
 
 **Testing Tools:**
+
 - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
 - Twitter Card Validator: https://cards-dev.twitter.com/validator
 - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
 - Google Rich Results Test: https://search.google.com/test/rich-results
 
 **Icon Libraries:**
+
 - react-icons: https://react-icons.github.io/react-icons/
 - heroicons: https://heroicons.com/
 
 ### Industry Research
 
 **Best Practices:**
+
 - Hootsuite Social Media Integration Strategies 2025: https://blog.hootsuite.com/social-media-integration-for-your-website/
 - Toast Restaurant Social Media Marketing Guide: https://pos.toasttab.com/blog/on-the-line/examples-of-awesome-restaurant-social-media-marketing
 - Statusbrew Social Media for Bakeries: https://statusbrew.com/insights/social-media-for-bakeries-and-restaurants/
 
 **Statistics & Benchmarks:**
+
 - Restaurant Social Media Statistics 2025: https://www.menutiger.com/blog/restaurant-social-media-statistics
 - Food & Beverage Industry Benchmarks: https://www.dashsocial.com/social-media-benchmarks/food-beverage-industry
 
 ### Current ChrisCakes Social Media
 
 **Update these as URLs are confirmed:**
+
 - Facebook: [URL needed]
 - Instagram: @chriscakesmi [URL needed]
 - Twitter/X: [URL needed]
@@ -1583,18 +1651,21 @@ const settings = await client.fetch(siteSettingsQuery);
 ## Maintenance & Ongoing Considerations
 
 **Monthly Tasks:**
+
 - Review which content gets shared most (adjust strategy)
 - Update Instagram feed if embedding method changes
 - Check for broken social links
 - Monitor social platform API changes
 
 **Quarterly Tasks:**
+
 - Analyze social traffic in Google Analytics
 - A/B test share button placement
 - Review UGC for featuring on site
 - Update OG images if brand/offerings change
 
 **Annual Tasks:**
+
 - Review platform priorities (TikTok growth, new platforms)
 - Update schema markup if business details change
 - Reassess which integrations provide most value
@@ -1614,6 +1685,7 @@ const settings = await client.fetch(siteSettingsQuery);
 ### Philosophy
 
 This implementation strategy prioritizes **CMS control over code complexity**. When faced with a choice between:
+
 - Adding a feature to Sanity Studio (takes longer initially)
 - Hardcoding it in components (faster initially)
 
@@ -1629,6 +1701,7 @@ This implementation strategy prioritizes **CMS control over code complexity**. W
 ### Training Site Owners
 
 When handing off social media features, ensure site owners understand:
+
 - How to add/remove social platforms in Sanity Studio
 - How to toggle visibility of features
 - How to customize text and CTAs
@@ -1639,6 +1712,7 @@ When handing off social media features, ensure site owners understand:
 ### Future Extensibility
 
 This CMS-first approach makes future additions easy:
+
 - Adding TikTok? Just add it to the Sanity schema list, no code changes
 - Want social icons in sidebar? Add a toggle in Sanity displaySettings
 - Need platform-specific styling? Add color field to platform objects

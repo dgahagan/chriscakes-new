@@ -1,3 +1,37 @@
+/**
+ * One-time content migration: seeds menu categories, menu items, and (if
+ * absent) site settings into Sanity.
+ *
+ * SAFE BY DESIGN AGAINST A POPULATED DATASET: this script's catalogue
+ * writes (menu categories, menu items) only ever run against an EMPTY
+ * dataset (zero `menuCategory` and zero `menuItem` documents). If the
+ * dataset already has any catalogue content — from a prior run of this
+ * script, an earlier non-idempotent version of it, or manual edits in
+ * Studio — the script writes NOTHING to the catalogue. It only prints a
+ * divergence report (entries in this file's hardcoded data that have no
+ * matching document in the dataset, by slug or by title/name) so an
+ * operator can see what differs. This is intentional: once real content
+ * exists, this script must never resurrect items an editor may have
+ * deleted on purpose, so it is permanently inert against live data.
+ *
+ * Existence matching uses slug.current OR title/name — slugs can drift
+ * (e.g. Sanity auto-deduplicating a slug to `-2` on an earlier import), so
+ * slug alone is not a reliable identity key.
+ *
+ * When the catalogue IS empty, the full import runs and creates every
+ * category/item with a deterministic `menuCategory-<slug>` /
+ * `menuItem-<slug>` id (via `createIfNotExists`).
+ *
+ * The `siteSettings` singleton is handled independently of the catalogue
+ * guard above: it is always created via `createIfNotExists`, so an
+ * existing settings document is never overwritten, but a missing one is
+ * still created even when the catalogue is already populated.
+ *
+ * Refuses to run without `--yes` and prints the target project and dataset
+ * before touching anything.
+ *
+ *   npx tsx scripts/import-all-content.ts --yes
+ */
 import { createClient } from '@sanity/client';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -5,17 +39,14 @@ import * as path from 'path';
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  useCdn: false,
-  token: process.env.SANITY_API_TOKEN!,
-  apiVersion: '2024-01-01',
-});
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
+const token = process.env.SANITY_API_TOKEN;
 
 // Menu Categories
 const categoriesData = [
   {
+    _id: 'menuCategory-breakfast-menus',
     _type: 'menuCategory',
     title: 'Breakfast Menus',
     slug: { _type: 'slug', current: 'breakfast-menus' },
@@ -23,6 +54,7 @@ const categoriesData = [
     order: 1,
   },
   {
+    _id: 'menuCategory-breakfast-a-la-carte',
     _type: 'menuCategory',
     title: 'Breakfast A-La-Carte',
     slug: { _type: 'slug', current: 'breakfast-a-la-carte' },
@@ -31,6 +63,7 @@ const categoriesData = [
     order: 2,
   },
   {
+    _id: 'menuCategory-menus-n-more-lunch-dinner',
     _type: 'menuCategory',
     title: 'Menus N More - Lunch & Dinner',
     slug: { _type: 'slug', current: 'menus-n-more-lunch-dinner' },
@@ -39,6 +72,7 @@ const categoriesData = [
     order: 3,
   },
   {
+    _id: 'menuCategory-menus-n-more',
     _type: 'menuCategory',
     title: 'Menus N More',
     slug: { _type: 'slug', current: 'menus-n-more' },
@@ -47,6 +81,7 @@ const categoriesData = [
     order: 4,
   },
   {
+    _id: 'menuCategory-menus-n-more-a-la-carte',
     _type: 'menuCategory',
     title: 'Menus N More A-La-Carte',
     slug: { _type: 'slug', current: 'menus-n-more-a-la-carte' },
@@ -273,7 +308,7 @@ const menuItemsByCategory: Record<string, MenuItemData[]> = {
       name: "BBQ N' More",
       slug: 'bbq-n-more',
       description:
-        'Choose your meat (pork, chicken, turkey) and sides and call our office for more info. It ain\'t your car Smokin\'… It\'s our BBQ!!',
+        "Choose your meat (pork, chicken, turkey) and sides and call our office for more info. It ain't your car Smokin'… It's our BBQ!!",
       featured: true,
       order: 4,
     },
@@ -316,6 +351,11 @@ const menuItemsByCategory: Record<string, MenuItemData[]> = {
   ],
 };
 
+const allMenuItems: MenuItemData[] = Object.values(menuItemsByCategory).flat();
+
+// Site settings singleton. Only created if one doesn't already exist —
+// see the `createIfNotExists` call below. Shape matches
+// sanity/schemas/siteSettings.ts.
 const siteSettingsData = {
   _id: 'siteSettings',
   _type: 'siteSettings',
@@ -324,6 +364,7 @@ const siteSettingsData = {
     "Premier breakfast caterer and large event specialist serving Michigan since 1969. Chris Cakes is more than great food at an affordable price... it's an experience!",
   phone: '989-802-0755',
   email: 'chriscakesmi@sbcglobal.net',
+  contactFormRecipients: ['chriscakesmi@sbcglobal.net'],
   address: 'P.O. Box 431\nClare MI, 48617',
   hours: [
     { day: 'Monday', hours: 'Call for availability' },
@@ -335,69 +376,171 @@ const siteSettingsData = {
     { day: 'Sunday', hours: 'Call for availability' },
   ],
   socialMedia: {
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    yelp: '',
+    platforms: [],
   },
 };
 
 async function importContent() {
+  if (!projectId) {
+    throw new Error('NEXT_PUBLIC_SANITY_PROJECT_ID is not set');
+  }
+  if (!dataset) {
+    throw new Error('NEXT_PUBLIC_SANITY_DATASET is not set');
+  }
+  if (!token) {
+    throw new Error('SANITY_API_TOKEN is not set (required to write)');
+  }
+
+  console.log(`Target project : ${projectId}`);
+  console.log(`Target dataset : ${dataset}`);
+
+  if (!process.argv.includes('--yes')) {
+    console.error(
+      '\nRefusing to run without --yes. This is a one-time migration script ' +
+        'that writes to the dataset above. Re-run with --yes to proceed.'
+    );
+    process.exit(1);
+  }
+
+  const client = createClient({
+    projectId,
+    dataset,
+    useCdn: false,
+    token,
+    apiVersion: '2024-01-01',
+  });
+
   try {
-    console.log('Starting full content import...\n');
+    console.log('\nStarting full content import...\n');
 
-    const categoryMap: Record<string, string> = {};
-    let totalItems = 0;
+    // Populated-dataset guard: if the catalogue already has ANY menuCategory
+    // or menuItem documents, this script must not write to it — see the
+    // header comment for why. It only reports what diverges.
+    const [categoryCount, itemCount] = await Promise.all([
+      client.fetch<number>(`count(*[_type == "menuCategory"])`),
+      client.fetch<number>(`count(*[_type == "menuItem"])`),
+    ]);
+    const isPopulated = categoryCount > 0 || itemCount > 0;
 
-    // Step 1: Create all categories
-    console.log('Creating menu categories...');
-    for (const categoryData of categoriesData) {
-      const category = await client.create(categoryData);
-      categoryMap[category.title] = category._id;
-      console.log(`✓ Created: ${category.title} (ID: ${category._id})`);
-    }
-    console.log(`\n✓ Created ${categoriesData.length} categories\n`);
+    if (isPopulated) {
+      console.log(
+        `Dataset already has catalogue content: ${categoryCount} menu categories, ${itemCount} menu items.`
+      );
+      console.log(
+        'Refusing to create or modify any menu category / menu item — this script only ' +
+          'performs the initial import into an empty dataset. See header comment.\n'
+      );
 
-    // Step 2: Create all menu items
-    console.log('Creating menu items...\n');
-    for (const [categoryTitle, items] of Object.entries(menuItemsByCategory)) {
-      console.log(`Importing ${categoryTitle}...`);
-      const categoryId = categoryMap[categoryTitle];
+      const existingCategories = await client.fetch<
+        Array<{ _id: string; title: string; slug: string | null }>
+      >(`*[_type == "menuCategory"]{ _id, title, "slug": slug.current }`);
+      const existingItems = await client.fetch<
+        Array<{ _id: string; name: string; slug: string | null }>
+      >(`*[_type == "menuItem"]{ _id, name, "slug": slug.current }`);
 
-      for (const item of items) {
-        const menuItem = await client.create({
-          _type: 'menuItem',
-          name: item.name,
-          slug: { _type: 'slug', current: item.slug },
-          description: item.description || '',
-          price: item.price || null,
-          available: true,
-          featured: item.featured || false,
-          order: item.order,
-          category: {
-            _type: 'reference',
-            _ref: categoryId,
-          },
-        });
-        totalItems++;
+      const categorySlugs = new Set(
+        existingCategories
+          .map((c) => c.slug)
+          .filter((s): s is string => Boolean(s))
+      );
+      const categoryTitles = new Set(existingCategories.map((c) => c.title));
+      const itemSlugs = new Set(
+        existingItems.map((i) => i.slug).filter((s): s is string => Boolean(s))
+      );
+      const itemNames = new Set(existingItems.map((i) => i.name));
+
+      const missingCategories = categoriesData.filter(
+        (c) =>
+          !categorySlugs.has(c.slug.current) && !categoryTitles.has(c.title)
+      );
+      const missingItems = allMenuItems.filter(
+        (i) => !itemSlugs.has(i.slug) && !itemNames.has(i.name)
+      );
+
+      console.log('Divergence report (no writes performed):');
+      if (missingCategories.length === 0 && missingItems.length === 0) {
+        console.log(
+          '  None — every category and menu item in this file has a match in the dataset (by slug or title/name).'
+        );
+      } else {
+        if (missingCategories.length > 0) {
+          console.log(
+            `  Present in script data but not in dataset (menu categories): ${missingCategories
+              .map((c) => c.title)
+              .join(', ')}`
+          );
+        }
+        if (missingItems.length > 0) {
+          console.log(
+            `  Present in script data but not in dataset (menu items): ${missingItems
+              .map((i) => i.name)
+              .join(', ')}`
+          );
+        }
       }
-      console.log(`  ✓ Imported ${items.length} items`);
+      console.log(
+        '\nNo menu categories or menu items were created or modified.\n'
+      );
+    } else {
+      console.log('Dataset has no existing catalogue content — importing.\n');
+
+      // Step 1: Create every category with a deterministic id.
+      console.log('Creating menu categories...');
+      const categoryMap: Record<string, string> = {};
+      for (const categoryData of categoriesData) {
+        const category = await client.createIfNotExists(categoryData);
+        categoryMap[categoryData.title] = category._id;
+        console.log(`✓ Created: ${category.title} (ID: ${category._id})`);
+      }
+      console.log(`\n✓ Created ${categoriesData.length} categories\n`);
+
+      // Step 2: Create every menu item with a deterministic id, referencing
+      // the category just created above.
+      console.log('Creating menu items...\n');
+      let totalItems = 0;
+      for (const [categoryTitle, items] of Object.entries(
+        menuItemsByCategory
+      )) {
+        console.log(`Importing ${categoryTitle}...`);
+        const categoryId = categoryMap[categoryTitle];
+
+        for (const item of items) {
+          await client.createIfNotExists({
+            _id: `menuItem-${item.slug}`,
+            _type: 'menuItem',
+            name: item.name,
+            slug: { _type: 'slug', current: item.slug },
+            description: item.description || '',
+            ...(item.price !== undefined ? { price: item.price } : {}),
+            available: true,
+            featured: item.featured || false,
+            order: item.order,
+            category: {
+              _type: 'reference',
+              _ref: categoryId,
+            },
+          });
+          totalItems++;
+        }
+        console.log(`  ✓ Imported ${items.length} items`);
+      }
+      console.log(`\n✓ Imported ${totalItems} total menu items\n`);
     }
 
-    console.log(`\n✓ Imported ${totalItems} total menu items\n`);
-
-    // Step 3: Create or update site settings
-    console.log('Creating site settings...');
-    await client.createOrReplace(siteSettingsData);
-    console.log(`✓ Created site settings\n`);
+    // Site settings: independent of the catalogue guard above — always safe
+    // to attempt since createIfNotExists never overwrites an existing doc.
+    console.log('Ensuring site settings exist...');
+    const existingSettings = await client.getDocument('siteSettings');
+    await client.createIfNotExists(siteSettingsData);
+    if (existingSettings) {
+      console.log('✓ Site settings already existed — left untouched\n');
+    } else {
+      console.log('✓ Created site settings\n');
+    }
 
     console.log('🎉 Import complete!\n');
-    console.log('Summary:');
-    console.log(`- ${categoriesData.length} menu categories created`);
-    console.log(`- ${totalItems} menu items created`);
-    console.log(`- Site settings configured`);
     console.log(
-      '\nYou can now view these in Sanity Studio at http://localhost:3000/studio'
+      'You can view content in Sanity Studio at http://localhost:3000/studio'
     );
   } catch (error) {
     console.error('Error importing content:', error);

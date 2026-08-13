@@ -1,0 +1,1602 @@
+# ChrisCakes Remediation — Implementation Plan
+
+**Status: IMPLEMENTED (2026-08-12)** — all 34 tasks complete, delivered on
+branch `feat/remediation` (PR #1). The Kickoff section below is preserved as
+written for the record; it describes how this plan was started, not how to
+start it now.
+
+Execution plan for `docs/plans/implemented/remediation-plan.md` (the WHAT/WHY). The
+Rules of Engagement normally live in `docs/guides/orchestration-playbook.md` —
+**that file does not exist in this repo**, so a compact version is inlined below
+and is authoritative for this run.
+
+---
+
+## Kickoff
+
+A fresh Opus session should run this with:
+
+```
+/run-plan docs/plans/proposed/remediation-implementation-plan.md
+```
+
+If `/run-plan` is unavailable, read `docs/plans/proposed/remediation-plan.md`
+(the design plan), the **Rules of Engagement** section below, and `CLAUDE.md`,
+then execute the task graph in order — spawning a subagent of each task's model,
+verifying the gate yourself, and committing after each green task.
+
+**Note:** `run-plan.md` instructs the orchestrator to read
+`docs/guides/orchestration-playbook.md`. That file is absent. Skip that step and
+use the inlined rules here instead — do not invent a playbook or stall on it.
+
+---
+
+## Rules of Engagement (inlined)
+
+**Verification gate** — the orchestrator runs these itself after every task. A
+subagent's self-report is never the gate.
+
+```bash
+npm run lint          # ESLint — zero errors (zero tolerance, per CLAUDE.md)
+npm run format:check  # Prettier — see amber-window note below
+npm run build         # next build (webpack, not Turbopack) — must succeed
+npm test              # Playwright — see Phase 6 gate contract below
+```
+
+- **One task = one commit.** Use the task's stated conventional commit message.
+  No `Co-Authored-By` lines (user's global rule).
+- **Never commit red.** On failure, send the diff back to a same-model subagent
+  or fix trivia yourself.
+- **`opus` tasks: do them yourself**, don't delegate.
+- **Tick the Progress Tracker** with the code commit's short SHA, commit that
+  separately, and push. The tracker is the resume point for a future session.
+- **Stop and ask** on genuine design ambiguity, unmeetable acceptance criteria,
+  or a real product bug. A mechanical consequence of an in-scope change (fixing
+  an import broken by a deletion) is not new scope — make it, keep green, note
+  it in the commit.
+
+### Gate exceptions, stated up front
+
+1. **`npm run format:check` will fail repo-wide from the first commit until
+   T31.** The repo carries ~77 files of pre-existing Prettier debt, and the
+   design plan deliberately defers the sweep to last so it lands as its own
+   reviewable commit. **Until T31, `format:check` is not part of the gate —
+   substitute `npx prettier --check <files touched by this task>`.** At T31 the
+   full repo-wide check becomes gating and must stay green.
+
+2. **`npm test` is amber across Phase 6 (T23–T26).** The suite is being rebuilt;
+   between the infrastructure reset and the final spec rewrite, unrewritten
+   specs are expected to fail. **Within Phase 6 the gate is lint + build + the
+   spec files that task touched passing.** At **T27** the full `npm test` must
+   be green, and it is gating for every task after that. Before Phase 6, `npm
+test` is not gating at all (the suite is known-broken on `master` — that is
+   the problem being fixed).
+
+---
+
+## Scope & branch
+
+**Branch:** `feat/remediation` (cut from `master`).
+
+Everything in the design plan is active — Workstreams A through H, covering the
+full Critical/High/Medium/Low set from `CODE_REVIEW.md`.
+
+### Deferred / out of scope
+
+| Item                                                  | Reason                                                              |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| Turnstile, Upstash, or any external anti-spam service | Owner decision — honeypot + hardening only (design plan, Non-Goals) |
+| Visual regression testing                             | Owner decision — `tests/visual/` is deleted, not repaired           |
+| Visual redesign or new features                       | Remediation only                                                    |
+| Hosting/deployment architecture changes               | Stays Vercel + embedded Studio                                      |
+
+---
+
+## Prerequisites — ✅ COMPLETE (verified 2026-07-26)
+
+### Scratch Sanity dataset — done
+
+T11 and T21 have acceptance criteria that mutate content ("unpublish the
+services document and expect a 404", "run `import:all` twice and expect zero
+duplicates"). These **must not** run against `production`.
+
+**`staging` exists and is seeded from production.** Verified counts:
+
+|                | production            | staging               |
+| -------------- | --------------------- | --------------------- |
+| pages          | 9                     | 9                     |
+| menuItems      | 67                    | 67                    |
+| menuCategories | 6                     | 6                     |
+| siteSettings   | 1 published + 1 draft | 1 published + 1 draft |
+
+<details>
+<summary>Commands used, for reference / re-seeding</summary>
+
+```bash
+npx sanity login
+npx sanity dataset create staging --visibility public
+npx sanity dataset export production ./staging-seed.tar.gz
+npx sanity dataset import ./staging-seed.tar.gz staging
+rm ./staging-seed.tar.gz
+```
+
+</details>
+
+Point a run at it by overriding one env var — no code change needed:
+
+```bash
+NEXT_PUBLIC_SANITY_DATASET=staging npm run dev
+NEXT_PUBLIC_SANITY_DATASET=staging npm run import:all -- --yes
+```
+
+Notes:
+
+- **Never** set `NEXT_PUBLIC_SANITY_DATASET=staging` in Vercel — local override
+  only.
+- `staging` is a **point-in-time copy**, not a mirror. It will drift from
+  production as content is edited. Re-seed if a task needs current content.
+- The CLI reads `sanity.cli.ts` for the project ID, so no extra flags are needed.
+
+---
+
+## Corrections to the design plan (verified against the codebase)
+
+The design plan hedged on two points. Both are now settled by inspection:
+
+1. **`ShareButtons.tsx` is NOT unused — it stays.** It is imported by
+   `app/menu/page.tsx`, `app/services/page.tsx`, `app/fundraising/page.tsx`, and
+   `app/[slug]/page.tsx`. The design plan's "delete `ShareButtons.tsx` if unused"
+   resolves to _keep_. Its `next-share` dependency also stays. Only the
+   _embedded feed / widget_ components are deleted.
+
+2. **`menuCategoriesQuery`'s `order` projection is used** — the query sorts by
+   `order asc`, and the field is projected. Drop only `image` (never rendered);
+   keep `order`.
+
+Also confirmed dead by grep, with zero importers outside themselves:
+`sanity/structure.ts`, `sanity/schemaTypes/*`, `sanity/lib/{client,image,live}.ts`,
+`sanity/env.ts`, `check-sanity-social.js`, and the `axe-playwright` package (the
+a11y suite imports `@axe-core/playwright`).
+
+---
+
+## Task graph
+
+Model policy: `opus` for orchestration-grade, design-sensitive, and final
+integration work; `sonnet` for bulk implementation and test authoring; `haiku`
+for mechanical edits and deletions.
+
+`∥` marks a task as **parallel-safe** with the sibling named — its file set is
+disjoint from that sibling's.
+
+---
+
+### Phase 0 — Plan housekeeping
+
+#### T0 — Relocate plan docs into `docs/plans/proposed/` · `haiku`
+
+Move the design plan to where `/run-plan`'s graduation step expects it, and get
+the currently-untracked remediation artifacts under version control.
+
+**⚠ `DESIGN_PLAN.md` and `CODE_REVIEW.md` are UNTRACKED** (verified 2026-07-26 —
+they have never been committed). `git mv` **fails on untracked files**. Use a
+plain `mv` followed by `git add`, and do not claim history preservation — there
+is no history to preserve.
+
+- **Do:**
+  ```bash
+  mkdir -p docs/plans/proposed docs/plans/implemented
+  mv DESIGN_PLAN.md docs/plans/proposed/remediation-plan.md
+  touch docs/plans/implemented/.gitkeep
+  git add docs/ CODE_REVIEW.md
+  ```
+  Then repo-wide grep and fix any reference to `DESIGN_PLAN.md`.
+- **Files:** `DESIGN_PLAN.md` → `docs/plans/proposed/remediation-plan.md`;
+  `docs/plans/implemented/.gitkeep` (new); `CODE_REVIEW.md` (add to git, stays
+  at root); `docs/plans/proposed/remediation-implementation-plan.md` (this file,
+  add to git).
+- **Accept:** `git ls-files docs/` lists both plans plus the `.gitkeep`;
+  `git ls-files CODE_REVIEW.md` is non-empty;
+  `grep -rn "DESIGN_PLAN.md" --exclude-dir=node_modules --exclude-dir=.git .`
+  returns nothing; build unaffected.
+- **Commit:** `docs: track remediation plans under docs/plans/proposed`
+- **Deps:** none.
+- **✅ DONE — commit `04cf3ab`.** `.claude/commands/` is tracked;
+  `.claude/settings.local.json` is gitignored as a machine-local override.
+  Branch `feat/remediation` was cut from `master` at `48236c6`.
+  **Baseline recorded at T0:** `npm run lint` 0 errors / 2 known warnings
+  (`test-utils.ts` unused vars — T23 clears them); `npm run build` green,
+  17 static pages. `npm test` is known-red and is Workstream A's subject.
+
+---
+
+### Phase 1 — Data layer foundation (Workstream G)
+
+Runs first: C, E, and B all build on a single client and the corrected schema.
+
+#### T1 — Delete `sanity init` boilerplate and dead components · `haiku` · ∥ T2
+
+Pure deletion. Every target was verified to have zero importers.
+
+- **Files (delete):** `sanity/structure.ts`, `sanity/schemaTypes/` (all 5 files),
+  `sanity/lib/{client.ts,image.ts,live.ts}`, `sanity/env.ts`,
+  `check-sanity-social.js`, `components/common/Button.tsx`,
+  `components/common/Card.tsx`, `components/common/Loading.tsx`,
+  `components/portable-text/PortableTextComponents.tsx`.
+- **Accept:** `npm run build` green; `npm run lint` green; grep confirms no
+  remaining import of any deleted path.
+- **Commit:** `chore: delete unused sanity boilerplate and dead components`
+- **Deps:** T0.
+- **Note:** this deletion removes 3 of the 4 sources of `crimson-*` class names
+  (`Button`, `Card`, `Loading`); T12 finishes the sweep.
+
+#### T2 — One Sanity client, token-free, env-driven project ID · `sonnet` · ∥ T1
+
+- **Files:** `lib/sanity.ts`, `sanity.config.ts`, `.env.local.example`.
+- **Do:** drop `token` from the app client (public dataset reads need none);
+  set `useCdn: false` (correct pairing with ISR — removes stacked-TTL
+  staleness); export a shared `apiVersion` constant; `sanity.config.ts` reads
+  `NEXT_PUBLIC_SANITY_PROJECT_ID` / `NEXT_PUBLIC_SANITY_DATASET` instead of the
+  hardcoded `'0fl6fs6u'` / `'production'`.
+- **Accept:** `grep -rn "SANITY_API_TOKEN" app components lib` returns nothing;
+  exactly one `createClient` and one `urlFor` remain in app code; `npm run build`
+  green; `/studio` loads locally; the contact page and homepage still render
+  Sanity data (proves the dataset is public-read without a token).
+- **Commit:** `refactor(sanity): consolidate on one token-free client`
+- **Deps:** T0.
+- **⚠ Verify during execution:** confirm no file under `scripts/` imports
+  `@/lib/sanity`. Any that does must construct its own token-bearing client
+  locally — the write token must never be reachable from app code.
+
+#### T3 — Query and schema corrections · `sonnet`
+
+- **Files:** `lib/queries.ts`, `sanity/schemas/menuItem.ts`.
+- **Do:**
+  - `available == true` → `available != false` (tolerant of undefined) in
+    `menuItemsQuery`, `menuItemsByCategoryQuery`, `featuredMenuItemsQuery`.
+  - `allPagesQuery`: add `defined(slug.current)` and an explicit order.
+  - `siteSettingsQuery`: **add the `analytics` projection** (the root cause of
+    GA never loading — see cross-task note below).
+  - `menuCategoriesQuery`: drop the `image` projection; **keep `order`** (used
+    for sorting).
+  - Delete never-imported queries, **except** `menuItemsByCategoryQuery`, which
+    T8 adopts for the fundraising page.
+  - `menuItem.price`: `Rule.required().min(0)` → `Rule.min(0)` — "call for
+    pricing" is a legitimate state the frontend already renders.
+- **Accept:** every export in `lib/queries.ts` has an importer (verify by grep);
+  `npm run build` green; menu page renders; Studio accepts a `menuItem` saved
+  with no price.
+- **Commit:** `fix(sanity): correct query projections and make price optional`
+- **Deps:** T1, T2.
+
+#### T4 — JSON-LD helper cleanup · `sonnet`
+
+- **Files:** `lib/schema.ts`, `app/page.tsx` (import fix only).
+- **Do:** `generateRestaurantSchema` reads `address`/`email`/`phone` from
+  settings, using the current hardcoded values only as fallbacks; **delete
+  `generateAggregateRatingSchema` entirely** (no `rating` field exists on the
+  testimonial schema — it can only ever fabricate a rating).
+- **Accept:** `npm run build` green; homepage JSON-LD contains the CMS phone and
+  email; no `AggregateRating` block is emitted.
+- **Commit:** `fix(seo): source restaurant schema from settings, drop fabricated rating`
+- **Deps:** T3.
+- **⚠ Cross-task:** deleting the export breaks `app/page.tsx:11`. Fix that import
+  **in this same commit** — the build is otherwise red.
+
+---
+
+### Phase 2 — Settings & CMS drift (Workstream C)
+
+#### T5 — Delete dead social features · `sonnet`
+
+Every one of these is configurable in Studio and rendered nowhere.
+
+- **Files (delete):** `components/common/UGCGallery.tsx`, `ReviewWidgets.tsx`,
+  `ClickToTweet.tsx`, `PinButton.tsx`, `PinnableImage.tsx`,
+  `PinterestBoardWidget.tsx`, `InstagramFeed.tsx`.
+- **Files (edit):** `sanity/schemas/siteSettings.ts` — remove the `ugcGallery`,
+  `reviewWidgets`, `clickToTweet`, and `pinterestBoards` fields, plus
+  `socialMedia.instagramWidget` and `shareButtons.pinterestEnabled` (the latter
+  drove `PinButton`, now deleted); `app/page.tsx` — remove the `InstagramFeed`
+  import and usage.
+- **Keep:** `ShareButtons.tsx` and the rest of `shareButtons` — actively used on
+  four pages (see Corrections above).
+- **Accept:** `npm run build` green; `npm run lint` green; every field remaining
+  in `siteSettings.ts` is projected by a query **and** rendered somewhere;
+  homepage renders without the Instagram section.
+- **Commit:** `feat(cms): remove unrendered social embed features`
+- **Deps:** T4.
+
+#### T6 — Google Analytics end-to-end fix · `opus`
+
+Four separate defects that only work as one unit. Design-sensitive (double
+pageview / static-prerender interaction) — do this yourself.
+
+- **Files:** `components/common/GoogleAnalytics.tsx`, `app/layout.tsx`.
+- **Do:**
+  - Wrap `<GoogleAnalytics>` in `<Suspense>` (required — `useSearchParams`
+    under static prerendering).
+  - Rewrite the component to a single `gtag('config')` source of truth: the
+    inline script configs with `send_page_view: false`; the effect sends
+    pageviews on route change with a correctly joined `pathname + '?' + qs`
+    (omit the `?` when the query string is empty — today it concatenates
+    `/menu` + `foo=bar` into `/menufoo=bar`).
+  - Validate the CMS-sourced ID against `/^G-[A-Z0-9]+$/` before rendering
+    anything.
+  - Add explicit `{ next: { revalidate: 60 } }` to the layout's settings fetch.
+- **Accept:** with `analytics.enabled` on and a valid ID in Studio, gtag loads
+  and exactly **one** pageview fires per navigation (verify in the network
+  panel); with a malformed ID, nothing renders; `npm run build` green with no
+  `useSearchParams` prerender error.
+- **Commit:** `fix(analytics): make Google Analytics actually load and fire once per route`
+- **Deps:** T5.
+- **⚠ Cross-task:** T3 added the `analytics` projection, so from T3 onward
+  `settings.analytics` is populated and the **broken** component becomes
+  reachable. It stays inert only because `analytics.enabled` defaults to
+  `false`. Do not enable analytics in Studio between T3 and T6.
+
+#### T7 — CMS-driven header/footer + contact page social shape · `sonnet`
+
+- **Files:** `app/layout.tsx`, `components/layout/Header.tsx`,
+  `components/layout/Footer.tsx`, `app/contact/page.tsx`.
+- **Do:**
+  - Layout passes `phone`/`email`/`address` from the settings it already
+    fetches down to `Header` and `Footer` as props, replacing the hardcoded
+    `989-802-0755` / `chriscakesmi@sbcglobal.net` / `P.O. Box 431 Clare MI`.
+  - **Remove `Footer`'s own `siteSettingsQuery` fetch** — it currently
+    duplicates the layout's. Footer becomes a props-driven component.
+  - Footer quick links: `/about` → the real routes `/how-to-book` and
+    `/day-of-event`.
+  - Contact page: rewrite the "Follow Us" block against the real
+    `socialMedia.platforms[]` array — the current code reads
+    `settings.socialMedia.facebook` / `.instagram` / `.twitter`, a flat shape
+    that does not exist in the schema, so the block never renders.
+  - Contact page `revalidate: 3600` → `60` (project-wide ISR rule).
+- **Accept:** editing phone/email in Studio updates header, footer, **and**
+  contact page; exactly one `siteSettings` fetch happens per request in the
+  layout path; with `socialMedia.platforms` **absent**, all three render cleanly
+  with no social block and no crash; after adding one enabled platform in the
+  **staging** dataset, the contact page and footer both render its link;
+  `npm run build` green.
+- **Commit:** `feat(cms): drive header, footer, and contact socials from settings`
+- **Deps:** T6 (both touch `app/layout.tsx` — must serialize).
+- **⚠ There is no social data to render.** A production query on 2026-07-26
+  confirmed `socialMedia.platforms` is **undefined** on `siteSettings` — so the
+  footer's icon row has never rendered either, and the "rewrite against the real
+  shape" change is currently unobservable. Verify the empty case against
+  `production` and the populated case by adding a throwaway platform entry in
+  `staging`. Do **not** invent social URLs in `production` to make a test pass.
+
+#### T8 — Fundraising page corrections · `sonnet`
+
+- **Files:** `app/fundraising/page.tsx`.
+- **Do:** filter the extracted subtitle section out before passing `sections` to
+  `SectionRenderer` (today it renders twice — once as the subtitle, once in the
+  section list); delete the hardcoded `item.name === 'Hot Dog Bash'` branch;
+  render each item's real `price`, falling back to "Call for pricing!" when
+  absent (matching T3's schema change); replace the inline near-duplicate GROQ
+  with `menuItemsByCategoryQuery`; add explicit `revalidate` to the
+  `siteSettingsQuery` fetch on line 112.
+- **Accept:** no section renders twice on `/fundraising`; an item with a price
+  shows it; an item without shows "Call for pricing!"; no menu item name is
+  hardcoded in the component; `npm run build` green.
+- **Commit:** `fix(fundraising): stop duplicating sections and hardcoding item names`
+- **Deps:** T5.
+
+#### T9 — `siteSettings` singleton enforcement in Studio · `sonnet`
+
+- **Files:** `sanity.config.ts` (custom `structureTool` resolver).
+- **Do:** pin Site Settings to the document ID **`siteSettings`** and remove the
+  type from the "create new" list.
+- **The canonical ID is confirmed.** A production query on 2026-07-26 returned
+  exactly two documents — `siteSettings` (published) and `drafts.siteSettings`
+  (its unpublished draft, with identical field values in the sampled fields).
+  That is the normal published/draft pair, **not** two competing settings
+  documents. Pin to `siteSettings`; the draft follows automatically.
+- **Accept:** Studio shows exactly one Site Settings entry, opening document
+  `siteSettings` directly; no UI path creates a second one; the site renders the
+  same settings values before and after (pinning must not silently switch which
+  document is live); `npm run build` green; `/studio` loads.
+- **Commit:** `feat(studio): enforce siteSettings as a singleton`
+- **Deps:** T2 (both touch `sanity.config.ts`).
+
+#### T10 — Delete the `test-dynamic-page` document · `opus`
+
+**⚠ Mutates the production Sanity dataset. Already confirmed by the owner
+(2026-07-26) — delete it. Do not stop to re-ask.**
+
+- **Files:** `scripts/delete-test-document.ts` (new, one-off) — or perform the
+  deletion manually in Studio and commit nothing.
+- **Do:** delete the leftover fixture from `production`. **Target confirmed
+  2026-07-26** — exactly one match, `_id: abe5021f-0a3a-4b99-b3b3-797895b6c756`,
+  title "Test Dynamic Page". Re-run the query to confirm the ID still matches
+  one document before deleting, and delete its `drafts.` counterpart if one
+  exists.
+- **Accept:** `*[_type == "page" && slug.current == "test-dynamic-page"]`
+  returns empty; `count(*[_type=="page"])` drops from 9 to 8 and no other
+  document is affected; `/test-dynamic-page` returns 404 (which requires T11's
+  `notFound()` handling to be in place for a clean result).
+- **Commit:** `chore(content): remove leftover test-dynamic-page document`
+- **Deps:** T9.
+
+---
+
+### Phase 3 — Frontend correctness & accessibility (Workstream F)
+
+#### T11 — Missing-document resilience + branded 404 · `sonnet`
+
+- **Files:** `app/services/page.tsx`, `app/fundraising/page.tsx`,
+  `app/not-found.tsx` (new).
+- **Do:** both pages currently 500 when their CMS document is missing —
+  `getPageData()` returns `null` and `page.seo` / `page.title` throw. Adopt the
+  `app/[slug]/page.tsx` pattern: null-check and call `notFound()`, in **both**
+  `generateMetadata` **and** the page body. Add a branded `not-found.tsx`.
+- **Accept:** unpublishing the `services` document in a scratch dataset yields a
+  styled 404, not a 500; the same for `fundraising`; an unknown `[slug]` renders
+  the branded 404; `npm run build` green.
+- **Commit:** `fix(pages): return 404 instead of 500 when a CMS document is missing`
+- **Deps:** T8 (both touch `app/fundraising/page.tsx`).
+
+#### T12 — Nonexistent-palette class sweep · `haiku` · ∥ T13
+
+Tailwind has no `crimson-*` scale — every one of these classes is a no-op, which
+is why the skip link is invisible on focus.
+
+- **Files:** `components/common/SkipToContent.tsx`, `components/menu/MenuDisplay.tsx`.
+- **Do:** replace `crimson-*` with the real brand values (`#dc143c` and a darker
+  ring), e.g. `focus:bg-[#dc143c]`.
+- **Accept:** `grep -rn "crimson-" app components lib` returns **zero** hits
+  (T1 removed the other three sources); pressing Tab on any page shows a visible
+  red skip link; the menu search input shows a visible focus ring.
+- **Commit:** `fix(a11y): replace nonexistent crimson-* classes with real values`
+- **Deps:** T11.
+
+#### T13 — Interactive-component accessibility · `sonnet` · ∥ T12
+
+The Phase-5 tests were asserting these and failing — the tests were right, the
+markup was wrong.
+
+- **Files:** `components/layout/Header.tsx`, `components/menu/CategoryFilter.tsx`,
+  `components/contact/ContactForm.tsx`.
+- **Do:**
+  - Header: `aria-expanded` + `aria-controls` on the hamburger; Escape closes
+    the menu; focus returns to the button on close; `aria-current="page"` on the
+    active nav link (via `usePathname` — Header is already a Client Component).
+    A full focus trap is deliberately out of scope for a nav panel.
+  - CategoryFilter: `aria-pressed` on every filter button; touch targets ≥44px
+    (currently `px-4 py-2` ≈ 36px tall — a real WCAG 2.5.5 defect).
+  - ContactForm: `role="status"` / `aria-live="polite"` on the result message,
+    and move focus to it on completion.
+- **Accept:** axe reports no new violations; the hamburger's `aria-expanded`
+  tracks state; Escape closes the mobile menu and returns focus; every category
+  button measures ≥44×44px; the submit result is announced.
+- **Commit:** `fix(a11y): add aria state and touch targets to interactive components`
+- **Deps:** T11.
+
+#### T14 — Rendering correctness and image sizing · `sonnet`
+
+- **Files:** `components/sections/PortableTextRenderer.tsx`,
+  `components/sections/VideoSection.tsx`,
+  `components/sections/TwoColumnSection.tsx`,
+  `components/menu/MenuItemCard.tsx`.
+- **Do:**
+  - PortableText link mark: guard `if (!value?.href) return children` — a link
+    annotation saved without a URL currently crashes the page. Fix the
+    external-link detection to match.
+  - VideoSection: replace the positional regex with `URL` + `searchParams`
+    parsing so `watch?feature=share&v=ID` resolves.
+  - Cap image widths: `urlFor(...).width(1200).url()` in `TwoColumnSection` and
+    `PortableTextRenderer`.
+  - Add a `sizes` prop to every `fill` image (`MenuItemCard.tsx:24` and any
+    others found).
+  - Add `data-testid="menu-item"` to `MenuItemCard` — the stable hook T25's
+    tests need.
+- **Accept:** a link mark with no href renders its text without crashing; a
+  `?feature=share&v=` YouTube URL embeds correctly; no `fill` image lacks
+  `sizes`; `npm run build` emits no image warnings.
+- **Commit:** `fix(components): guard portable text links, parse video URLs, size images`
+- **Deps:** T13.
+
+#### T15 — Data-fetch, sort, and directive cleanup · `sonnet`
+
+- **Files:** `app/page.tsx`, `components/menu/MenuDisplay.tsx`,
+  `components/common/SocialCTA.tsx`, plus any remaining fetch missing
+  `revalidate`.
+- **Do:**
+  - Homepage: convert the three sequential `await`s (`getMenuItems`,
+    `getTestimonials`, `getSiteSettings`) to a single `Promise.all` — they are
+    independent and currently waterfall; fix the `h2` → `h4` heading skip.
+  - MenuDisplay: "Price (Low to High)" currently coerces a missing price to `0`,
+    sorting call-for-pricing items to the **top**. Sort them to the **end** in
+    both directions.
+  - Remove the unnecessary `'use client'` from `SocialCTA`.
+  - Sweep every remaining Sanity fetch for an explicit
+    `{ next: { revalidate: 60 } }`.
+- **Accept:** homepage issues its three Sanity fetches concurrently; heading
+  order is `h1 → h2 → h3` with no skip; an item with no price sorts last under
+  "Price (Low to High)"; `grep -rn "client.fetch" app components` shows every
+  call passing `revalidate`.
+- **Commit:** `perf(frontend): parallelize homepage fetches and fix sort and ISR gaps`
+- **Deps:** T12, T14 (touches `MenuDisplay.tsx` after T12 and `app/page.tsx`
+  after T5).
+
+---
+
+### Phase 4 — Endpoint & security hardening (Workstreams D + E)
+
+**Ordering deviation, deliberate:** the design plan's graph puts E before F. This
+plan moves the **CSP/header task (T20) to the end of this phase** instead,
+because the inline-script surface CSP must permit is not final until GA (T6) and
+SchemaMarkup (T17) have both landed. Writing CSP earlier guarantees a rewrite.
+
+#### T16 — Contact endpoint hardening · `opus`
+
+Design-sensitive: the silent-success semantics are the whole point (a bot that
+learns it was caught adapts), and the timing gate must not punish slow humans.
+
+- **Files:** `app/api/contact/route.ts`, `components/contact/ContactForm.tsx`.
+- **Do:**
+  - **Honeypot:** a visually-hidden `website` field (CSS-hidden, `tabIndex={-1}`,
+    `autoComplete="off"`, `aria-hidden`). Non-empty ⇒ reject, but **return the
+    normal 200 success response** and send no email.
+  - **Minimum fill time — opaque, client-stamped** (owner decision, 2026-07-26):
+    the form records `Date.now()` on mount and submits it as a hidden field; the
+    server rejects anything under ~3s elapsed with the same silent-success
+    response. Treat a missing, non-numeric, `NaN`, or future-dated value as a
+    rejection too. **No new secret and no token endpoint** — a server-signed
+    stamp cannot work here, because the contact page is ISR-cached at
+    `revalidate: 60`, so a stamp baked into the HTML would be shared across
+    every visitor in the window and already stale on arrival. This gate is
+    forgeable by design; it exists to catch bots that POST the endpoint without
+    ever rendering the form. The honeypot remains the primary gate.
+  - **Trusted IP:** use `x-vercel-forwarded-for` / the **rightmost**
+    `x-forwarded-for` entry — the current code takes the leftmost, which is
+    fully client-controlled and therefore trivially spoofed. Keep the in-memory
+    limiter as documented best-effort defense-in-depth, with a max-size cap and
+    periodic pruning so the `Map` cannot grow unbounded.
+  - **Input validation:** every field type-checked as a string, trimmed, and
+    length-capped (name ≤100, email ≤254 + regex, message ≤5000); strip
+    `[\r\n]` from anything interpolated into the subject line (currently
+    `body.contactName` and `body.eventStartDate` go in raw — a header-injection
+    vector); coerce booleans explicitly; reject payloads over a total size cap.
+  - **Same-origin check:** verify `origin`/`referer` host against the deployment
+    host **when present**; absent headers are allowed (honeypot + timing are the
+    primary gate).
+- **Accept:** a `curl` POST with instant timing or a filled honeypot sends **no**
+  email but receives a success response; normal form use is unaffected; a
+  `contactName` containing `\r\nBcc:` arrives as one sanitized subject line;
+  oversized and wrong-typed fields are rejected; **no new environment variable
+  is introduced** (verify `.env.local.example` is unchanged).
+- **Commit:** `feat(security): harden contact endpoint with honeypot and validation`
+- **Deps:** T13 (both touch `ContactForm.tsx`), T2.
+- **⚠ Watch for a false positive:** the 3s floor must be measured from form
+  _mount_, not from page load, and must not fire for someone using a password
+  manager or autofill to complete the form quickly. If T26's tests show a
+  legitimate fast path tripping it, lower the floor rather than removing the
+  honeypot.
+
+#### T17 — JSON-LD server rendering and XSS fix · `sonnet`
+
+- **Files:** `components/common/SchemaMarkup.tsx`.
+- **Do:** the component uses `next/script` with `strategy="afterInteractive"`, so
+  structured data is absent from the initial HTML that crawlers read — the SEO
+  value is zero. Render inline in the server component via
+  `<script type="application/ld+json">` with
+  `JSON.stringify(data).replace(/</g, '\\u003c')`, which is both present at
+  first paint and escape-proof against CMS content containing `</script>`.
+- **Accept:** `curl http://localhost:3000 | grep 'application/ld+json'` shows the
+  full payload; a page title containing `</script><script>` renders escaped and
+  executes nothing; `npm run build` green.
+- **Commit:** `fix(seo): render JSON-LD server-side with escaped output`
+- **Deps:** T16.
+
+#### T18 — robots + sitemap · `sonnet` · ∥ T19
+
+- **Files:** `app/robots.ts` (new), `app/sitemap.ts` (new).
+- **Do:** `robots.ts` disallows `/studio` and `/api/`; `sitemap.ts` emits the
+  static routes plus every published `[slug]` page from Sanity (reuse
+  `allPagesQuery`, which T3 made slug-safe and ordered).
+- **Accept:** `/robots.txt` and `/sitemap.xml` both serve; the sitemap lists
+  every published page and no drafts; `npm run build` green.
+- **Commit:** `feat(seo): add robots.txt and dynamic sitemap`
+- **Deps:** T17.
+
+#### T19 — Dependency vulnerability remediation · `sonnet` · ∥ T18
+
+Baseline as of 2026-07-26: **42 vulnerabilities (1 critical, 26 high, 13
+moderate, 2 low)**; 40 of them in the production tree.
+
+- **Files:** `package.json`, `package-lock.json`.
+- **Do:** run `npm audit fix` (non-breaking only). For anything remaining,
+  evaluate `sanity` / `next-sanity` minor upgrades. Also **remove the unused
+  `axe-playwright` dependency** — the a11y suite imports `@axe-core/playwright`,
+  which is a different package and stays.
+- **Accept:** `npm audit --omit=dev` shows no critical/high, **or** each
+  residual is documented in the commit body with why it is unfixable and what
+  the exposure is; `npm run build` green; **`/studio` loads and saves a
+  document** (Sanity is the fragile dependency here — smoke-test it manually
+  before committing).
+- **Commit:** `chore(deps): resolve audit advisories and drop unused axe-playwright`
+- **Deps:** T17.
+- **⚠ Cross-task:** if a bump changes Sanity's structure API, T9's singleton
+  resolver may need adjusting. Verify it still works as part of the Studio
+  smoke test. Roll back individual bumps that break Studio and document them.
+
+#### T20 — Security headers and CSP · `opus`
+
+The riskiest task in the plan — CSP breaks silently and Studio is the fragile
+consumer. Do this yourself, verify interactively, and be willing to scope down.
+
+- **Files:** `next.config.ts`.
+- **Do:**
+  - `headers()`: `X-Content-Type-Options: nosniff`,
+    `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: DENY`
+    (Studio runs same-origin, so DENY should be safe — verify, and carve out
+    `/studio` only if it actually breaks).
+  - A real CSP (not Report-Only): `default-src 'self'`, plus `cdn.sanity.io`
+    (img), Google Analytics hosts (script/connect), YouTube (frame, for
+    `VideoSection`), and whatever inline-script allowance Next.js requires.
+    Scope a relaxed policy to `/studio` by path if needed.
+  - Scope `images.remotePatterns` to `pathname: '/images/<projectId>/**'`,
+    sourcing the project ID from the env var at config time so it cannot drift.
+- **Accept:** every header present on all routes (verify with `curl -I`); **every
+  page renders and every interaction works with CSP active** — homepage, menu
+  filtering/search/sort/print, contact form submit, a page with a YouTube embed,
+  and `/studio` (load, edit, save); zero CSP violations in the browser console;
+  Sanity images still load.
+- **Commit:** `feat(security): add security headers, CSP, and scoped image patterns`
+- **Deps:** T6, T17, T18, T19 — needs the final script/frame surface.
+
+---
+
+### Phase 5 — Import script safety (Workstream B)
+
+Independent of A/C/D/F; scheduled here so it lands before the tests are written.
+
+#### T21 — Defang the import scripts · `sonnet`
+
+These are **one-time migration tools**, not routine commands — the content is
+already live. The goal is to make them harmless, not perfect.
+
+- **Files:** `scripts/import-all-content.ts`, `scripts/import-content.ts`.
+- **Do:**
+  - Update the `siteSettings` payloads to the **current** schema shape
+    (`socialMedia.platforms[]`, include `contactFormRecipients`) and switch
+    `createOrReplace` → `createIfNotExists` so a live document is never
+    overwritten. Today `npm run import:all` destroys real site settings.
+  - Switch every `client.create()` to a deterministic `_id`
+    (e.g. `menuItem-<slug>`) with `createIfNotExists`, so re-runs are no-ops
+    instead of duplicating the whole catalog.
+  - Stop writing `price: null` — omit the field (T3 made it optional).
+  - Add a top-of-script guard: refuse to run without `--yes`, and print the
+    target project and dataset **before** writing anything.
+- **Accept:** running `import:all` twice against a **scratch dataset** produces
+  zero duplicates and leaves a pre-existing `siteSettings` document byte-identical;
+  running without `--yes` aborts with a clear message and writes nothing.
+- **Commit:** `fix(scripts): make content imports idempotent and non-destructive`
+- **Deps:** T3.
+- **✅ The `staging` dataset exists and is seeded** (verified 2026-07-26). Run
+  acceptance there: `NEXT_PUBLIC_SANITY_DATASET=staging npm run import:all -- --yes`,
+  twice. Baseline before the first run is 9 pages / 67 menu items / 6 categories
+  / 1 published `siteSettings`; all four counts must be **unchanged** after both
+  runs. **Never** point this script at `production`.
+
+#### T22 — Fix swallowed import errors · `haiku`
+
+- **Files:** `scripts/import-page-content.ts`.
+- **Do:** the script catches per-page errors and still reports success. Track
+  failures, report them accurately, and `process.exit(1)` when any occurred.
+- **Accept:** a forced failure on one page produces a non-zero exit and names the
+  failed page; an all-success run exits 0.
+- **Commit:** `fix(scripts): report and exit non-zero on page import failures`
+- **Deps:** T21.
+
+---
+
+### Phase 6 — Test suite rebuild and CI (Workstream A)
+
+Tests are written against the **fixed** site, which is why this phase runs last.
+Re-read the **amber-window gate contract** in the Rules of Engagement before
+starting: `npm test` is not fully gating until T27.
+
+#### T23 — Test infrastructure reset · `sonnet`
+
+- **Files:** delete `tests/visual/`; edit `package.json` (drop `test:visual`),
+  `playwright.config.ts`, `tests/helpers/test-utils.ts`.
+- **Do:**
+  - Delete the visual regression suite entirely (owner decision — baselines
+    never existed).
+  - `playwright.config.ts`: `webServer.command` becomes `npm run build && npm run start`
+    (tests must run against the production build, not `next dev`); in CI, run
+    **chromium + one mobile project only**; the full 11-project matrix stays
+    available locally.
+  - `test-utils.ts`: delete `calculateContrastRatio` (a hand-rolled
+    reimplementation of what axe already checks) and the unused helpers
+    (`checkConsoleErrors`, `isInViewport`, and anything else with no surviving
+    caller). Keep and repair only what the rewritten specs will use. This also
+    clears the 2 outstanding ESLint unused-var warnings.
+- **Accept:** `tests/visual/` gone; `npm run test:visual` no longer exists;
+  `npm run lint` reports **zero warnings**; `npx playwright test --list` runs
+  without import errors.
+- **Commit:** `test: reset playwright infrastructure and drop visual suite`
+- **Deps:** T20, T22.
+
+#### T24 — Rewrite navigation and homepage specs · `sonnet`
+
+- **Files:** `tests/e2e/navigation.spec.ts`, `tests/e2e/homepage.spec.ts`.
+- **Do:** target the **real** nav link names (`On the Flip Side`, `Menus`,
+  `Contact Us`) with `exact: true` or navigation-scoped locators to avoid
+  strict-mode multi-matches; assert **structure over values** — a `tel:` link
+  exists, rather than the literal `989-802-0755`, so owner edits in the CMS do
+  not break tests; restrict full click-through to desktop projects and give
+  mobile a dedicated hamburger-menu flow test (open, navigate, close, Escape,
+  focus return — the behavior T13 added); assert `aria-current="page"` on the
+  active link; **zero `waitForTimeout`** — condition-based waits only.
+- **Accept:** both specs green on chromium **and** a mobile project; no
+  `waitForTimeout` in either file; no assertion depends on CMS-editable text.
+- **Commit:** `test: rewrite navigation and homepage specs against real markup`
+- **Deps:** T23.
+
+#### T25 — Rewrite menu spec and add page smoke tests · `sonnet`
+
+- **Files:** `tests/e2e/menu.spec.ts`, `tests/e2e/pages.spec.ts` (new).
+- **Do:** menu spec targets `data-testid="menu-item"` (added in T14) and
+  `aria-pressed` on filters (T13); cover **search, sort, and the print button**
+  — currently untested; assert shapes ("at least one category button", "the menu
+  grid renders"), never item counts or specific category names. New `pages.spec.ts`
+  covers `/fundraising`, a `[slug]` page whose slug is **fetched dynamically**
+  from the first published page rather than hardcoded, and an unknown slug
+  returning 404 (depends on T11).
+- **Accept:** all specs green; passing with a scratch dataset containing
+  different content than production proves content-tolerance; unknown slug
+  asserts a 404 status, not just absent text.
+- **Commit:** `test: rewrite menu spec and add page smoke coverage`
+- **Deps:** T24.
+
+#### T26 — Contact form and API coverage · `sonnet`
+
+The largest gap in the current suite — the contact form has **zero** coverage.
+
+- **Files:** `tests/e2e/contact.spec.ts` (new), `tests/api/contact.spec.ts` (new).
+- **Do:**
+  - E2E: fill/submit happy path with the API mocked via `page.route()`;
+    client-side validation errors; the honeypot field is present **and**
+    hidden from both sighted users and the tab order.
+  - API-level, using `request` fixtures with Resend mocked or absent: validation
+    rejections, honeypot rejection **returning 200 with no email sent**, the
+    sub-3s timing rejection, non-POST method restriction, and subject-line
+    newline sanitization.
+- **Accept:** every rejection path from T16 has a test; the honeypot test
+  asserts a 200 response _and_ that no send occurred; specs green.
+- **Commit:** `test: add contact form and API endpoint coverage`
+- **Deps:** T25.
+
+#### T27 — Accessibility spec rewrite and full-suite green · `opus`
+
+Final integration — the point where the whole suite must actually pass.
+
+- **Files:** `tests/accessibility/wcag-compliance.spec.ts`.
+- **Do:** drop the hand-rolled contrast check (axe covers it); replace
+  `activeElement` truthiness assertions — which pass on `<body>` and therefore
+  prove nothing — with assertions that focus moved to a **specific** element;
+  keep the touch-target check at 44px (T13 fixed the markup rather than
+  weakening the test); rewrite the console-error test to register its listener
+  **before** navigation, or delete it.
+- **Accept:** **`npm test` fully green on a fresh checkout against the production
+  build** — this is the phase's real gate; `grep -rn "waitForTimeout" tests`
+  returns nothing; no test references CMS-editable literal content.
+- **Commit:** `test: rewrite accessibility spec and restore a green suite`
+- **Deps:** T26.
+- **Note:** from this task onward, `npm test` is gating for every remaining task.
+
+#### T28 — CI workflow · `sonnet`
+
+- **Files:** `.github/workflows/ci.yml` (new).
+- **Do:** run on PR and push to `master`: install → `lint` → `format:check` →
+  `build` → Playwright (chromium + one mobile project). Cache npm and Playwright
+  browsers. Tests run against `next build && next start`.
+- **Accept:** the workflow passes on a real PR from this branch; total runtime is
+  reasonable (the browser cache is doing its job); a deliberately introduced
+  lint error fails the run.
+- **Commit:** `ci: add lint, build, and playwright workflow`
+- **Deps:** T27.
+- **⚠ Note:** `format:check` in CI will fail until **T31** (the format sweep)
+  lands. Either hold the PR open until T31, or expect that one red check and
+  clear it at T31 — state which in the commit body.
+
+---
+
+### Phase 7 — Hygiene (Workstream H)
+
+#### T29 — Documentation update · `sonnet`
+
+- **Files:** `CLAUDE.md`, `IMPLEMENTATION_PLAN.md`, `SETUP.md`.
+- **Do:**
+  - `CLAUDE.md`: correct the project ID to **`0fl6fs6u` in exactly one place**
+    (line 187 currently documents the stale `9t9xlmvm`); reframe `import:all` as
+    a one-time migration that is now safe to re-run and will not touch existing
+    documents; remove the deleted social features; update the test commands
+    (`test:visual` is gone); add CI to the pre-deployment checklist.
+  - `IMPLEMENTATION_PLAN.md`: add a "Phase 6: Remediation" entry recording this
+    work.
+  - `SETUP.md`: same import-script reframing.
+- **Accept:** `grep -rln "9t9xlmvm" --exclude-dir=node_modules --exclude-dir=.git .`
+  returns **only** `CODE_REVIEW.md` and `docs/plans/proposed/remediation-plan.md`,
+  which quote the stale ID deliberately as the defect being fixed — no live doc
+  or source file carries it; `CLAUDE.md` presents `import:all` as a one-time
+  migration; the test-command list no longer mentions `test:visual`; the
+  pre-deployment checklist names CI.
+- **Commit:** `docs: update project docs for remediation changes`
+- **Deps:** T28.
+- **Note:** the four superseded docs still reference deleted features at this
+  point — that is expected. T30 archives them; do not try to fix them here.
+
+#### T30 — Archive superseded documentation · `haiku`
+
+Four root-level docs describe features and a test suite this work deletes.
+Leaving them in place would mislead the next reader worse than deleting them —
+archive rather than delete, so the history of _why_ those features existed
+stays reachable.
+
+- **Files (move via `git mv` into `docs/archive/`):**
+  - `SOCIAL_MEDIA_INTEGRATION.md` (54KB — documents the UGC gallery, review
+    widgets, click-to-tweet, and Pinterest boards deleted in T5)
+  - `SOCIAL_MEDIA_STATUS.md` (status of the same deleted features)
+  - `PHASE5_TESTING_SUMMARY.md` (describes the visual suite deleted in T23)
+  - `TESTING_GUIDE.md` (documents the pre-rewrite suite and `test:visual`)
+- **Do:** create `docs/archive/`; `git mv` each file in (history preserved);
+  add `docs/archive/README.md` naming each file, the date archived
+  (2026-07-26), and one line on what superseded it. Then repo-wide grep for
+  references to the old paths and update them — `README.md` and `CLAUDE.md` are
+  the likely referrers.
+- **Accept:** all four files live under `docs/archive/` with history intact
+  (`git log --follow`); `grep -rn "SOCIAL_MEDIA_INTEGRATION\|SOCIAL_MEDIA_STATUS\|PHASE5_TESTING_SUMMARY\|TESTING_GUIDE" --exclude-dir=node_modules --exclude-dir=docs .`
+  returns nothing; the gate is green (these are docs — the build is unaffected).
+- **Commit:** `docs: archive documentation superseded by remediation`
+- **Deps:** T29.
+- **Note:** `CODE_REVIEW.md` stays at the repo root — it is the live input to
+  the design plan, not superseded by it.
+
+#### T31 — Repo-wide format sweep · `haiku`
+
+Deliberately last-but-one and **strictly its own commit** — mixing a 77-file
+reformat with logic changes destroys reviewability. Runs after T30 so the
+archived docs are formatted in place too (or excluded via `.prettierignore` —
+whichever keeps the diff honest).
+
+- **Files:** whatever `npm run format` touches. **No hand edits.**
+- **Do:** run `npm run format`. Nothing else.
+- **Accept:** `npm run format:check` green **repo-wide** (it becomes gating from
+  here on); `npm run lint` green with zero warnings; `npm run build` green;
+  `npm test` green; `git show --stat` shows formatting-only changes.
+- **Commit:** `style: apply prettier formatting across the repo`
+- **Deps:** T30.
+
+#### T32 — Graduate the plan documents · `opus`
+
+- **Files:** `docs/plans/proposed/remediation-plan.md` and
+  `docs/plans/proposed/remediation-implementation-plan.md` → `docs/plans/implemented/`.
+- **Do:** mark the design plan `Status: IMPLEMENTED (<date>)`; `git mv` both
+  files; fix any reference to their old paths (repo-wide grep).
+- **Accept:** both files live under `docs/plans/implemented/`; no dangling path
+  reference; the full gate is green; report status and propose next steps (open
+  a PR — **confirm with the human before merging to `master`**).
+- **Commit:** `docs: graduate remediation plans to implemented`
+- **Deps:** T31.
+
+---
+
+## Cross-task consequences the orchestrator must reconcile
+
+1. **T3 arms a broken component.** Adding the `analytics` projection makes
+   `settings.analytics` populated, so the defective `GoogleAnalytics` component
+   becomes reachable — inert only because `analytics.enabled` defaults to
+   `false`. **Do not enable analytics in Studio between T3 and T6.**
+2. **Deletions break imports in the same breath.** T4 (`generateAggregateRatingSchema`)
+   and T5 (`InstagramFeed`) both remove things `app/page.tsx` imports. Each must
+   fix that import in its own commit or the build is red.
+3. **`app/page.tsx` is touched by three tasks** (T4, T5, T15) and
+   `app/layout.tsx` by two (T6, T7). These are serialized on purpose — none of
+   those pairs is parallel-safe.
+4. **T2 removes the token from the app client.** This is only safe if the
+   dataset is public-read. The contact API route (`app/api/contact/route.ts`)
+   reads `siteSettings` through that client — verify it still resolves before
+   committing.
+5. **T3's optional `price` unblocks T21** (the import scripts currently write
+   `price: null` against a required field) and requires `MenuItemCard` /
+   `MenuDisplay` to handle `undefined` — T15 covers the sort side.
+6. **CSP (T20) is scheduled after GA (T6) and SchemaMarkup (T17)** because both
+   determine the inline-script surface the policy must allow. This inverts the
+   design plan's E-before-F edge, deliberately.
+7. **`npm audit fix` (T19) may move Sanity**, which can disturb T9's custom
+   structure resolver. The Studio smoke test in T19's acceptance must include
+   opening the Site Settings singleton.
+8. **T23 switches Playwright to a production build**, so every subsequent local
+   test run pays a full `next build`. Expect noticeably slower iteration from
+   Phase 6 onward.
+9. **T13's a11y markup is what T24–T26 assert.** If T13 lands with different
+   attribute names than planned, the test tasks must follow the markup, not the
+   plan text.
+10. **CI (T28) runs `format:check`, which is red until T31.** Hold the PR or
+    accept one red check; state the choice in T28's commit body.
+11. **The `staging` dataset is a full copy of production as of 2026-07-26**
+    (9 pages, 67 menu items, 6 categories). It does **not** track later
+    production edits. T10 deletes `test-dynamic-page` from production only —
+    `staging` keeps its copy, so a `staging` run will still see 9 pages. Do not
+    treat that divergence as a failure.
+
+---
+
+## Owner decisions (settled 2026-07-26)
+
+| Question                                         | Decision                                                                                                                                | Where it landed         |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| Delete `test-dynamic-page` from production?      | **Yes — delete it.** No mid-run confirmation needed.                                                                                    | T10                     |
+| Scratch Sanity dataset available?                | **Created and seeded** — `staging`, verified 2026-07-26.                                                                                | Prerequisites; T11, T21 |
+| T16 fill-time stamp: signed or opaque?           | **Opaque, client-stamped.** No new secret, no token endpoint; ISR stays intact. Forgeable by design — the honeypot is the primary gate. | T16                     |
+| Fate of the four superseded docs?                | **Archive** into `docs/archive/`, not delete.                                                                                           | T30                     |
+| Missing `docs/guides/orchestration-playbook.md`? | **Inline the rules** in this plan.                                                                                                      | Rules of Engagement     |
+
+### Still worth knowing at kickoff
+
+- **`/run-plan` will try to read `docs/guides/orchestration-playbook.md` and
+  fail** — the file genuinely does not exist. The Kickoff section tells it to
+  skip that step and use the inlined rules. You may need to say so directly if
+  it stalls.
+- **`socialMedia.platforms` is undefined in production.** The footer's social
+  icon row has therefore never rendered, and T7's contact-page rewrite is
+  unobservable until someone adds a platform in Studio. Verify the empty case
+  against production, the populated case in `staging`. See T7.
+- **`DESIGN_PLAN.md` and `CODE_REVIEW.md` are untracked** — T0 uses `mv` +
+  `git add`, not `git mv`. `.claude/` is untracked too; T0 asks what to do with
+  it.
+- **One decision is deliberately deferred to T20:** whether `X-Frame-Options:
+DENY` and a strict CSP break the embedded Studio. The plan says try DENY
+  first and carve out `/studio` only if it actually breaks — that is a
+  verify-then-decide, not an unknown blocking kickoff.
+
+---
+
+## ✅ RESOLVED — route-shadowing bug found during execution (2026-07-27, at T8)
+
+**Fixed in `946979f`** (owner decision: exclude reserved slugs). `[slug]`'s
+`generateStaticParams` now filters out `fundraising` and `services`, so the
+dedicated routes render. T8's acceptance was then verified end-to-end and
+**T11 is unblocked**. Original writeup below for the record.
+
+**`/fundraising` and `/services` are dead routes.** The CMS contains `page`
+documents with slugs `fundraising` and `services`. `app/[slug]/page.tsx`'s
+`generateStaticParams` reads `allPagesQuery` and therefore prerenders both,
+writing to the same output paths as the dedicated `app/fundraising/page.tsx`
+and `app/services/page.tsx` routes. The `[slug]` renderer wins, so the
+dedicated pages never render.
+
+Evidence: a sentinel menu item hardcoded into `app/fundraising/page.tsx`'s
+item list does not appear in `.next/server/app/fundraising.html`, and neither
+does a `console.log` in its data fetcher. The served page is `[slug]`'s
+markup — `<h1>{page.title}</h1>` plus `SectionRenderer`, with no menu items.
+Confirmed present **before** T8 (verified by rebuilding the pre-T8 file), so it
+is pre-existing, not caused by this work.
+
+Published page slugs: `test-dynamic-page`, `about`, `day-of-event`,
+**`fundraising`**, `fundraising-tips`, `how-to-book`, `invoice-payment`,
+**`services`**, `volunteers`.
+
+**Impact on the plan:** T8 is committed and correct but unverifiable in the
+running app. **T11 is blocked** — it adds `notFound()` handling to those two
+pages, which cannot be exercised while they are shadowed. Awaiting an owner
+decision on the fix.
+
+---
+
+## Progress Tracker
+
+**Phase 0 — Plan housekeeping**
+
+- [x] T0 — Relocate plan docs into `docs/plans/proposed/` (`haiku`) — `04cf3ab`
+
+**Phase 1 — Data layer foundation (G)**
+
+- [x] T1 — Delete sanity boilerplate and dead components (`haiku`) ∥ T2 — `512c10b`
+- [x] T2 — One token-free, env-driven Sanity client (`sonnet`) ∥ T1 — `a2d07f2`
+- [x] T3 — Query and schema corrections (`sonnet`) — `90699dc`
+- [x] T4 — JSON-LD helper cleanup (`sonnet`) — `f1a2a8b`
+
+**Phase 2 — Settings & CMS drift (C)**
+
+- [x] T5 — Delete dead social features (`sonnet`) — `68d4388` (note: `siteSettings.logo` remains projected-but-unrendered; outside T5's delete-list, retained deliberately)
+- [x] T6 — Google Analytics end-to-end fix (`opus`) — `8874806` (validator extracted to new `lib/analytics.ts`; verified on `staging`)
+- [x] T7 — CMS-driven header/footer + contact socials (`sonnet`) — `67c9165`
+- [x] T8 — Fundraising page corrections (`sonnet`) — `609a26b`; route-shadowing blocker fixed in `946979f`, acceptance then verified in full
+- [x] T9 — `siteSettings` singleton enforcement (`sonnet`) — `867fbf6` ✅ **Studio DOM manually verified by the owner 2026-08-12** in a logged-in browser: exactly one Site Settings entry, opens directly, no reachable path to create a second. The earlier ⚠ is cleared.
+- [x] T10 — Delete `test-dynamic-page` document (`opus`) — script `f706e60`, executed 2026-08-12. Deleted `abe5021f-0a3a-4b99-b3b3-797895b6c756` ("Test Dynamic Page") from `production`; `count(*[_type=="page"])` 9 → 8; `/test-dynamic-page` returns 404 while `/about`, `/fundraising`, `/services` still 200. **Note:** a clean rebuild (`rm -rf .next`) is required after content deletions — Next's fetch cache otherwise keeps prerendering the removed slug.
+
+**Phase 3 — Frontend correctness & a11y (F)**
+
+- [x] T11 — Missing-document resilience + branded 404 (`sonnet`) — `b8823ad`
+- [x] T12 — Nonexistent-palette class sweep (`haiku`) ∥ T13 — `734a551` (also carries gate-required Prettier reformatting of `MenuDisplay.tsx`)
+- [x] T13 — Interactive-component accessibility (`sonnet`) ∥ T12 — `651928e` (mobile panel is now always-mounted and toggled with `hidden` so `aria-controls` always resolves; verified Escape/focus-return/`aria-current` interactively)
+- [x] T14 — Rendering correctness and image sizing (`sonnet`) — `a0ec740`. Scope note: also added `sizes` to the four `fill` images in `app/page.tsx` (not in T14's stated file list, but required by its "no `fill` image lacks `sizes`" acceptance); nothing else in that file was touched, so T15 still owns it. The YouTube id keeps a `^[a-zA-Z0-9_-]+$` check so the `URL`-based rewrite does not loosen the old regex's guarantee.
+- [x] T15 — Data-fetch, sort, and directive cleanup (`sonnet`) — `415621a`. The homepage had **two** heading skips, not one (`h1→h4→h2→h4→h4→h2`); all fixed. ISR sweep covered all 19 `client.fetch` calls and normalized a stray `revalidate: 3600` in `[slug]`'s `generateStaticParams` to 60.
+
+**Phase 3 complete.**
+
+**Phase 4 — Endpoint & security hardening (D + E)**
+
+- [x] T16 — Contact endpoint hardening (`opus`) — `0af1f80`
+
+> **⚠ Two operational warnings learned the hard way at T16 (2026-08-12).**
+>
+> 1. **`pkill -f "next start"` does NOT kill the server.** It matches the npm
+>    wrapper, not the `next-server` child, which survives and keeps serving a
+>    **stale build** on the same port. A later `npm run start` then dies with
+>    `EADDRINUSE` while curl happily talks to the old code. Always
+>    `pkill -f "next-server"`, then assert the port is free, then assert a
+>    response that only the new code can produce before trusting any result.
+> 2. **`.env.local` carries a live `RESEND_API_KEY` and real recipients**
+>    (`contactFormRecipients` in Sanity takes priority over `CONTACT_EMAIL_TO`,
+>    so blanking the env var alone is NOT enough). Ten test posts against the
+>    stale server delivered **20 real emails** to the owner's inboxes. Any
+>    future contact-endpoint testing must start the server with an **invalid**
+>    `RESEND_API_KEY` and verify `grep -c "Email sent successfully"` is 0.
+>
+> **🐛 Pre-existing bug found and FIXED — commit `492f62c`** (owner approved the
+> follow-up, 2026-08-12). The endpoint returned 200 "sent successfully" even
+> when Resend failed, because the SDK resolves with `{data, error}` instead of
+> throwing and neither the original code nor T16 inspected `error` — a genuine
+> delivery failure was reported to the visitor as success and the inquiry was
+> lost with no trace. Now uses `Promise.allSettled` and reads `error` per
+> recipient: all-failed returns 500, partial success still returns 200 and logs
+> the failures. The bot gates are unaffected — they return before any send.
+> T26's API tests should cover this path.
+
+- [x] T17 — JSON-LD server rendering and XSS fix (`sonnet`) — `28d8ba2` (verified against prerendered `.next/server/app/index.html`, so no running server was needed)
+- [x] T18 — robots + sitemap (`sonnet`) ∥ T19 — `b23ed8c`
+- [x] T19 — Dependency vulnerability remediation (`sonnet`) ∥ T18 — `14eb919`. 41 → 12 vulns (critical + low cleared); 7 high / 5 moderate residuals all need major bumps (`sanity@6`, `next@16`, `next-sanity@13`) and are documented in the commit body. No Sanity bump was applied, so T9's resolver is on an unchanged dependency surface. ✅ **Studio edit/save manually verified by the owner 2026-08-12** against `staging`: changed a menu item price and uploaded an image, both persisted and rendered on `/menu` after ISR revalidation. The earlier "interactive check outstanding" note is cleared.
+
+> **Note on the T18 ∥ T19 marker:** their _file sets_ are disjoint, but T19 runs
+> `npm audit fix`, which rewrites `node_modules` and would break a concurrent
+> build in T18. They were run **sequentially**. Treat `∥` as a statement about
+> files only — tasks that touch installed dependencies are never actually
+> parallel-safe.
+
+- [x] T20 — Security headers and CSP (`opus`) — `3019ed9`
+
+> **Phase 4 complete.** Owner decision (2026-08-12): `/studio` gets a **relaxed
+> CSP scoped by path from the start**, rather than the plan's try-DENY-first,
+> because the interactive Studio check cannot be automated here. Public routes
+> keep the strict policy and `X-Frame-Options: DENY`; `/studio` gets
+> `SAMEORIGIN`.
+>
+> **Trap worth remembering:** Next's `headers()` applies _every_ matching entry,
+> so a public source and a `/studio` source that both match would emit **two**
+> CSP headers and the browser would enforce their intersection — silently
+> breaking Studio. The public source uses a negative lookahead
+> (`/:path((?!studio).*)`) to guarantee they are disjoint; verified by asserting
+> exactly one CSP header per route.
+>
+> `core.sanity-cdn.com` (Sanity's visual-editing bridge) had to be added to the
+> Studio policy — found by observing a real violation, not by guessing.
+>
+> ✅ **Authenticated Studio surface manually verified by the owner 2026-08-12**
+> with the DevTools Console open: image upload, document edit and save all
+> succeeded with **no CSP violations**. Image upload is the strongest signal
+> available — it exercises `blob:`, the Sanity asset API, and CDN writes at
+> once. A real uploaded Sanity image was then confirmed to render on `/menu`
+> through the scoped `remotePatterns` with zero violations, which also closes
+> the earlier gap where the pattern could only be tested against a fake asset.
+>
+> **All human-only verification for this run is now complete.** T9, T19 and T20
+> each carried an "unverified in a logged-in browser" caveat; all three are
+> cleared.
+>
+> Note for future sessions: use **`localhost:3333`** for Studio work — it is
+> already in the project's Sanity CORS origins (`npx sanity cors list`), so no
+> new origin has to be registered. An arbitrary port triggers Studio's
+> "Connect this studio to your project" screen, whose "Add development host"
+> button writes a **permanent** CORS origin.
+
+**Phase 5 — Import script safety (B)**
+
+- [x] T21 — Defang the import scripts (`sonnet`) — `1b464a1`
+
+> **Deterministic ids alone were not enough — the catalogue writes are now
+> gated on an empty dataset.** The plan assumed `createIfNotExists` with a
+> `menuItem-<slug>` id would make re-runs no-ops. It does not: the live
+> catalogue was imported _before_ those ids existed, so its documents carry
+> random ids and some slugs have since drifted (Sanity de-duplicated a few to
+> `-2`). Deterministic ids therefore collide with nothing and create a **second
+> full copy** of the catalogue beside the real one. This actually happened
+> against `staging` during verification and had to be cleaned up.
+>
+> The script now refuses to write any menuCategory/menuItem unless the dataset
+> has zero of both, printing a divergence report (matched on slug **or**
+> title/name) instead. `siteSettings` is handled independently — always
+> `createIfNotExists`, so a missing one is still created.
+>
+> **`createIfNotExists` on an existing document advances `_rev` but changes
+> nothing else** — `_updatedAt` and every field value are untouched. Confirmed
+> adversarially by passing a bogus `title`, which did not apply. So "byte-
+> identical" holds for content; only Sanity's internal revision id for the
+> no-op mutation moves. Do not mistake that `_rev` bump for a write.
+>
+> Verified on `staging`: two `--yes` runs wrote nothing, counts held at 9 pages
+> / 67 menu items / 6 categories, `siteSettings._updatedAt` still 2026-07-27.
+> Without `--yes` it exits 1 having written nothing.
+>
+> **⚠ The empty-dataset create path is committed but never executed** (owner
+> decision, 2026-08-12: accept as untested). Every verification run hit the
+> populated guard, because there is no empty dataset to run it against: the
+> Sanity plan's **dataset quota is exhausted at 2** (`production` + `staging`),
+> so `sanity dataset create` returns `Payment Required - Quota exceeded`. The
+> fallback — emptying `staging`'s catalogue and restoring it — was declined as
+> not worth the risk. That path now only matters for a from-scratch disaster
+> reimport. **If you ever need it, exercise it against a genuinely empty
+> dataset first.** A full `staging` export (93 docs + 19 assets) was taken
+> before this investigation and lives only in the session scratchpad — it is
+> not committed and will not survive the session.
+>
+> **⚠ Two sibling scripts are still destructive and are outside T21's scope:**
+> `scripts/import-additional-content.ts` (`npm run import:more`) still uses
+> bare `client.create()` for the fundraising category, menu items, FAQs, and
+> testimonials — it will duplicate all of them on a re-run.
+> `scripts/import-page-content.ts` (`npm run import:page`) still uses
+> `createOrReplace` on all 8 page documents, so it **overwrites live page
+> content**. T22 touches the latter for error handling only. Neither is in the
+> plan's scope; flagged for an owner decision.
+
+- [x] T22 — Fix swallowed import errors (`sonnet`, upgraded from `haiku`) — `03beec9`
+
+> **Scope expanded past the plan, with owner approval (2026-08-12).** The
+> stated brief was error handling only, but both remaining import scripts
+> carried the same destructive defects T21 had just fixed next door, so they
+> were closed in the same commit. Model upgraded to `sonnet` because the work
+> was no longer mechanical.
+>
+> **`import-page-content.ts` was the most dangerous script in the repo.** It
+> used `createOrReplace` on all 8 pages, and its hardcoded ids (`about-page`,
+> `services-page`, …) are **exactly** the ids of the real, owner-edited
+> documents live today — verified by query. Unlike T21's case there was no id
+> mismatch to soften the blow: a `--yes` run would have silently replaced real
+> page content with the file's hardcoded 2025 text. Now `createIfNotExists`.
+>
+> `import-additional-content.ts` used bare `client.create()` for the
+> fundraising category, its items, 6 FAQs, and 3 testimonials — all already
+> live — so a re-run duplicated every one. Now uses T21's populated-dataset
+> guard, matching FAQs by `question` and testimonials by `author` (neither
+> schema has a slug).
+>
+> Both also gained T21's `--yes` + target-print + env-validation guard.
+>
+> Verified on `staging`: both refuse without `--yes` (exit 1, no writes); with
+> `--yes` the page script skipped all 8 and the additional script wrote
+> nothing. **All 91 documents byte-identical afterward** (content hash and
+> `_updatedAt`). A forced per-page failure exited 1 and named the page.
+> Page payloads proven unchanged by diffing every string literal against the
+> prior version — only console messages differ.
+>
+> **⚠ Three scripts still `createOrReplace` live page documents and were left
+> alone:** `add-videos-to-pages.ts`, `update-remaining-pages-with-images.ts`,
+> `upload-images-and-update-pages.ts`. These are _update_ tools whose purpose
+> is to modify existing pages, so replacement is arguably intended — but each
+> rewrites the whole document from hardcoded content and would discard any
+> owner edits made since. None has a `--yes` guard. Not in scope; flagged for
+> an owner decision.
+
+**Phase 5 complete.**
+
+**Phase 6 — Test suite rebuild and CI (A)**
+
+- [x] T23 — Test infrastructure reset (`sonnet`) — `9164949`
+
+> `npm run lint` now reports **zero errors and zero warnings** — the two stale
+> `test-utils.ts` warnings carried since T0 are gone. Five callerless helpers
+> deleted; `waitForPageLoad` was kept because `navigateAndWait` calls it
+> internally (the plan's delete-list did not account for that).
+>
+> CI filtering verified by running `--list` both ways: **396 tests locally
+> (11 projects) → 72 under `CI=1`**, across exactly `chromium` and
+> `Mobile Chrome`.
+>
+> **⚠ Only chromium browsers are installed on this machine** — firefox and
+> webkit are not, so those three projects cannot run locally despite still
+> being defined. Local full-matrix runs will fail on them until
+> `npx playwright install` is run. CI is unaffected (it filters to chromium).
+>
+> **⚠ From here on every local `npm test` pays a full `next build`** (webServer
+> is now `npm run build && npm run start`). Note `reuseExistingServer` is still
+> `!CI`, so a stale server already listening on :3000 will be reused and the
+> build skipped — see the T16 warning above about stale servers.
+>
+> **Tooling note for future sessions:** long `git commit` heredocs get blocked
+> by the permission classifier in this environment. Write the message to a file
+> and use `git commit -F <file>` instead.
+
+- [x] T24 — Rewrite navigation and homepage specs (`sonnet`) — `e123134`
+
+> **The root cause of much of the red suite: every nav link exists twice in
+> the DOM simultaneously.** T13 made the `#mobile-menu` panel always-mounted
+> (toggled by the `hidden` class) so `aria-controls` always resolves, and the
+> desktop list `div.hidden.lg:flex` is always mounted too. So a bare
+> `getByRole('link', { name: 'Menus' })` matches **two** elements and fails
+> Playwright strict mode. Every nav locator must be scoped to one container
+> first. T25–T27 must do the same.
+>
+> Verified independently by the orchestrator: **29 passed, 5 skipped, 0
+> failed** on chromium + Mobile Chrome. The 5 skips are the intended
+> desktop-only / mobile-only splits.
+>
+> **⚠ Harness trap fixed here (mechanical consequence of T23).** The config
+> had `reuseExistingServer: !CI`, so a local run adopted whatever already
+> owned port 3000 rather than the build it had just made. **On this host an
+> unrelated service permanently owns :3000 and 302s to `/login`** — the suite
+> would have silently tested that app. Now `reuseExistingServer: false` (the
+> suite always serves its own build) and the port is overridable:
+> **run local suites as `PLAYWRIGHT_PORT=3100 npm test`.** A busy port now
+> fails loudly instead of producing confident nonsense.
+>
+> `checkNavigationLinks` and `testMobileMenu` were deleted from `test-utils`
+> — both used unscoped locators (the former substring-matched, so
+> "Fundraising" also hit "Fundraising Tips") and the latter used
+> `waitForTimeout`.
+>
+> **Note for the contact specs:** the phone number is plain text in `Header`
+> and `Footer`, never a `tel:` anchor — only `/contact` has one. The plan's
+> "assert a `tel:` link exists" has nothing to bind to on the homepage/nav.
+
+- [x] T25 — Rewrite menu spec and add page smoke tests (`sonnet`) — `42b7c29`
+
+> Verified independently: **22 passed, 0 failed** on chromium + Mobile Chrome.
+> All 8 `waitForTimeout` calls are gone — `grep -rn "waitForTimeout" tests/e2e`
+> is now empty (the accessibility spec still has 5; T27 clears them).
+>
+> Filters are located by `aria-pressed` rather than by button text, so renaming
+> a category in Studio cannot turn the suite red. Search seeds its query from
+> the first rendered item's own name at runtime instead of hardcoding one.
+>
+> `pages.spec.ts` sources its `[slug]` target from **`/sitemap.xml`** at
+> runtime — no hardcoded slug and no Sanity credentials in the test. It
+> excludes the static routes and the two reserved slugs (`fundraising`,
+> `services`), mirroring `RESERVED_SLUGS` in `app/[slug]/page.tsx`. The 404
+> test asserts the real HTTP status from the navigation response, which is the
+> first actual coverage of T11's `notFound()` handling.
+
+- [x] T26 — Contact form and API coverage (`sonnet`) — `1e1ca1b`
+
+> Verified independently: **36 passed, 0 failed** on chromium + Mobile Chrome.
+>
+> **✅ No email was sent.** Every run exports an invalid `RESEND_API_KEY`;
+> Next's env loader leaves a shell-set variable in place (verified empirically
+> via `@next/env`), so this defeats the live key in `.env.local` **and** the
+> Sanity-sourced `contactFormRecipients` that made blanking `CONTACT_EMAIL_TO`
+> insufficient at T16. Confirmed in the server log: only the sanitization test
+> reaches delivery and it fails; `Email sent successfully` appears nowhere.
+> **Always use this prefix for contact work:**
+> `RESEND_API_KEY=re_invalid_test_key_do_not_send PLAYWRIGHT_PORT=3100 npx playwright test ...`
+>
+> **Rate-limit isolation was required to make the suite runnable at all.** The
+> endpoint allows 3 requests/hour per resolved IP; with no proxy locally every
+> request resolves to `'unknown'`, so the 4th test in the file would start
+> getting 429s. Each request now sends a unique `X-Forwarded-For` derived from
+> the Playwright test id.
+>
+> **Endpoint subtlety worth remembering:** the honeypot check is
+> `typeof website !== 'string'`, so **omitting** the field is rejected exactly
+> like filling it. Any future client that forgets to submit `website: ''` will
+> be silently swallowed with a fake 200.
+>
+> **Known limitation:** there is no seam to inspect the literal subject handed
+> to Resend, so subject-line sanitization is only asserted as "accepted and
+> fails cleanly at the send stage", not as a verified string. Closing that
+> would need an app-code seam or a stubbed Resend backend — neither in scope.
+
+- [x] T27 — Accessibility spec rewrite and full-suite green (`opus`) — `4c2f63e`
+
+> **✅ FULL SUITE GREEN: 115 passed, 0 failed, 5 skipped** on chromium +
+> Mobile Chrome against a production build. `grep -rn "waitForTimeout" tests`
+> returns nothing. **From here `npm test` is gating for every remaining task.**
+>
+> **🐛 Real WCAG AA failure found and fixed (owner approved 2026-08-12).** The
+> footer's "Contact Us Online!" button was white on `#5bc0de` — **2.09:1**
+> against a required 4.5:1 — and being in the footer it failed on _every_
+> page. Now `#31708f` / `#2a6070` hover, measured at 5.46:1 and 6.99:1.
+> Followed T13's precedent: fix the markup, don't weaken the test.
+>
+> **Third-party markup is excluded from axe.** The homepage's YouTube embed
+> reports `aria-allowed-attr` and `aria-prohibited-attr` violations _inside
+> the player iframe_ — YouTube's markup, unfixable from this repo, and liable
+> to change when they redeploy. `.exclude('iframe')` keeps the scan on our own
+> markup.
+>
+> The two `activeElement` truthiness assertions were replaced with specific
+> focus assertions (they passed on `<body>`, proving nothing). The touch-target
+> test no longer selects filters by CMS category names — it uses
+> `aria-pressed`, and measures all of them rather than the first three.
+>
+> ### ⚠️ Email safety is now enforced by the config, not by discipline
+>
+> **A full-suite run during this task delivered real email** — the run omitted
+> the `RESEND_API_KEY` prefix, the sanitization test cleared every bot gate,
+> and the live key in `.env.local` plus Sanity's `contactFormRecipients` did
+> the rest. That is the second such incident on this project (see T16).
+>
+> Root cause: safety depended on _remembering a prefix_. `playwright.config.ts`
+> now sets `webServer.env.RESEND_API_KEY` to an invalid value
+> unconditionally, so no test run can deliver mail regardless of how it is
+> invoked. Verified by running the whole suite with **no** prefix: green, with
+> the server logging delivery failures and no successful send. **The manual
+> prefix is no longer needed.**
+
+- [x] T28 — CI workflow (`sonnet`) — `4d74b14`. **Owner decision (2026-08-12): accept one red `format:check`** and clear it at T31; stated explicitly in the commit body, with no `continue-on-error` hiding it.
+
+> **The workflow is deliberately thin because `playwright.config.ts` already
+> owns the hard parts.** No server-start step and no `--project` flags: the
+> config's `webServer.command` is `npm run build && npm run start`, and it
+> self-filters to `chromium` + `Mobile Chrome` whenever `CI` is set — which
+> GitHub Actions does automatically. Only the chromium browser is installed,
+> because `Mobile Chrome` is a Pixel 5 _emulation_ on chromium, not a separate
+> download. Adding `--project` flags or a second server here would duplicate or
+> fight that config.
+>
+> All three `NEXT_PUBLIC_SANITY_*` vars are set at workflow level: `next build`
+> statically renders pages that fetch **live** Sanity content, so CI needs a
+> working connection, not placeholder strings. They are public, non-secret
+> coordinates. `SANITY_API_TOKEN` is deliberately absent — after T2 nothing
+> under `app/`, `components/`, or `lib/` reads it. `RESEND_API_KEY` is also
+> deliberately absent so it cannot weaken the config-level email guard T27 put
+> in place.
+>
+> **⚠ Local `npm test` runs the full 11-project matrix and will fail**, because
+> firefox and webkit are not installed on this host (recorded at T23). The
+> baseline run for this task hit exactly that trap. Always verify locally with
+> `PLAYWRIGHT_PORT=3100 npx playwright test --project=chromium --project="Mobile Chrome"`,
+> which is the matrix CI actually runs. Verified green at T28: **115 passed,
+> 5 skipped, 0 failed**, `grep -c "Email sent successfully"` = 0.
+>
+> **⚠ `pkill` is blocked by this environment's permission classifier**, so the
+> T16/T23 advice to `pkill -f "next-server"` cannot be followed directly. Stop
+> a runaway suite by stopping the background task itself, then confirm the port
+> is free with `ss -ltnp | grep :3100`. Note `:3000` is permanently owned by an
+> unrelated service on this host.
+>
+> **First real CI run: PR #1, run `31663068264` — failed on `format:check`
+> and nothing else, exactly as predicted.** Per-step: checkout, Set up Node,
+> `npm ci`, and `Lint` all ✅; `Check formatting` ❌; everything after it
+> **skipped**.
+>
+> **✅ CLOSED after T32 — run `31664594910` is fully green.** Every step ran:
+> Lint, Check formatting, Build, and Run Playwright tests all ✅, in 4m22s.
+> The browser cache demonstrably works — `Install Playwright browsers` was
+> **skipped on a cache hit** while `Install Playwright OS dependencies` ran,
+> which is the exact behaviour the cache-hit branch was written for. That
+> closes the "total runtime is reasonable / the browser cache is doing its
+> job" clause too. **T28 is now fully accepted.** The original partial-
+> verification note is kept below for the record.
+>
+> **⚠ T28's acceptance was only PARTIALLY verified at the time, with the
+> remainder deferred to T31.** Because a failed step halts the job, `Build`, the
+> Playwright browser cache, and `Run Playwright tests` have **never executed in
+> CI**. They are verified locally only. When T31 clears the formatting debt and
+> pushes, CI re-runs on this same PR and finally exercises the full chain —
+> **that run is what closes T28.** Do not consider T28 fully accepted until a
+> CI run shows `Run Playwright tests` green. The browser-cache half of the
+> acceptance ("the cache is doing its job") needs _two_ post-T31 runs to show a
+> cache hit.
+>
+> The "a deliberately introduced lint error fails the run" clause was **not**
+> tested by pushing a broken commit — that would put deliberate noise in the
+> PR history. `Lint` is a plain `run: npm run lint` step with default fail-fast
+> and it demonstrably executed in CI, so a non-zero exit fails the job
+> structurally.
+>
+> **⚠ Unrelated pre-existing failure surfaced by opening the PR: two Vercel
+> projects are attached to this repo.** `Vercel – chriscakes-new` deployed the
+> PR head **successfully**; `Vercel – chriscakes` **failed** on the identical
+> commit. Same code, different project configuration, so this is a Vercel
+> project-settings issue (likely root directory or missing env vars), not a
+> code defect. Hosting/deployment changes are explicitly out of scope for this
+> plan — **flagged for an owner decision**, not fixed here.
+>
+> Throwaway `scripts/cleanup-staging-duplicates.cjs` (untracked, left over from
+> T21's staging verification) was deleted at this point per owner decision, so
+> T31's repo-wide `format:check` sees a clean tree. It was untracked, so the
+> deletion produced no diff and no commit.
+
+**Phase 7 — Hygiene (H)**
+
+- [x] T29 — Documentation update (`sonnet`) — `a3e32a9`
+
+> **All three docs predated this branch and described a codebase that no
+> longer exists**, so the work was verification-driven: every retained claim
+> was checked against source, not against the plan text.
+>
+> **Corrections beyond the stated brief, all mechanical consequences of
+> already-committed work:** the `page` schema field list said `content` (block
+> content) when the real field is `sections` with five section types; the
+> Vercel env list demanded `SANITY_API_TOKEN` (unnecessary since T2) and
+> omitted the Resend vars the contact form needs at runtime.
+>
+> **⚠ The tracker itself was wrong about a command.** T22's note refers to
+> `npm run import:page`; **no such npm alias exists** in `package.json`
+> (only `import`, `import:all`, `import:more`). The real invocation is
+> `npx tsx scripts/import-page-content.ts --yes`. The docs now say so.
+>
+> **⚠ `NEXT_PUBLIC_SITE_URL` is read nowhere in app code.** `app/sitemap.ts`
+> and `app/robots.ts` hardcode `https://www.chriscakesofmi.com` (T18 built
+> them that way). `.env.local.example` and SETUP.md both implied otherwise.
+> SETUP.md now states that setting it has no effect today. Left as-is —
+> changing T18's committed behaviour is not T29's scope.
+>
+> The subagent's draft twice claimed "CI is green" and that the suite "is
+> green in CI". **Both were false** and were corrected by the orchestrator
+> before commit — `format:check` halts the job before build or tests run, so
+> the suite is green _locally_ only. Watch for this specific overstatement in
+> T30–T32.
+>
+> `test:visual` survives in two frozen Phase 5 passages in
+> `IMPLEMENTATION_PLAN.md` (lines ~706 and ~867), deliberately: they are dated
+> historical record of what was built in 2025-10, and the new Phase 6 entry
+> cross-references that the script and suite no longer exist. The live
+> command lists in `CLAUDE.md` and `SETUP.md` are clean.
+>
+> The `9t9xlmvm` grep matches three files, not the two the acceptance
+> predicted: `CODE_REVIEW.md`, `remediation-plan.md`, **and this
+> implementation plan** — whose T29 acceptance criterion literally contains
+> the string. Self-referential, pre-existing, not a defect.
+>
+> Gate: lint clean, build green, 115 passed / 5 skipped / 0 failed, 0 emails.
+
+- [x] T30 — Archive superseded documentation (`haiku`) — `0f2c4ac`
+
+> All four moved at 100% similarity; `git log --follow --oneline --
+docs/archive/TESTING_GUIDE.md` reaches back to `304e329` ("Add comprehensive
+> automated testing infrastructure (Phase 5)"), so history survived.
+>
+> **⚠ The acceptance criterion is self-contradictory and cannot be met as
+> literally written.** It asks that
+> `grep -rn "SOCIAL_MEDIA_INTEGRATION\|…" --exclude-dir=docs .` return nothing
+> _and_ that referrers be updated to the new paths. An updated reference
+> **contains the filename**, so the grep can only be empty if every reference
+> is deleted outright. Resolved in substance: **zero root-level references
+> survive**, and every remaining match is a `docs/archive/` path explicitly
+> worded as archived. Verify with
+> `grep -rn "SOCIAL_MEDIA_INTEGRATION\|SOCIAL_MEDIA_STATUS\|PHASE5_TESTING_SUMMARY\|TESTING_GUIDE" --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=docs . | grep -v "docs/archive/"`
+> which returns nothing.
+>
+> **Referrers were in more places than the plan predicted.** It named
+> `README.md` and `CLAUDE.md` as the likely referrers; neither actually
+> referenced these files. The real referrers were `IMPLEMENTATION_PLAN.md`
+> (3 places) plus **`tests/README.md` and `tests/QUICK_START.md`**, which the
+> plan did not anticipate at all.
+>
+> The archive README was corrected by the orchestrator before commit: it had
+> labelled `remediation-plan.md` as "Full implementation plan" and the
+> implementation plan as "context and rationale" — the two are swapped. Now
+> labelled design-plan vs execution-log.
+>
+> **⚠ T32 must re-point the archive README.** `docs/archive/README.md` cites
+> `docs/plans/proposed/…` four times; T32 moves both plans to
+> `docs/plans/implemented/`, which will dangle those links unless its
+> repo-wide grep catches them.
+>
+> Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
+
+- [x] T30b — Rewrite the stale test suite docs (`sonnet`) — **not in the
+      original plan; added by owner decision 2026-08-12.** T30 revealed that
+      `tests/README.md` and `tests/QUICK_START.md` are stale in exactly the way
+      T30 exists to fix: they document the deleted `visual/` suite and
+      `npm run test:visual`, omit the specs added in T25–T26 (`pages.spec.ts`,
+      `contact.spec.ts`, `tests/api/`), and instruct the reader to run tests
+      against `npm run dev` when T23 switched the suite to a production build.
+      Owner chose **rewrite** over archive. Sequenced before T31 so the format
+      sweep covers final content. — `1aca962`
+
+> **The old docs also advertised two helper functions that do not exist:**
+> `testMobileMenu()` and `checkNavigationLinks()`, both deleted in T24 for
+> using unscoped locators and `waitForTimeout`. The real exports of
+> `tests/helpers/test-utils.ts` are `waitForPageLoad`, `checkTouchTargetSize`,
+> `navigateAndWait`, and `checkImagesLoaded`.
+>
+> The rewrite deliberately foregrounds the suite's hard-won gotchas rather
+> than burying them: the forced-invalid `RESEND_API_KEY` and why it exists,
+> nav-locator scoping against the always-mounted mobile panel, the
+> content-tolerant assertion policy, no `waitForTimeout`, and the unique
+> `X-Forwarded-For` needed to dodge the contact endpoint's 3/hour limit.
+>
+> **⚠ `npm run test:e2e` and `npm run test:a11y` are traps on a fresh dev
+> box.** They carry no `PLAYWRIGHT_PORT` override and no `--project` filter,
+> so they fail both on the busy :3000 and on the missing firefox/webkit. The
+> orchestrator caught the subagent presenting them as ready-to-use; both docs
+> now show the explicit invocation instead. Fixing the scripts themselves in
+> `package.json` was **not** done — out of scope here, but a reasonable
+> follow-up.
+>
+> Gate: lint clean, 115 passed / 5 skipped / 0 failed, 0 emails.
+
+- [x] T31 — Repo-wide format sweep (`haiku`, run by the orchestrator) — `fead9d8`
+
+> Run directly rather than delegated: the brief is a single deterministic
+> command with an explicit "no hand edits" constraint, so a subagent could
+> only add risk.
+>
+> **41 files, not the ~77 the plan estimated.** Not a miscount — the deletions
+> in T1/T5/T23, the four docs archived in T30, and the files rewritten
+> wholesale along the way cleared most of that debt before the sweep reached
+> it. 17 of the 41 were code (8 `.ts`, 6 `.tsx`, 2 `.mjs`, 1 `.css`); a `-w`
+> diff confirms every code change is line wrapping, ternary breaking, or quote
+> normalization, with nothing semantic moved.
+>
+> **`npm run format:check` is green repo-wide for the first time on this
+> branch, so the known-red CI step from T28 is cleared. format:check is gating
+> from here on.**
+>
+> Gate: lint clean / zero warnings, build green, format:check green repo-wide,
+> 115 passed / 5 skipped / 0 failed, 0 emails. The suite was re-run rather
+> than assumed, because the sweep touched `app/globals.css` and six
+> components.
+
+- [x] T32 — Graduate the plan documents (`opus`, orchestrator) — this commit
+
+> Both plans moved to `docs/plans/implemented/` with `git mv`; the design plan
+> is marked `Status: IMPLEMENTED (2026-08-12)` and carries a short note of the
+> three assumptions execution disproved (`ShareButtons` was not unused;
+> deterministic ids did not make the imports idempotent; `/studio` needed a
+> scoped CSP from the start rather than try-DENY-first).
+>
+> Referrers repointed: `docs/archive/README.md` (6), `IMPLEMENTATION_PLAN.md`
+> (4). **Historical references inside this file were deliberately left
+> pointing at `docs/plans/proposed/`** — T0's instructions, its commit
+> message, and the T29 acceptance criterion are a record of what was done at
+> the time, and rewriting them would falsify it. Only the live pointers in the
+> header were updated.
+>
+> `.claude/commands/*.md` also match a `docs/plans/proposed/` grep but were
+> left alone: they are generic slash-command templates describing the
+> convention, not references to these two documents.
+>
+> **There is no `docs/README.md` index in this repo**, so the generic
+> `/run-plan` instruction to update the docs index had nothing to bind to.
+> Creating one was not in T32's brief and was not invented.
+
+## ✅ COMPLETE — 2026-08-12
+
+All 34 boxes ticked (T0–T32 plus the owner-added T30b). Final state on
+`feat/remediation`, PR #1:
+
+| Gate                                                    | Result                                          |
+| ------------------------------------------------------- | ----------------------------------------------- |
+| `npm run lint`                                          | green, **zero warnings**                        |
+| `npm run format:check`                                  | green **repo-wide**                             |
+| `npm run build`                                         | green                                           |
+| Playwright (chromium + Mobile Chrome, production build) | **115 passed / 5 skipped / 0 failed**, 0 emails |
+| CI run `31664594910`                                    | **all steps green**, 4m22s, browser cache hit   |
+
+**Open items deliberately left for an owner decision — none of them blocking:**
+
+1. **A second Vercel project is misconfigured.** `Vercel – chriscakes` failed
+   on _every_ commit in this PR while `Vercel – chriscakes-new` succeeded on
+   every one — same code, different project settings. Hosting is out of this
+   plan's scope. It will red-flag every future PR until disconnected or fixed.
+2. **Three scripts still `createOrReplace` live page documents** with no
+   `--yes` guard: `add-videos-to-pages.ts`,
+   `update-remaining-pages-with-images.ts`, `upload-images-and-update-pages.ts`.
+   Flagged at T22, still true.
+3. **12 dependency advisories remain** (7 high / 5 moderate), all needing
+   major bumps: `sanity@6`, `next@16`, `next-sanity@13`. See T19.
+4. **The import scripts' empty-dataset create path has never been executed**
+   — the Sanity dataset quota is exhausted at 2, so there was nowhere to test
+   it. See T21.
+5. **`npm run test:e2e` / `test:a11y` carry no port or project overrides** and
+   fail on a fresh dev box. Docs work around it; the scripts themselves could
+   be fixed.
+6. **No `docs/README.md` index exists** — nothing to update at graduation, and
+   one was not invented.
+
+**Original done-when criteria**, all met: all boxes ticked; `npm run lint`, `npm run format:check`,
+`npm run build`, and `npm test` are all green on a fresh checkout of
+`feat/remediation`; the CI workflow is green on a real PR; `/studio` loads,
+edits, and saves with CSP active; `grep -rn "9t9xlmvm\|crimson-\|waitForTimeout"`
+over `app/ components/ lib/ sanity/ scripts/ tests/` returns nothing (the plan
+and review docs quote the stale ID intentionally); the four superseded docs are archived
+under `docs/archive/`; and both plan documents have graduated to
+`docs/plans/implemented/`.

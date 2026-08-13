@@ -2,10 +2,64 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
-export default function Header() {
+interface SocialPlatform {
+  platform: string;
+  url: string;
+  enabled: boolean;
+  handle?: string;
+}
+
+interface SocialMediaSettings {
+  platforms?: SocialPlatform[];
+  displaySettings?: {
+    showInHeader?: boolean;
+    showInFooter?: boolean;
+  };
+  socialCTA?: {
+    enabled?: boolean;
+    heading?: string;
+    message?: string;
+    hashtag?: string;
+  };
+}
+
+interface HeaderProps {
+  phone?: string;
+  email?: string;
+  address?: string;
+  socialMedia?: SocialMediaSettings;
+}
+
+export default function Header({ phone, email, address }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const wasMobileMenuOpenRef = useRef(false);
+
+  // Return focus to the hamburger button whenever the mobile menu closes.
+  useEffect(() => {
+    if (wasMobileMenuOpenRef.current && !mobileMenuOpen) {
+      menuButtonRef.current?.focus();
+    }
+    wasMobileMenuOpenRef.current = mobileMenuOpen;
+  }, [mobileMenuOpen]);
+
+  // Close the mobile menu on Escape.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -48,6 +102,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={pathname === link.href ? 'page' : undefined}
                 className="text-white hover:text-gray-300 px-3 py-2 text-sm font-medium"
               >
                 {link.label}
@@ -58,10 +113,13 @@ export default function Header() {
           {/* Mobile Navigation - Hamburger Button */}
           <div className="lg:hidden flex items-center justify-between py-3">
             <button
+              ref={menuButtonRef}
               type="button"
               className="text-white hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-white"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               <svg
                 className="h-6 w-6"
@@ -83,22 +141,24 @@ export default function Header() {
           </div>
 
           {/* Mobile Navigation - Menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden pb-4">
-              <div className="flex flex-col space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-white hover:bg-gray-700 px-3 py-2 text-sm font-medium rounded"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
+          <div
+            id="mobile-menu"
+            className={`lg:hidden ${mobileMenuOpen ? 'pb-4' : 'hidden'}`}
+          >
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={pathname === link.href ? 'page' : undefined}
+                  className="text-white hover:bg-gray-700 px-3 py-2 text-sm font-medium rounded"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       </nav>
 
@@ -106,15 +166,15 @@ export default function Header() {
       <div className="bg-gray-100 border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-between text-sm text-gray-700">
-            <div>P.O. Box 431 Clare MI, 48617</div>
-            <div>Office: 989-802-0755</div>
+            <div>{address || 'P.O. Box 431 Clare MI, 48617'}</div>
+            <div>Office: {phone || '989-802-0755'}</div>
             <div>
               Email:{' '}
               <a
-                href="mailto:chriscakesmi@sbcglobal.net"
+                href={`mailto:${email || 'chriscakesmi@sbcglobal.net'}`}
                 className="text-blue-600 hover:text-blue-800"
               >
-                chriscakesmi@sbcglobal.net
+                {email || 'chriscakesmi@sbcglobal.net'}
               </a>
             </div>
           </div>

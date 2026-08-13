@@ -8,11 +8,11 @@ This document provides comprehensive guidance for testing the ChrisCakes website
 
 ### Tools & Frameworks
 
-| Tool | Purpose | Documentation |
-|------|---------|---------------|
-| **Playwright** | Cross-browser E2E testing | https://playwright.dev |
-| **@axe-core/playwright** | Accessibility testing (WCAG 2.1 AA) | https://github.com/dequelabs/axe-core-npm |
-| **Chrome DevTools MCP** | Performance profiling (manual) | https://github.com/ChromeDevTools/chrome-devtools-mcp |
+| Tool                     | Purpose                             | Documentation                                         |
+| ------------------------ | ----------------------------------- | ----------------------------------------------------- |
+| **Playwright**           | Cross-browser E2E testing           | https://playwright.dev                                |
+| **@axe-core/playwright** | Accessibility testing (WCAG 2.1 AA) | https://github.com/dequelabs/axe-core-npm             |
+| **Chrome DevTools MCP**  | Performance profiling (manual)      | https://github.com/ChromeDevTools/chrome-devtools-mcp |
 
 ### MCP Servers (Optional - For AI-Assisted Testing)
 
@@ -31,6 +31,7 @@ This document provides comprehensive guidance for testing the ChrisCakes website
 ### Prerequisites
 
 1. **Start the development server:**
+
    ```bash
    npm run dev
    ```
@@ -86,6 +87,7 @@ npm test -- --project="Tablet"
 ### 1. E2E Tests (`tests/e2e/`)
 
 **Homepage Tests** (`homepage.spec.ts`):
+
 - Page loads successfully
 - Header navigation displays
 - Footer with contact information
@@ -96,6 +98,7 @@ npm test -- --project="Tablet"
 - Mobile responsiveness
 
 **Menu Page Tests** (`menu.spec.ts`):
+
 - Page loads successfully
 - Menu categories display
 - Menu items display
@@ -106,6 +109,7 @@ npm test -- --project="Tablet"
 - Mobile responsiveness
 
 **Navigation Tests** (`navigation.spec.ts`):
+
 - Navigation between all main pages
 - Mobile menu functionality
 - Logo link to homepage
@@ -149,6 +153,7 @@ npm test -- --project="Tablet"
 ### 3. Visual Regression Tests (`tests/visual/`)
 
 **Desktop Snapshots** (1440x900):
+
 - Homepage baseline
 - Menu page baseline
 - About page baseline
@@ -156,16 +161,19 @@ npm test -- --project="Tablet"
 - Contact page baseline
 
 **Mobile Snapshots** (375x667):
+
 - Homepage mobile baseline
 - Menu page mobile baseline
 - Mobile menu open state
 - About page mobile baseline
 
 **Tablet Snapshots** (768x1024):
+
 - Homepage tablet baseline
 - Menu page tablet baseline
 
 **Component Snapshots**:
+
 - Header navigation
 - Footer
 - Menu category filters
@@ -220,17 +228,17 @@ Test on real devices if possible:
 
 #### Performance Targets
 
-| Metric | Target | Description |
-|--------|--------|-------------|
-| **FCP** | <1.8s | First Contentful Paint |
-| **LCP** | <2.5s | Largest Contentful Paint |
-| **TTI** | <3.5s | Time to Interactive |
-| **CLS** | <0.1 | Cumulative Layout Shift |
-| **Page Load** | <3s | Total page load time |
-| **Lighthouse Performance** | >90 | Overall performance score |
-| **Lighthouse Accessibility** | >90 | Accessibility score |
-| **Lighthouse Best Practices** | >90 | Best practices score |
-| **Lighthouse SEO** | >90 | SEO score |
+| Metric                        | Target | Description               |
+| ----------------------------- | ------ | ------------------------- |
+| **FCP**                       | <1.8s  | First Contentful Paint    |
+| **LCP**                       | <2.5s  | Largest Contentful Paint  |
+| **TTI**                       | <3.5s  | Time to Interactive       |
+| **CLS**                       | <0.1   | Cumulative Layout Shift   |
+| **Page Load**                 | <3s    | Total page load time      |
+| **Lighthouse Performance**    | >90    | Overall performance score |
+| **Lighthouse Accessibility**  | >90    | Accessibility score       |
+| **Lighthouse Best Practices** | >90    | Best practices score      |
+| **Lighthouse SEO**            | >90    | SEO score                 |
 
 ### Sanity Studio Testing
 
@@ -284,6 +292,7 @@ npm run test:report
 ```
 
 This opens an HTML report in your browser showing:
+
 - Test pass/fail status
 - Screenshots of failures
 - Video recordings of test runs
@@ -321,20 +330,25 @@ jobs:
 ### Common Issues
 
 **1. Tests fail with "page not found"**
+
 - Solution: Ensure `npm run dev` is running before tests
 - Check that `http://localhost:3000` is accessible
 
 **2. Browser binaries not found**
+
 - Solution: Run `npx playwright install`
 
 **3. Visual regression tests fail after intentional changes**
+
 - Solution: Update baselines with `npm test -- --update-snapshots`
 
 **4. Accessibility tests fail**
+
 - Solution: Review axe-core violations in test report
 - Fix issues in components (contrast, alt text, ARIA labels)
 
 **5. ISR not updating**
+
 - Solution: Check Sanity API token in `.env.local`
 - Verify 60-second revalidation in page code
 - Clear browser cache and hard refresh
@@ -373,4 +387,4 @@ All tests pass when:
 
 ---
 
-*Last Updated: 2025-10-19*
+_Last Updated: 2025-10-19_

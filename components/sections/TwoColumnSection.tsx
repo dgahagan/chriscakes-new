@@ -32,9 +32,10 @@ export default function TwoColumnSection({
   const imageColumn = image && (
     <div className="relative h-64 w-full rounded overflow-hidden">
       <Image
-        src={urlFor(image).url()}
+        src={urlFor(image).width(1200).url()}
         alt={image.alt || heading}
         fill
+        sizes="(min-width: 768px) 50vw, 100vw"
         className="object-cover"
       />
     </div>

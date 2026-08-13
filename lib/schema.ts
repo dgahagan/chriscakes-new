@@ -49,9 +49,10 @@ interface FundraisingEvent {
  * Generate LocalBusiness/Restaurant schema
  */
 export function generateRestaurantSchema(settings: SiteSettings) {
-  const socialUrls = settings.socialMedia?.platforms
-    ?.filter((p) => p.enabled)
-    .map((p) => p.url) || [];
+  const socialUrls =
+    settings.socialMedia?.platforms
+      ?.filter((p) => p.enabled)
+      .map((p) => p.url) || [];
 
   return {
     '@context': 'https://schema.org',
@@ -61,18 +62,20 @@ export function generateRestaurantSchema(settings: SiteSettings) {
     alternateName: 'ChrisCakes',
     description:
       settings.description ||
-      'Michigan\'s premier breakfast caterer serving delicious pancakes and catering services since 1969.',
+      "Michigan's premier breakfast caterer serving delicious pancakes and catering services since 1969.",
     url: 'https://www.chriscakesofmi.com',
     telephone: settings.phone || '989-802-0755',
     email: settings.email || 'info@chriscakesofmi.com',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'P.O. Box 431',
-      addressLocality: 'Clare',
-      addressRegion: 'MI',
-      postalCode: '48617',
-      addressCountry: 'US',
-    },
+    address: settings.address
+      ? settings.address
+      : {
+          '@type': 'PostalAddress',
+          streetAddress: 'P.O. Box 431',
+          addressLocality: 'Clare',
+          addressRegion: 'MI',
+          postalCode: '48617',
+          addressCountry: 'US',
+        },
     geo: {
       '@type': 'GeoCoordinates',
       latitude: 43.8194,
@@ -104,31 +107,36 @@ export function generateRestaurantSchema(settings: SiteSettings) {
  * Generate Menu schema for menu page
  */
 export function generateMenuSchema(menuItems: MenuItem[]) {
-  const menuSections = menuItems.reduce((acc: Record<string, MenuItem[]>, item) => {
-    const category = item.category?.title || 'Other';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {});
+  const menuSections = menuItems.reduce(
+    (acc: Record<string, MenuItem[]>, item) => {
+      const category = item.category?.title || 'Other';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    },
+    {}
+  );
 
-  const hasMenuSections = Object.entries(menuSections).map(([category, items]) => ({
-    '@type': 'MenuSection',
-    name: category,
-    hasMenuItem: items.map((item) => ({
-      '@type': 'MenuItem',
-      name: item.name,
-      description: item.description || undefined,
-      offers: item.price
-        ? {
-            '@type': 'Offer',
-            price: item.price,
-            priceCurrency: 'USD',
-          }
-        : undefined,
-    })),
-  }));
+  const hasMenuSections = Object.entries(menuSections).map(
+    ([category, items]) => ({
+      '@type': 'MenuSection',
+      name: category,
+      hasMenuItem: items.map((item) => ({
+        '@type': 'MenuItem',
+        name: item.name,
+        description: item.description || undefined,
+        offers: item.price
+          ? {
+              '@type': 'Offer',
+              price: item.price,
+              priceCurrency: 'USD',
+            }
+          : undefined,
+      })),
+    })
+  );
 
   return {
     '@context': 'https://schema.org',
@@ -136,30 +144,6 @@ export function generateMenuSchema(menuItems: MenuItem[]) {
     name: 'ChrisCakes Menu',
     description: 'Our complete breakfast and catering menu',
     hasMenuSection: hasMenuSections,
-  };
-}
-
-/**
- * Generate AggregateRating schema from testimonials
- */
-export function generateAggregateRatingSchema(testimonials: Testimonial[]) {
-  // If no testimonials have ratings, return null
-  const ratingsAvailable = testimonials.some((t) => t.rating);
-  if (!ratingsAvailable || testimonials.length === 0) {
-    return null;
-  }
-
-  // Calculate average rating (default to 5 if not specified)
-  const totalRating = testimonials.reduce((sum, t) => sum + (t.rating || 5), 0);
-  const averageRating = totalRating / testimonials.length;
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'AggregateRating',
-    ratingValue: averageRating.toFixed(1),
-    reviewCount: testimonials.length,
-    bestRating: '5',
-    worstRating: '1',
   };
 }
 

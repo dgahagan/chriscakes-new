@@ -1,95 +1,101 @@
 import { test, expect } from '@playwright/test';
-import { navigateAndWait, checkNavigationLinks, checkImagesLoaded } from '../helpers/test-utils';
+import { navigateAndWait, checkImagesLoaded } from '../helpers/test-utils';
 
-test.describe('Homepage - Cross-Browser Compatibility', () => {
+test.describe('Homepage', () => {
   test.beforeEach(async ({ page }) => {
     await navigateAndWait(page, '/');
   });
 
-  test('should load homepage successfully', async ({ page }) => {
-    // Check page title
+  test('loads with the expected title and exactly one h1', async ({ page }) => {
     await expect(page).toHaveTitle(/ChrisCakes/i);
 
-    // Check main heading
-    const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toBeVisible();
+    const h1 = page.getByRole('heading', { level: 1 });
+    await expect(h1).toHaveCount(1);
+    await expect(h1).toBeVisible();
   });
 
-  test('should display header navigation', async ({ page }) => {
-    const expectedLinks = ['Home', 'Menu', 'About', 'Services', 'Contact'];
-    await checkNavigationLinks(page, expectedLinks);
+  test('has no heading-level skips', async ({ page }) => {
+    // Structural check on heading order (h1 > h2 > h3 ...): dropping back
+    // down a level (e.g. h3 -> h2) is a normal new section and is fine;
+    // jumping forward by more than one (e.g. h2 -> h4) is not.
+    const levels = await page.evaluate(() =>
+      Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6')).map(
+        (el) => Number(el.tagName.charAt(1))
+      )
+    );
+
+    expect(levels.length).toBeGreaterThan(0);
+    expect(levels[0]).toBe(1);
+
+    for (let i = 1; i < levels.length; i++) {
+      const jump = levels[i] - levels[i - 1];
+      expect(jump).toBeLessThanOrEqual(1);
+    }
   });
 
-  test('should display footer with contact information', async ({ page }) => {
-    // Footer should be visible
-    const footer = page.locator('footer');
-    await expect(footer).toBeVisible();
+  test('all images have an alt attribute', async ({ page }) => {
+    const images = page.locator('img');
+    const count = await images.count();
+    expect(count).toBeGreaterThan(0);
 
-    // Check for phone number or contact info
-    await expect(footer).toContainText(/248/); // Phone area code
+    for (let i = 0; i < count; i++) {
+      expect(await images.nth(i).getAttribute('alt')).not.toBeNull();
+    }
   });
 
-  test('should load all images without errors', async ({ page }) => {
+  test('all images finish loading successfully', async ({ page }) => {
     await checkImagesLoaded(page);
   });
 
-  test('should have no console errors', async ({ page }) => {
-    const errors: string[] = [];
-
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        errors.push(msg.text());
-      }
-    });
-
-    page.on('pageerror', (error) => {
-      errors.push(error.message);
-    });
-
-    // Navigate and interact
-    await page.waitForTimeout(2000);
-
-    // Filter out known acceptable errors (if any)
-    const criticalErrors = errors.filter(
-      (error) => !error.includes('favicon') // Ignore favicon errors
-    );
-
-    expect(criticalErrors).toHaveLength(0);
+  test('has the expected landmark regions', async ({ page }) => {
+    await expect(page.getByRole('banner')).toBeVisible();
+    await expect(page.getByRole('navigation')).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByRole('contentinfo')).toBeVisible();
   });
 
-  test('should display hero section with CTA', async ({ page }) => {
-    // Look for main call-to-action button
-    const ctaButton = page.getByRole('link', { name: /menu|order|book/i }).first();
-    await expect(ctaButton).toBeVisible();
+  test('footer exposes a mailto contact link (not a literal address)', async ({
+    page,
+  }) => {
+    // Phone/email/address come from Sanity and are owner-editable, so this
+    // asserts the structural affordance (a mailto: link exists) rather than
+    // any literal contact text, which could change at any time.
+    const footer = page.getByRole('contentinfo');
+    const mailLink = footer.locator('a[href^="mailto:"]');
+    await expect(mailLink).toHaveCount(1);
   });
 
-  test('should have proper meta tags for SEO', async ({ page }) => {
-    // Check title
-    const title = await page.title();
-    expect(title.length).toBeGreaterThan(0);
+  test('has a working "Contact us Today!" call-to-action to /contact', async ({
+    page,
+  }) => {
+    // This CTA text and href are hardcoded in app/page.tsx (not CMS
+    // content), so asserting on it is safe.
+    const cta = page.getByRole('link', {
+      name: 'Contact us Today!',
+      exact: true,
+    });
+    await expect(cta).toHaveAttribute('href', '/contact');
+  });
 
-    // Check meta description
+  test('has a meta description tag', async ({ page }) => {
     const description = page.locator('meta[name="description"]');
     await expect(description).toHaveCount(1);
+    const content = await description.getAttribute('content');
+    expect(content?.length).toBeGreaterThan(0);
   });
+});
 
-  test('should be responsive on mobile viewport', async ({ page, isMobile }) => {
-    if (isMobile) {
-      // On mobile, hamburger menu should be visible
-      const menuButton = page.getByRole('button', { name: /menu/i });
-      await expect(menuButton).toBeVisible();
+test.describe('Homepage - console errors', () => {
+  test('has no unexpected console or page errors on load', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') errors.push(msg.text());
+    });
+    page.on('pageerror', (error) => errors.push(error.message));
 
-      // Click to open menu
-      await menuButton.click();
-      await page.waitForTimeout(500);
+    await navigateAndWait(page, '/');
 
-      // Navigation links should now be visible
-      const homeLink = page.getByRole('link', { name: 'Home' });
-      await expect(homeLink).toBeVisible();
-    } else {
-      // On desktop, navigation links should be visible directly
-      const homeLink = page.getByRole('link', { name: 'Home' });
-      await expect(homeLink).toBeVisible();
-    }
+    const criticalErrors = errors.filter((error) => !error.includes('favicon'));
+    expect(criticalErrors).toEqual([]);
   });
 });

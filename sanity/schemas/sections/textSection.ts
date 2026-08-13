@@ -78,7 +78,16 @@ export default defineType({
       title: 'title',
       content: 'content',
     },
-    prepare({ title, content }: { title?: string; content?: Array<{ _type: string; children?: Array<{ _type: string; text?: string }> }> }) {
+    prepare({
+      title,
+      content,
+    }: {
+      title?: string;
+      content?: Array<{
+        _type: string;
+        children?: Array<{ _type: string; text?: string }>;
+      }>;
+    }) {
       const block = (content || []).find((block) => block._type === 'block');
       return {
         title: title || 'Text Section',

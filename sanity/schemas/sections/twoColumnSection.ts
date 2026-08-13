@@ -87,7 +87,8 @@ export default defineType({
         layout: 'radio',
       },
       initialValue: 'left',
-      description: 'Position of the image relative to text (desktop only, stacks on mobile)',
+      description:
+        'Position of the image relative to text (desktop only, stacks on mobile)',
     },
     {
       name: 'ctaButton',
