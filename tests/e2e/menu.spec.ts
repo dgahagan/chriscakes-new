@@ -1,122 +1,173 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page, type Locator } from '@playwright/test';
 import { navigateAndWait } from '../helpers/test-utils';
 
-test.describe('Menu Page - Functionality Tests', () => {
+function menuItems(page: Page): Locator {
+  return page.locator('[data-testid="menu-item"]');
+}
+
+function categoryFilter(page: Page): Locator {
+  return page.getByRole('button', { name: 'All Categories', exact: true });
+}
+
+// Every category button (including "All Categories") carries aria-pressed;
+// no other button on the page does, so this is a reliable way to find "some
+// category button that isn't All Categories" regardless of its label.
+function categoryButtons(page: Page): Locator {
+  return page.locator('button[aria-pressed]');
+}
+
+function searchInput(page: Page): Locator {
+  return page.getByRole('textbox', { name: 'Search menu items' });
+}
+
+function clearSearchButton(page: Page): Locator {
+  return page.getByRole('button', { name: 'Clear search', exact: true });
+}
+
+function sortSelect(page: Page): Locator {
+  return page.locator('#sort-select');
+}
+
+function printButton(page: Page): Locator {
+  return page.getByRole('button', { name: 'Print menu', exact: true });
+}
+
+/**
+ * Reads the visible name of the first menu item card. Cards render the item
+ * name in an <h3>, scoped inside the card so it never collides with the
+ * category <h2> headings that also appear on the page.
+ */
+async function firstItemName(page: Page): Promise<string | null> {
+  return menuItems(page).first().locator('h3').first().textContent();
+}
+
+test.describe('Menu Page', () => {
   test.beforeEach(async ({ page }) => {
     await navigateAndWait(page, '/menu');
   });
 
-  test('should load menu page successfully', async ({ page }) => {
+  test('loads with the expected title and an h1', async ({ page }) => {
     await expect(page).toHaveTitle(/Menu.*ChrisCakes/i);
-
-    const heading = page.getByRole('heading', { name: /menu/i, level: 1 });
-    await expect(heading).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 
-  test('should display menu categories', async ({ page }) => {
-    // Wait for menu items to load
-    await page.waitForSelector('article, [role="article"], .menu-item', { timeout: 10000 });
-
-    // Check for category filters or navigation
-    const categoryButtons = page.locator('button').filter({ hasText: /breakfast|lunch|dinner|all/i });
-    const count = await categoryButtons.count();
-    expect(count).toBeGreaterThan(0);
+  test('renders at least one category button and one menu item', async ({
+    page,
+  }) => {
+    await expect(categoryFilter(page)).toBeVisible();
+    expect(await categoryButtons(page).count()).toBeGreaterThan(0);
+    await expect(menuItems(page).first()).toBeVisible();
+    expect(await menuItems(page).count()).toBeGreaterThan(0);
   });
 
-  test('should display menu items', async ({ page }) => {
-    // Wait for menu items to load
-    await page.waitForTimeout(2000);
-
-    // Check for menu item cards - using multiple possible selectors
-    const menuItems = page.locator('[class*="menu"]').filter({ has: page.locator('h2, h3') });
-    const count = await menuItems.count();
-
-    expect(count).toBeGreaterThan(0);
+  test('"All Categories" starts pressed', async ({ page }) => {
+    await expect(categoryFilter(page)).toHaveAttribute('aria-pressed', 'true');
   });
 
-  test('should filter menu by category', async ({ page }) => {
-    // Wait for page to load
-    await page.waitForTimeout(2000);
+  test('selecting a category updates aria-pressed and keeps the grid non-empty', async ({
+    page,
+  }) => {
+    // Any category button other than "All Categories" is a real category,
+    // whatever its label happens to be today.
+    const categoryButton = categoryButtons(page)
+      .filter({ hasNotText: 'All Categories' })
+      .first();
 
-    // Find category filter buttons
-    const breakfastButton = page.getByRole('button', { name: /breakfast/i });
-
-    if (await breakfastButton.isVisible()) {
-      await breakfastButton.click();
-      await page.waitForTimeout(1000);
-
-      // Verify URL or active state changed
-      const isActive = await breakfastButton.evaluate((el) => {
-        return el.classList.contains('active') ||
-               el.classList.contains('bg-crimson') ||
-               el.getAttribute('aria-current') === 'true';
-      });
-
-      expect(isActive).toBeTruthy();
+    // Fall back gracefully if the CMS currently has zero categories beyond
+    // "All Categories" -- the grid-shape tests above already cover that case.
+    if ((await categoryButton.count()) === 0) {
+      test.skip(true, 'no non-default category button rendered');
     }
+
+    await expect(categoryFilter(page)).toHaveAttribute('aria-pressed', 'true');
+
+    await categoryButton.click();
+    await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(categoryFilter(page)).toHaveAttribute('aria-pressed', 'false');
+    await expect(menuItems(page).first()).toBeVisible();
+
+    // Switching back to "All Categories" restores its pressed state.
+    await categoryFilter(page).click();
+    await expect(categoryFilter(page)).toHaveAttribute('aria-pressed', 'true');
+    await expect(categoryButton).toHaveAttribute('aria-pressed', 'false');
   });
 
-  test('should display menu item details', async ({ page }) => {
-    await page.waitForTimeout(2000);
+  test('searching narrows the visible set and clearing restores it', async ({
+    page,
+  }) => {
+    const initialCount = await menuItems(page).count();
+    expect(initialCount).toBeGreaterThan(0);
 
-    // Look for any menu item with a heading
-    const firstMenuItem = page.locator('h2, h3').first();
-    await expect(firstMenuItem).toBeVisible();
+    // A name lifted from the currently-rendered first item is guaranteed to
+    // match at least that one item, without asserting anything about which
+    // item it is.
+    const targetName = (await firstItemName(page))?.trim();
+    expect(targetName).toBeTruthy();
 
-    // Check that items have names visible
-    const itemName = await firstMenuItem.textContent();
-    expect(itemName?.length).toBeGreaterThan(0);
+    const search = searchInput(page);
+    await search.fill(targetName as string);
+
+    // The grid re-renders synchronously off React state; wait for the count
+    // to settle rather than a fixed timeout.
+    await expect(async () => {
+      const filteredCount = await menuItems(page).count();
+      expect(filteredCount).toBeGreaterThan(0);
+      expect(filteredCount).toBeLessThanOrEqual(initialCount);
+    }).toPass();
+
+    // An obviously-unmatchable query empties the grid entirely.
+    await search.fill('zzzzzznonexistentmenuitemzzzzzz');
+    await expect(menuItems(page)).toHaveCount(0);
+
+    await clearSearchButton(page).click();
+    await expect(search).toHaveValue('');
+    await expect(menuItems(page)).toHaveCount(initialCount);
   });
 
-  test('should show all categories when "All" is selected', async ({ page }) => {
-    await page.waitForTimeout(2000);
-
-    const allButton = page.getByRole('button', { name: /^all$/i });
-
-    if (await allButton.isVisible()) {
-      await allButton.click();
-      await page.waitForTimeout(1000);
-
-      // Count visible menu items
-      const menuItems = page.locator('h2, h3').filter({ hasText: /.+/ });
-      const count = await menuItems.count();
-
-      expect(count).toBeGreaterThan(5); // Should show multiple items
-    }
+  test('the clear-search button only appears while there is a query', async ({
+    page,
+  }) => {
+    await expect(clearSearchButton(page)).toBeHidden();
+    await searchInput(page).fill('a');
+    await expect(clearSearchButton(page)).toBeVisible();
+    await clearSearchButton(page).click();
+    await expect(clearSearchButton(page)).toBeHidden();
   });
 
-  test('should load menu item images', async ({ page }) => {
-    await page.waitForTimeout(2000);
+  test('sorting by name-asc then name-desc reverses the first item', async ({
+    page,
+  }) => {
+    // Sorting only produces an observable reversal when there's more than
+    // one item to reorder.
+    test.skip(
+      (await menuItems(page).count()) < 2,
+      'fewer than two menu items rendered'
+    );
 
-    // Check for Next.js Image components or img tags
-    const images = page.locator('img').filter({ hasNot: page.locator('[alt=""]') });
-    const count = await images.count();
+    await sortSelect(page).selectOption('name-asc');
+    const ascName = await firstItemName(page);
 
-    if (count > 0) {
-      // Verify first image loaded
-      const firstImg = images.first();
-      const naturalWidth = await firstImg.evaluate((el) => (el as HTMLImageElement).naturalWidth);
-      expect(naturalWidth).toBeGreaterThan(0);
-    }
+    await sortSelect(page).selectOption('name-desc');
+    const descName = await firstItemName(page);
+
+    expect(ascName).toBeTruthy();
+    expect(descName).toBeTruthy();
+    expect(descName).not.toBe(ascName);
   });
 
-  test('should be mobile responsive', async ({ page, isMobile }) => {
-    await page.waitForTimeout(2000);
+  test('print button triggers window.print', async ({ page }) => {
+    await page.evaluate(() => {
+      (window as unknown as { __printCalled: boolean }).__printCalled = false;
+      window.print = () => {
+        (window as unknown as { __printCalled: boolean }).__printCalled = true;
+      };
+    });
 
-    // Menu should be readable on mobile
-    const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toBeVisible();
+    await printButton(page).click();
 
-    // Category filters should be visible
-    const categoryButtons = page.locator('button').filter({ hasText: /breakfast|lunch|dinner|all/i });
-    const count = await categoryButtons.count();
-    expect(count).toBeGreaterThan(0);
-
-    if (isMobile) {
-      // On mobile, items should stack vertically
-      const firstItem = page.locator('h2, h3').first();
-      const box = await firstItem.boundingBox();
-      expect(box?.width).toBeLessThan(600); // Should not be full desktop width
-    }
+    const printCalled = await page.evaluate(
+      () => (window as unknown as { __printCalled: boolean }).__printCalled
+    );
+    expect(printCalled).toBe(true);
   });
 });
