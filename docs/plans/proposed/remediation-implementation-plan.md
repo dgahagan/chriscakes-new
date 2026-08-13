@@ -1093,7 +1093,41 @@ decision on the fix.
 
 **Phase 5 — Import script safety (B)**
 
-- [ ] T21 — Defang the import scripts (`sonnet`)
+- [x] T21 — Defang the import scripts (`sonnet`) — `1b464a1`
+
+> **Deterministic ids alone were not enough — the catalogue writes are now
+> gated on an empty dataset.** The plan assumed `createIfNotExists` with a
+> `menuItem-<slug>` id would make re-runs no-ops. It does not: the live
+> catalogue was imported *before* those ids existed, so its documents carry
+> random ids and some slugs have since drifted (Sanity de-duplicated a few to
+> `-2`). Deterministic ids therefore collide with nothing and create a **second
+> full copy** of the catalogue beside the real one. This actually happened
+> against `staging` during verification and had to be cleaned up.
+>
+> The script now refuses to write any menuCategory/menuItem unless the dataset
+> has zero of both, printing a divergence report (matched on slug **or**
+> title/name) instead. `siteSettings` is handled independently — always
+> `createIfNotExists`, so a missing one is still created.
+>
+> **`createIfNotExists` on an existing document advances `_rev` but changes
+> nothing else** — `_updatedAt` and every field value are untouched. Confirmed
+> adversarially by passing a bogus `title`, which did not apply. So "byte-
+> identical" holds for content; only Sanity's internal revision id for the
+> no-op mutation moves. Do not mistake that `_rev` bump for a write.
+>
+> Verified on `staging`: two `--yes` runs wrote nothing, counts held at 9 pages
+> / 67 menu items / 6 categories, `siteSettings._updatedAt` still 2026-07-27.
+> Without `--yes` it exits 1 having written nothing.
+>
+> **⚠ Two sibling scripts are still destructive and are outside T21's scope:**
+> `scripts/import-additional-content.ts` (`npm run import:more`) still uses
+> bare `client.create()` for the fundraising category, menu items, FAQs, and
+> testimonials — it will duplicate all of them on a re-run.
+> `scripts/import-page-content.ts` (`npm run import:page`) still uses
+> `createOrReplace` on all 8 page documents, so it **overwrites live page
+> content**. T22 touches the latter for error handling only. Neither is in the
+> plan's scope; flagged for an owner decision.
+
 - [ ] T22 — Fix swallowed import errors (`haiku`)
 
 **Phase 6 — Test suite rebuild and CI (A)**
